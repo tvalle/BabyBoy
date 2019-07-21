@@ -28,8 +28,18 @@ private:
     uint8_t f;
     uint8_t h;
     uint8_t l;
+    uint16_t SP;
 
     uint16_t fetchNext2BytesInverted(Rom rom, int PC);
+
     bool isFlagSet(Flag flag);
+    void setZ(bool value);
+    void setN(bool value);
+    void setH(bool value);
+    void setC(bool value);
+    
     uint16_t combineRegisters(uint8_t reg1, uint8_t reg2);
+
+    void increaseRegister(uint8_t* reg);
+    void decreaseRegister(uint8_t* reg);
 };

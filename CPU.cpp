@@ -24,6 +24,105 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         break;
 
         // INCREASE DECREASE OPERATIONS
+    case 0x03:
+        // inc bc
+        c++;
+        if (c == 0)
+            b++;
+
+        PC++;
+        break;
+    case 0x13:
+        // inc de
+        e++;
+        if (e == 0)
+            d++;
+
+        PC++;
+        break;
+    case 0x23:
+        // inc hl
+        l++;
+        if (l == 0)
+            h++;
+
+        PC++;
+        break;
+    case 0x33:
+        // inc sp
+        SP++;
+        PC++;
+        break;
+    case 0x04:
+        //inc b
+        increaseRegister(&b);
+        PC++;
+        break;
+    case 0x05:
+        //dec b
+        decreaseRegister(&b);
+        PC++;
+        break;
+    case 0x0C:
+        //inc C
+        increaseRegister(&c);
+        PC++;
+        break;
+    case 0x0D:
+        //dec C
+        decreaseRegister(&c);
+        PC++;
+        break;
+    case 0x14:
+        //inc D
+        increaseRegister(&d);
+        PC++;
+        break;
+    case 0x15:
+        //dec D
+        decreaseRegister(&d);
+        PC++;
+        break;
+    case 0x24:
+        //inc H
+        increaseRegister(&h);
+        PC++;
+        break;
+    case 0x25:
+        //dec H
+        decreaseRegister(&h);
+        PC++;
+        break;
+    case 0x1C:
+        //inc E
+        increaseRegister(&e);
+        PC++;
+        break;
+    case 0x1D:
+        //dec E
+        decreaseRegister(&e);
+        PC++;
+        break;
+    case 0x2C:
+        //inc L
+        increaseRegister(&l);
+        PC++;
+        break;
+    case 0x2D:
+        //dec L
+        decreaseRegister(&l);
+        PC++;
+        break;
+    case 0x3C:
+        //inc A
+        increaseRegister(&a);
+        PC++;
+        break;
+    case 0x3D:
+        //dec A
+        decreaseRegister(&a);
+        PC++;
+        break;
 
         // JUMP OPERATIONS
     case 0xC2:
@@ -65,7 +164,55 @@ bool CPU::isFlagSet(Flag flag)
     return f & (1 << flag);
 }
 
+void CPU::setZ(bool value)
+{
+}
+
+void CPU::setN(bool value)
+{
+}
+
+void CPU::setH(bool value)
+{
+}
+
+void CPU::setC(bool value)
+{
+}
+
 uint16_t CPU::combineRegisters(uint8_t reg1, uint8_t reg2)
 {
     return (reg1 << 8 | 0x00ff) & (reg2 | 0xff00);
+}
+
+void CPU::increaseRegister(uint8_t* reg)
+{
+    (*reg)++;
+    if (*reg == 0)
+    {
+        setZ(true);
+        setH(true);
+    }
+    else
+    {
+        setZ(false);
+        setH(false);
+    }
+}
+
+void CPU::decreaseRegister(uint8_t* reg)
+{
+    (*reg)--;
+
+    if (*reg == 0)
+        setZ(true);
+    else
+        setZ(false);
+
+    if (*reg == 0xFF)
+        setH(true);
+    else
+        setH(false);
+
+    setN(true);
 }
