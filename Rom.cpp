@@ -21,13 +21,3 @@ Rom::Rom(std::string fileName)
         romFile.close();
     }
 }
-
-uint8_t Rom::fetchByte(int position)
-{
-    //TODO: control length maybe
-
-    if (romBuffer == 0)
-        return 0;
-
-    return romBuffer[position];
-}

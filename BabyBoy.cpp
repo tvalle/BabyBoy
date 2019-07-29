@@ -18,7 +18,7 @@ int main(int argc, char* argv[])
         if (i % 16 == 0)
             printf("\n");*/
 
-        gbCpu.ExecuteInstruction(rom.fetchByte(gbCpu.PC));
+        gbCpu.ExecuteInstruction(gbCpu.RAM[gbCpu.PC]);
     }
 
 
