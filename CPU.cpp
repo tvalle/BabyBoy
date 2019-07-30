@@ -635,19 +635,28 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         break;
     case 0xF8:
         // LD HL,SP+r8
-        //TODO: implement
-        break;
+    {
+        uint16_t tmp = SP + RAM[PC + 1];
+        l = tmp | 0xff00;
+        h = (tmp | 0x00ff) >> 8;
+        PC += 2;
+    }
+    break;
     case 0xF9:
         // LD SP,HL
-        //TODO: implement
+        SP = h << 8;
+        SP += l;
+        PC += 1;
         break;
     case 0xEA:
         // LD (a16),A
-        //TODO: implement
+        RAM[fetchNext2BytesInverted(PC)] = a;
+        PC += 3;
         break;
     case 0xFA:
         // LD A,(a16)
-        //TODO: implement
+        a = RAM[fetchNext2BytesInverted(PC)];
+        PC += 3;
         break;
 
         // BITS EXTENSIONS **************************************
