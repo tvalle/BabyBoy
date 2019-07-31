@@ -131,16 +131,42 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         // cp (hl)
         compare(RAM[combineRegisters(h, l)]);
         PC++;
+        break;
     case 0xFE:
         // cp *
         compare(RAM[PC + 1]);
         PC += 2;
         break;
 
-        // JUMP OPERATIONS *****************************************
-    case 0X20:
+        // JUMP/CALL OPERATIONS *****************************************
+    case 0x20:
         // jr nz, *
         if (!isFlagSet(Flag::Z))
+            PC += RAM[PC + 1];
+
+        PC += 2;
+        break;
+    case 0x30:
+        // jr nc, *
+        if (!isFlagSet(Flag::C))
+            PC += RAM[PC + 1];
+        PC += 2;
+        break;
+    case 0x18:
+        // jr *
+        PC += RAM[PC + 1];
+        PC += 2;
+        break;
+    case 0x28:
+        // jr z, *
+        if (isFlagSet(Flag::Z))
+            PC += RAM[PC + 1];
+
+        PC += 2;
+        break;
+    case 0x38:
+        // jr c, *
+        if (isFlagSet(Flag::C))
             PC += RAM[PC + 1];
 
         PC += 2;
@@ -148,6 +174,10 @@ void CPU::ExecuteInstruction(uint8_t instruction)
     case 0xC2:
         // jp nz, **
         PC = !isFlagSet(Flag::Z) ? fetchNext2BytesInverted(PC) : PC += 3;
+        break;
+    case 0xD2:
+        // jp nc, **
+        PC = !isFlagSet(Flag::C) ? fetchNext2BytesInverted(PC) : PC += 3;
         break;
     case 0xC3:
         // jp **
@@ -157,17 +187,116 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         // jp z, **
         PC = isFlagSet(Flag::Z) ? fetchNext2BytesInverted(PC) : PC += 3;
         break;
-    case 0xD2:
-        // jp nc, **
-        PC = !isFlagSet(Flag::C) ? fetchNext2BytesInverted(PC) : PC += 3;
-        break;
     case 0xDA:
         // jp c, **
         PC = !isFlagSet(Flag::C) ? fetchNext2BytesInverted(PC) : PC += 3;
         break;
     case 0xE9:
         // jp (hl), **
-        PC = combineRegisters(h, l);
+        PC = receive2bytesFromRam(combineRegisters(h, l));
+        break;
+    case 0xC0:
+        // ret nz
+        if (!isFlagSet(Flag::Z))
+        {
+            PC = receive2bytesFromRam(SP);
+        }
+        else
+            PC += 1;
+
+        SP += 2;
+        break;
+    case 0xD0:
+        // ret nc
+        if (!isFlagSet(Flag::C))
+        {
+            PC = receive2bytesFromRam(SP);
+        }
+        else
+            PC += 1;
+
+        SP += 2;
+        break;
+    case 0xC8:
+        // ret z
+        if (isFlagSet(Flag::Z))
+        {
+            PC = receive2bytesFromRam(SP);
+        }
+        else
+            PC += 1;
+
+        SP += 2;
+        break;
+    case 0xD8:
+        // ret c
+        if (isFlagSet(Flag::C))
+        {
+            PC = receive2bytesFromRam(SP);
+        }
+        else
+            PC += 1;
+
+        SP += 2;
+        break;
+    case 0xC9:
+        // ret
+        PC = receive2bytesFromRam(SP);
+        SP += 2;
+        break;
+    case 0xD9:
+        // reti
+        PC = receive2bytesFromRam(SP);
+        SP += 2;
+        //TODO ENABLE INTERRUPTS
+        break;
+    case 0xC7:
+        // rst 00h
+        SP += 2;
+        add2bytesToRam(SP, PC + 1);
+        PC = 0x00;
+        break;
+    case 0xD7:
+        // rst 10h
+        SP += 2;
+        add2bytesToRam(SP, PC + 1);
+        PC = 0x10;
+        break;
+    case 0xE7:
+        // rst 20h
+        SP += 2;
+        add2bytesToRam(SP, PC + 1);
+        PC = 0x20;
+        break;
+    case 0xF7:
+        // rst 30h
+        SP += 2;
+        add2bytesToRam(SP, PC + 1);
+        PC = 0x30;
+        break;
+    case 0xCF:
+        // rst 08h
+        SP += 2;
+        add2bytesToRam(SP, PC + 1);
+        PC = 0x08;
+        break;
+    case 0xDF:
+        // rst 18h
+        SP += 2;
+        add2bytesToRam(SP, PC + 1);
+        PC = 0x18;
+        break;
+    case 0xEF:
+        // rst 28h
+        SP += 2;
+        add2bytesToRam(SP, PC + 1);
+        PC = 0x28;
+        break;
+    case 0xFF:
+        // rst 38h
+        SP += 2;
+        add2bytesToRam(SP, PC + 1);
+        PC = 0x38;
         break;
 
         // PUSH OPERATIONS *****************************************
@@ -246,7 +375,7 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         break;
     case 0x08:
         // ld (a16), SP
-        //TODO: IMPLEMENT (will have to jump to two memory points and store masked SP for each byte in it
+        add2bytesToRam(receive2bytesFromRam(fetchNext2BytesInverted(PC)), SP);
         PC += 3;
         break;
     case 0x0A:
@@ -672,6 +801,22 @@ void CPU::ExecuteInstruction(uint8_t instruction)
 uint16_t CPU::fetchNext2BytesInverted(int PC)
 {
     return (RAM[PC + 1] | 0xff00) & ((RAM[PC + 2] << 8) | 0x00ff);
+}
+
+uint16_t CPU::receive2bytesFromRam(int ramPos)
+{
+    uint16_t result;
+
+    result = RAM[ramPos + 1] << 8;
+    result += RAM[ramPos];
+
+    return result;
+}
+
+void CPU::add2bytesToRam(int ramPos, uint16_t value)
+{
+    RAM[ramPos] = value >> 8;
+    RAM[ramPos + 1] = (uint8_t)value;
 }
 
 bool CPU::isFlagSet(Flag flag)

@@ -12,7 +12,7 @@ class CPU
 {
 public:
     // Program Counter
-    unsigned int PC;
+    uint16_t PC;
 
     CPU(Rom rom);
     void ExecuteInstruction(uint8_t instruction);
@@ -31,6 +31,8 @@ private:
     uint16_t SP;
 
     uint16_t fetchNext2BytesInverted(int PC);
+    uint16_t receive2bytesFromRam(int ramPos);
+    void add2bytesToRam(int ramPos, uint16_t value);
 
     bool isFlagSet(Flag flag);
     void setZ(bool value);
