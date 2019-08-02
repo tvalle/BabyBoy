@@ -298,12 +298,114 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         add2bytesToRam(SP, PC + 1);
         PC = 0x38;
         break;
+    case 0xC4:
+        // call nz, **
+        if (!isFlagSet(Flag::Z))
+        {
+            SP += 2;
+            add2bytesToRam(SP, PC + 3);
+            PC = fetchNext2BytesInverted(PC);
+        }
+        else
+        {
+            PC += 1;
+        }
+        break;
+    case 0xD4:
+        // call nc, **
+        if (!isFlagSet(Flag::C))
+        {
+            SP += 2;
+            add2bytesToRam(SP, PC + 3);
+            PC = fetchNext2BytesInverted(PC);
+        }
+        else
+        {
+            PC += 1;
+        }
+        break;
+    case 0xCC:
+        // call z, **
+        if (isFlagSet(Flag::Z))
+        {
+            SP += 2;
+            add2bytesToRam(SP, PC + 3);
+            PC = fetchNext2BytesInverted(PC);
+        }
+        else
+        {
+            PC += 1;
+        }
+        break;
+    case 0xDC:
+        // call c, **
+        if (isFlagSet(Flag::C))
+        {
+            SP += 2;
+            add2bytesToRam(SP, PC + 3);
+            PC = fetchNext2BytesInverted(PC);
+        }
+        else
+        {
+            PC += 1;
+        }
+        break;
+    case 0xCD:
+        // call **
+        SP += 2;
+        add2bytesToRam(SP, PC + 3);
+        PC = fetchNext2BytesInverted(PC);
+        break;
 
-        // PUSH OPERATIONS *****************************************
+
+        // PUSH/POP OPERATIONS *****************************************
+    case 0xC1:
+        // pop bc
+        RAM[++SP] = c;
+        RAM[++SP] = b;
+        PC++;
+        break;
+    case 0xD1:
+        // pop DE
+        RAM[++SP] = e;
+        RAM[++SP] = d;
+        PC++;
+        break;
+    case 0xE1:
+        // pop HL
+        RAM[++SP] = l;
+        RAM[++SP] = h;
+        PC++;
+        break;
+    case 0xF1:
+        // pop AF
+        RAM[++SP] = f;
+        RAM[++SP] = a;
+        PC++;
+        break;
+
+    case 0xC5:
+        // push bc
+        RAM[--SP] = b;
+        RAM[--SP] = c;
+        PC++;
+        break;
+    case 0xD5:
+        // push de
+        RAM[--SP] = d;
+        RAM[--SP] = e;
+        PC++;
+        break;
     case 0xE5:
         // push hl
-        RAM[SP--] = h;
-        RAM[SP--] = l;
+        RAM[--SP] = h;
+        RAM[--SP] = l;
+        PC++;
+        break;
+    case 0xF5:
+        // push af
+        RAM[--SP] = a;
+        RAM[--SP] = f;
         PC++;
         break;
 
