@@ -42,6 +42,8 @@ private:
     
     uint16_t combineRegisters(uint8_t reg1, uint8_t reg2);
 
+    void increaseMemoryAddress(uint16_t pointer);
+    void decreaseMemoryAddress(uint16_t pointer);
     void increaseRegister(uint8_t* reg);
     void increaseRegister(uint8_t* reg1, uint8_t* reg2);
     void decreaseRegister(uint8_t* reg);

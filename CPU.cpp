@@ -12,8 +12,6 @@ CPU::CPU(Rom rom)
 
 void CPU::ExecuteInstruction(uint8_t instruction)
 {
-    printf("%x ", instruction);
-
     switch (instruction)
     {
     case 0x00:
@@ -52,6 +50,16 @@ void CPU::ExecuteInstruction(uint8_t instruction)
     case 0x33:
         // inc sp
         SP++;
+        PC++;
+        break;
+    case 0x34:
+        // inc (hl)
+        increaseMemoryAddress(combineRegisters(h, l));
+        PC++;
+        break;
+    case 0x35:
+        // dec (hl)
+        decreaseMemoryAddress(combineRegisters(h, l));
         PC++;
         break;
     case 0x04:
@@ -945,6 +953,45 @@ void CPU::setC(bool value)
 uint16_t CPU::combineRegisters(uint8_t reg1, uint8_t reg2)
 {
     return (reg1 << 8 | 0x00ff) & (reg2 | 0xff00);
+}
+
+void CPU::increaseMemoryAddress(uint16_t pointer)
+{
+    uint8_t previousValue = RAM[pointer];
+    RAM[pointer] = RAM[pointer]++;
+    uint8_t result = RAM[pointer];
+
+    if (result == 0)
+    {
+        setZ(true);
+        setH(true);
+    }
+    else
+    {
+        setZ(false);
+        if ((previousValue & 0x0f) == 0x0f)
+            setH(true);
+        else
+            setH(false);
+    }
+
+    setN(false);
+}
+
+void CPU::decreaseMemoryAddress(uint16_t pointer)
+{
+    uint8_t previousValue = RAM[pointer];
+    RAM[pointer] = RAM[pointer]--;
+    uint8_t result = RAM[pointer];
+
+    setZ(result == 0);
+
+    if (((uint8_t)(previousValue << 4)) == 0x00)
+        setH(true);
+    else
+        setH(false);
+
+    setN(true);
 }
 
 void CPU::increaseRegister(uint8_t* reg)
