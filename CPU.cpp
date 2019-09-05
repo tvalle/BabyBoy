@@ -62,6 +62,27 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         decreaseMemoryAddress(combineRegisters(h, l));
         PC++;
         break;
+    case 0x37:
+        // scf
+        setN(false);
+        setH(false);
+        setC(true);
+        PC++;
+        break;
+    case 0x2F:
+        // cpl
+        a = ~a;
+        setN(true);
+        setH(true);
+        PC++;
+        break;
+    case 0x3F:
+        // ccf
+        setN(false);
+        setH(false);
+        setC(!c);
+        PC++;
+        break;
     case 0x04:
         //inc b
         increaseRegister(&b);
