@@ -22,7 +22,7 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         PC++;
         break;
 
-        // INCREASE DECREASE OPERATIONS *****************************************
+        // ARITHMETIC/LOGICAL OPERATIONS *****************************************
     case 0x03:
         // inc bc
         c++;
@@ -152,6 +152,70 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         //dec A
         decreaseRegister(&a);
         PC++;
+        break;
+    case 0x80:
+        // add a,b
+        add(b);
+        break;
+    case 0x81:
+        // add a,c
+        add(c);
+        break;
+    case 0x82:
+        // add a,d
+        add(d);
+        break;
+    case 0x83:
+        // add a,e
+        add(e);
+        break;
+    case 0x84:
+        // add a,h
+        add(h);
+        break;
+    case 0x85:
+        // add a,l
+        add(l);
+        break;
+    case 0x86:
+        // add a,(hl)
+        add(RAM[combineRegisters(h, l)]);
+        break;
+    case 0x87:
+        // add a,a
+        add(a);
+        break;
+    case 0x88:
+        // adc a,b
+        adc(b);
+        break;
+    case 0x89:
+        // adc a,c
+        adc(c);
+        break;
+    case 0x8A:
+        // adc a,d
+        adc(d);
+        break;
+    case 0x8B:
+        // adc a,e
+        adc(e);
+        break;
+    case 0x8C:
+        // adc a,h
+        adc(h);
+        break;
+    case 0x8D:
+        // adc a,l
+        adc(l);
+        break;
+    case 0x8E:
+        // adc a,(hl)
+        adc(RAM[combineRegisters(h, l)]);
+        break;
+    case 0x8F:
+        // adc a,a
+        adc(a);
         break;
 
         // LOGICAL OPERATIONS **************************************
@@ -971,6 +1035,11 @@ void CPU::setC(bool value)
 {
 }
 
+bool CPU::getC()
+{
+    return false;
+}
+
 uint16_t CPU::combineRegisters(uint8_t reg1, uint8_t reg2)
 {
     return (reg1 << 8 | 0x00ff) & (reg2 | 0xff00);
@@ -1059,6 +1128,30 @@ void CPU::decreaseRegister(uint8_t* reg1, uint8_t* reg2)
 
     if (*reg2 == 0xff)
         (*reg1)--;
+}
+
+void CPU::add(uint8_t reg)
+{
+    setC((uint16_t)a + (uint16_t)reg > 0xff);
+    setH(((uint8_t)a << 4) + ((uint8_t)reg << 4) > 0xff);
+
+    a = a + reg;
+
+    setZ(a == 0);
+    setN(false);
+}
+
+void CPU::adc(uint8_t reg)
+{
+    int carry = getC() == true ? 1 : 0;
+
+    setC((uint16_t)a + (uint16_t)reg + carry > 0xff);
+    setH(((uint8_t)a << 4) + ((uint8_t)reg << 4) + carry > 0xff);
+
+    a = a + reg + carry;
+
+    setZ(a == 0);
+    setN(false);
 }
 
 void CPU::bitExtensions(uint8_t opcode)
