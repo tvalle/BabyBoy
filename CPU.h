@@ -53,6 +53,8 @@ private:
 
     void add(uint8_t reg);
     void adc(uint8_t reg);
+    void sub(uint8_t reg);
+    void sbc(uint8_t reg);
 
     void bitExtensions(uint8_t opcode);
 

@@ -156,66 +156,162 @@ void CPU::ExecuteInstruction(uint8_t instruction)
     case 0x80:
         // add a,b
         add(b);
+        PC++;
         break;
     case 0x81:
         // add a,c
         add(c);
+        PC++;
         break;
     case 0x82:
         // add a,d
         add(d);
+        PC++;
         break;
     case 0x83:
         // add a,e
         add(e);
+        PC++;
         break;
     case 0x84:
         // add a,h
         add(h);
+        PC++;
         break;
     case 0x85:
         // add a,l
         add(l);
+        PC++;
         break;
     case 0x86:
         // add a,(hl)
         add(RAM[combineRegisters(h, l)]);
+        PC++;
         break;
     case 0x87:
         // add a,a
         add(a);
+        PC++;
         break;
     case 0x88:
         // adc a,b
         adc(b);
+        PC++;
         break;
     case 0x89:
         // adc a,c
         adc(c);
+        PC++;
         break;
     case 0x8A:
         // adc a,d
         adc(d);
+        PC++;
         break;
     case 0x8B:
         // adc a,e
         adc(e);
+        PC++;
         break;
     case 0x8C:
         // adc a,h
         adc(h);
+        PC++;
         break;
     case 0x8D:
         // adc a,l
         adc(l);
+        PC++;
         break;
     case 0x8E:
         // adc a,(hl)
         adc(RAM[combineRegisters(h, l)]);
+        PC++;
         break;
     case 0x8F:
         // adc a,a
         adc(a);
+        PC++;
+        break;
+    case 0x90:
+        // sub a,b
+        sub(b);
+        PC++;
+        break;
+    case 0x91:
+        // sub a,c
+        sub(c);
+        PC++;
+        break;
+    case 0x92:
+        // sub a,d
+        sub(d);
+        PC++;
+        break;
+    case 0x93:
+        // sub a,e
+        sub(e);
+        PC++;
+        break;
+    case 0x94:
+        // sub a,h
+        sub(h);
+        PC++;
+        break;
+    case 0x95:
+        // sub a,l
+        sub(l);
+        PC++;
+        break;
+    case 0x96:
+        // sub a,(hl)
+        sub(RAM[combineRegisters(h, l)]);
+        PC++;
+        break;
+    case 0x97:
+        // sub a,a
+        sub(a);
+        PC++;
+        break;
+    case 0x98:
+        // sbc a,b
+        sbc(b);
+        PC++;
+        break;
+    case 0x99:
+        // sbc a,c
+        sbc(c);
+        PC++;
+        break;
+    case 0x9A:
+        // sbc a,d
+        sbc(d);
+        PC++;
+        break;
+    case 0x9B:
+        // sbc a,e
+        sbc(e);
+        PC++;
+        break;
+    case 0x9C:
+        // sbc a,h
+        sbc(h);
+        PC++;
+        break;
+    case 0x9D:
+        // sbc a,l
+        sbc(l);
+        PC++;
+        break;
+    case 0x9E:
+        // sbc a,(hl)
+        sbc(RAM[combineRegisters(h, l)]);
+        PC++;
+        break;
+    case 0x9F:
+        // sbc a,a
+        sbc(a);
+        PC++;
         break;
 
         // LOGICAL OPERATIONS **************************************
@@ -1152,6 +1248,30 @@ void CPU::adc(uint8_t reg)
 
     setZ(a == 0);
     setN(false);
+}
+
+void CPU::sub(uint8_t reg)
+{
+    setC((int16_t)a - (int16_t)reg < 0x00);
+    setH((a & 0x0f) - (b & 0x0f) < 0x00);
+
+    a = a - reg;
+
+    setZ(a == 0);
+    setN(true);
+}
+
+void CPU::sbc(uint8_t reg)
+{
+    int carry = getC() == true ? 1 : 0;
+
+    setC((int16_t)a - (int16_t)reg - carry < 0x00);
+    setH((a & 0x0f) - (b & 0x0f) - carry < 0x00);
+
+    a = a - reg;
+
+    setZ(a == 0);
+    setN(true);
 }
 
 void CPU::bitExtensions(uint8_t opcode)
