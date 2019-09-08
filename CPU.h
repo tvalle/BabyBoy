@@ -55,8 +55,10 @@ private:
     void adc(uint8_t reg);
     void sub(uint8_t reg);
     void sbc(uint8_t reg);
+    void reg_and(uint8_t reg);
+    void reg_xor(uint8_t reg);
+    void reg_or(uint8_t reg);
+    void reg_cp(uint8_t reg);
 
     void bitExtensions(uint8_t opcode);
-
-    void compare(uint8_t value);
 };

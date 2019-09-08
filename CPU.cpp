@@ -17,10 +17,6 @@ void CPU::ExecuteInstruction(uint8_t instruction)
     case 0x00:
         PC++;
         break;
-    case 0xAF:
-        a = a ^ a;
-        PC++;
-        break;
 
         // ARITHMETIC/LOGICAL OPERATIONS *****************************************
     case 0x03:
@@ -313,17 +309,204 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         sbc(a);
         PC++;
         break;
-
-        // LOGICAL OPERATIONS **************************************
-        //TODO: ON COMPARE OPERATIONS CHECK HOW TO SET H AND C CORRECTLY. EX A=10 AND CP VALUE 90 WILL TRIGGER C BUT NOT H
+    case 0xA0:
+        // and b
+        reg_and(b);
+        PC++;
+        break;
+    case 0xA1:
+        // and c
+        reg_and(c);
+        PC++;
+        break;
+    case 0xA2:
+        // and d
+        reg_and(d);
+        PC++;
+        break;
+    case 0xA3:
+        // and e
+        reg_and(e);
+        PC++;
+        break;
+    case 0xA4:
+        // and h
+        reg_and(h);
+        PC++;
+        break;
+    case 0xA5:
+        // and l
+        reg_and(l);
+        PC++;
+        break;
+    case 0xA6:
+        // and (hl)
+        reg_and(RAM[combineRegisters(h, l)]);
+        PC++;
+        break;
+    case 0xA7:
+        // and a
+        reg_and(a);
+        PC++;
+        break;
+    case 0xA8:
+        // xor b
+        reg_xor(b);
+        PC++;
+        break;
+    case 0xA9:
+        // xor c
+        reg_xor(c);
+        PC++;
+        break;
+    case 0xAA:
+        // xor d
+        reg_xor(d);
+        PC++;
+        break;
+    case 0xAB:
+        // xor e
+        reg_xor(e);
+        PC++;
+        break;
+    case 0xAC:
+        // xor h
+        reg_xor(h);
+        PC++;
+        break;
+    case 0xAD:
+        // xor l
+        reg_xor(l);
+        PC++;
+        break;
+    case 0xAE:
+        // xor (hl)
+        reg_xor(RAM[combineRegisters(h, l)]);
+        PC++;
+        break;
+    case 0xAF:
+        // xor a
+        reg_xor(a);
+        PC++;
+        break;
+    case 0xB0:
+        // orb
+        reg_or(b);
+        PC++;
+        break;
+    case 0xB1:
+        // orc
+        reg_or(c);
+        PC++;
+        break;
+    case 0xB2:
+        // ord
+        reg_or(d);
+        PC++;
+        break;
+    case 0xB3:
+        // ore
+        reg_or(e);
+        PC++;
+        break;
+    case 0xB4:
+        // orh
+        reg_or(h);
+        PC++;
+        break;
+    case 0xB5:
+        // orl
+        reg_or(l);
+        PC++;
+        break;
+    case 0xB6:
+        // or(hl)
+        reg_or(RAM[combineRegisters(h, l)]);
+        PC++;
+        break;
+    case 0xB7:
+        // ora
+        reg_or(a);
+        PC++;
+        break;
+    case 0xB8:
+        // cp b
+        reg_cp(b);
+        PC++;
+        break;
+    case 0xB9:
+        // cp c
+        reg_cp(c);
+        PC++;
+        break;
+    case 0xBA:
+        // cp d
+        reg_cp(d);
+        PC++;
+        break;
+    case 0xBB:
+        // cp e
+        reg_cp(e);
+        PC++;
+        break;
+    case 0xBC:
+        // cp h
+        reg_cp(h);
+        PC++;
+        break;
+    case 0xBD:
+        // cp l
+        reg_cp(l);
+        PC++;
+        break;
     case 0xBE:
         // cp (hl)
-        compare(RAM[combineRegisters(h, l)]);
+        reg_cp(RAM[combineRegisters(h, l)]);
         PC++;
+        break;
+    case 0xBF:
+        // cp a
+        reg_cp(a);
+        PC++;
+        break;
+    case 0xC6:
+        // add *
+        add(RAM[PC + 1]);
+        PC += 2;
+        break;
+    case 0xD6:
+        // sub *
+        sub(RAM[PC + 1]);
+        PC += 2;
+        break;
+    case 0xE6:
+        // and *
+        reg_and(RAM[PC + 1]);
+        PC += 2;
+        break;
+    case 0xF6:
+        // or *
+        reg_or(RAM[PC + 1]);
+        PC += 2;
+        break;
+    case 0xCE:
+        // adc *
+        adc(RAM[PC + 1]);
+        PC += 2;
+        break;
+    case 0xDE:
+        // sbc *
+        sbc(RAM[PC + 1]);
+        PC += 2;
+        break;
+    case 0xEE:
+        // xor *
+        reg_xor(RAM[PC + 1]);
+        PC += 2;
         break;
     case 0xFE:
         // cp *
-        compare(RAM[PC + 1]);
+        reg_cp(RAM[PC + 1]);
         PC += 2;
         break;
 
@@ -1253,7 +1436,7 @@ void CPU::adc(uint8_t reg)
 void CPU::sub(uint8_t reg)
 {
     setC((int16_t)a - (int16_t)reg < 0x00);
-    setH((a & 0x0f) - (b & 0x0f) < 0x00);
+    setH((a & 0x0f) - (reg & 0x0f) < 0x00);
 
     a = a - reg;
 
@@ -1266,11 +1449,47 @@ void CPU::sbc(uint8_t reg)
     int carry = getC() == true ? 1 : 0;
 
     setC((int16_t)a - (int16_t)reg - carry < 0x00);
-    setH((a & 0x0f) - (b & 0x0f) - carry < 0x00);
+    setH((a & 0x0f) - (reg & 0x0f) - carry < 0x00);
 
     a = a - reg;
 
     setZ(a == 0);
+    setN(true);
+}
+
+void CPU::reg_and(uint8_t reg)
+{
+    a = a & reg;
+    setZ(a == 0);
+    setN(false);
+    setH(true);
+    setC(false);
+}
+
+void CPU::reg_xor(uint8_t reg)
+{
+    a = a ^ reg;
+    setZ(a == 0);
+    setN(false);
+    setH(false);
+    setC(false);
+}
+
+void CPU::reg_or(uint8_t reg)
+{
+    a = a | reg;
+    setZ(a == 0);
+    setN(false);
+    setH(false);
+    setC(false);
+}
+
+void CPU::reg_cp(uint8_t reg)
+{
+    setC((int16_t)a - (int16_t)reg < 0x00);
+    setH((a & 0x0f) - (reg & 0x0f) < 0x00);
+
+    setZ(a - reg == 0);
     setN(true);
 }
 
@@ -1288,13 +1507,4 @@ void CPU::bitExtensions(uint8_t opcode)
     default:
         break;
     }
-}
-
-void CPU::compare(uint8_t value)
-{
-    int result = a - value;
-    setZ(a == 0);
-    setN(true);
-    setH(a < 0);
-    setC(a < 0);
 }
