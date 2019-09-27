@@ -8,27 +8,51 @@ int main(int argc, char* argv[])
 {
     SDL_Init(SDL_INIT_VIDEO);
 
+    SDL_Window* window = SDL_CreateWindow(
+        "BabyBoy",
+        100, 100,
+        160, 144,
+        SDL_WINDOW_OPENGL);
+
     Rom rom = Rom("Tetris (World).gb");
     CPU gbCpu = CPU(rom);
+
+    SDL_Event e;
+
+    bool isDebuggingMode = true;
 
     bool exit = false;
     while (!exit)
     {
-        /*printf("%x ", rom.fetchByte(i));
-        if (i % 16 == 0)
-            printf("\n");*/
+        while (SDL_PollEvent(&e) != 0)
+        {
+            if (e.type == SDL_QUIT)
+            {
+                exit = true;
+            }
+        }
+
+        const Uint8* currentKeyStates = SDL_GetKeyboardState(NULL);
+        if (currentKeyStates[SDL_SCANCODE_ESCAPE])
+        {
+            exit = true;
+        }
 
         gbCpu.ExecuteInstruction(gbCpu.RAM[gbCpu.PC]);
+        if (!isDebuggingMode)
+        {
+            SDL_Delay(1);
+        }
+        else
+        {
+            while (SDL_PollEvent(&e) == 0 || e.type != SDL_KEYDOWN || (e.key.keysym.sym != SDLK_F10 && e.key.repeat == 0))
+            {
+                
+            }
+        }
+
     }
 
-
-    SDL_Window* window = SDL_CreateWindow
-    ("An SDL2 window", // window's title
-        10, 25, // coordinates on the screen, in pixels, of the window's upper left corner
-        640, 480, // window's length and height in pixels  
-        SDL_WINDOW_OPENGL);
-
-    SDL_Delay(500); // window lasts 3 seconds
     SDL_DestroyWindow(window);
     SDL_Quit();
     return 0;

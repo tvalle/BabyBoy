@@ -1,4 +1,5 @@
 #include "CPU.h"
+#include <stdio.h>
 
 CPU::CPU(Rom rom)
 {
@@ -12,6 +13,9 @@ CPU::CPU(Rom rom)
 
 void CPU::ExecuteInstruction(uint8_t instruction)
 {
+    printf("Instruction: %x, a=%x b=%x c=%x d=%x e=%x f=%x h=%x l=%x\n", instruction, a, b, c, d, e, f, h, l);
+    printf("PC: %x, SP= %x\n", PC, SP);
+
     switch (instruction)
     {
     case 0x00:
@@ -1268,8 +1272,11 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         bitExtensions(RAM[PC]);
         break;
     default:
+        printf("Not implemented %x\n", instruction);
         break;
     }
+
+    printf("\n");
 }
 
 uint16_t CPU::fetchNext2BytesInverted(int PC)
