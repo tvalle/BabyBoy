@@ -14,12 +14,12 @@ int main(int argc, char* argv[])
         160, 144,
         SDL_WINDOW_OPENGL);
 
-    Rom rom = Rom("Tetris (World).gb");
+    Rom rom = Rom("dmg0_rom.bin");
     CPU gbCpu = CPU(rom);
 
     SDL_Event e;
 
-    bool isDebuggingMode = true;
+    bool isDebuggingMode = false;
 
     bool exit = false;
     while (!exit)
@@ -41,7 +41,7 @@ int main(int argc, char* argv[])
         gbCpu.ExecuteInstruction(gbCpu.RAM[gbCpu.PC]);
         if (!isDebuggingMode)
         {
-            SDL_Delay(1);
+            /*SDL_Delay(1);*/
         }
         else
         {

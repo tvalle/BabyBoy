@@ -3,7 +3,7 @@
 
 CPU::CPU(Rom rom)
 {
-    PC = 0x100;
+    PC = 0x00;
     SP = 0;
 
     a = b = c = d = e = f = h = l = 0;
@@ -13,8 +13,13 @@ CPU::CPU(Rom rom)
 
 void CPU::ExecuteInstruction(uint8_t instruction)
 {
-    printf("Instruction: %x, a=%x b=%x c=%x d=%x e=%x f=%x h=%x l=%x\n", instruction, a, b, c, d, e, f, h, l);
-    printf("PC: %x, SP= %x\n", PC, SP);
+    /*printf("Instruction: %x, a=%x f=%x  b=%x c=%x  d=%x e=%x  h=%x l=%x\n", instruction, a, f, b, c, d, e, h, l);
+    printf("PC: 0x%x, SP= 0x%x\n", PC, SP);*/
+
+    if (PC == 0x0C)
+    {
+        printf("");
+    }
 
     switch (instruction)
     {
@@ -518,32 +523,34 @@ void CPU::ExecuteInstruction(uint8_t instruction)
     case 0x20:
         // jr nz, *
         if (!isFlagSet(Flag::Z))
-            PC += RAM[PC + 1];
+            PC += (int8_t)RAM[PC + 1];
 
         PC += 2;
         break;
     case 0x30:
         // jr nc, *
         if (!isFlagSet(Flag::C))
-            PC += RAM[PC + 1];
+            PC += (int8_t)RAM[PC + 1];
         PC += 2;
         break;
+
+
     case 0x18:
         // jr *
-        PC += RAM[PC + 1];
+        PC += (int8_t)RAM[PC + 1];
         PC += 2;
         break;
     case 0x28:
         // jr z, *
         if (isFlagSet(Flag::Z))
-            PC += RAM[PC + 1];
+            PC += (int8_t)RAM[PC + 1];
 
         PC += 2;
         break;
     case 0x38:
         // jr c, *
         if (isFlagSet(Flag::C))
-            PC += RAM[PC + 1];
+            PC += (int8_t)RAM[PC + 1];
 
         PC += 2;
         break;
@@ -1276,7 +1283,7 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         break;
     }
 
-    printf("\n");
+    //printf("\n");
 }
 
 uint16_t CPU::fetchNext2BytesInverted(int PC)
@@ -1307,18 +1314,22 @@ bool CPU::isFlagSet(Flag flag)
 
 void CPU::setZ(bool value)
 {
+    f ^= (-value ^ f) & (1UL << Z);
 }
 
 void CPU::setN(bool value)
 {
+    f ^= (-value ^ f) & (1UL << N);
 }
 
 void CPU::setH(bool value)
 {
+    f ^= (-value ^ f) & (1UL << H);
 }
 
 void CPU::setC(bool value)
 {
+    f ^= (-value ^ f) & (1UL << C);
 }
 
 bool CPU::getC()
@@ -1504,7 +1515,7 @@ void CPU::bitExtensions(uint8_t opcode)
 {
     switch (opcode)
     {
-    case 0x4C:
+    case 0x7C:
         // bit 7, h
         setN(false);
         setH(true);
