@@ -1,12 +1,13 @@
 #pragma once
-#include<string>
-#include<stdint.h>
+#include <vector>
+#include <string>
+#include <stdint.h>
 
 class Rom
 {
 public:
-    Rom(std::string fileName);
+	Rom(std::string fileName);
 
-    char* romBuffer;
+	std::vector<uint8_t> romBuffer;
 };
 

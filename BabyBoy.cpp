@@ -3,6 +3,8 @@
 #include "CPU.h"
 #include <stdio.h>
 
+int oldValue = -1;
+int cpuCycleCount = 0;
 
 int main(int argc, char* argv[])
 {
@@ -38,12 +40,20 @@ int main(int argc, char* argv[])
             exit = true;
         }
 
+		if (gbCpu.RAM[256] != oldValue)
+		{
+			oldValue = gbCpu.RAM[256];
+		}
+
+		//if (cpuCycleCount == 12)
+
         gbCpu.ExecuteInstruction(gbCpu.RAM[gbCpu.PC]);
+		cpuCycleCount++;
         if (!isDebuggingMode)
         {
             /*SDL_Delay(1);*/
         }
-        else
+        else if(gbCpu.PC >= 0x0C)
         {
             while (SDL_PollEvent(&e) == 0 || e.type != SDL_KEYDOWN || (e.key.keysym.sym != SDLK_F10 && e.key.repeat == 0))
             {

@@ -17,7 +17,7 @@ public:
     CPU(Rom rom);
     void ExecuteInstruction(uint8_t instruction);
 
-    uint8_t RAM[65535] = { 0 };
+	uint8_t* RAM;
 private:
     // Registers
     uint8_t a;

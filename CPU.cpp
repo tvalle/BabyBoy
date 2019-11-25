@@ -1,5 +1,6 @@
 #include "CPU.h"
 #include <stdio.h>
+#include <algorithm>
 
 CPU::CPU(Rom rom)
 {
@@ -8,17 +9,18 @@ CPU::CPU(Rom rom)
 
     a = b = c = d = e = f = h = l = 0;
 
-    std::memcpy(RAM, rom.romBuffer, 0x7FFF);
+	RAM = new uint8_t[0xFFFF];
+
+	auto bufferSize = std::clamp(static_cast<int>(rom.romBuffer.size()), 0, 0x7FFF);
+	std::memcpy(RAM, &rom.romBuffer[0], bufferSize);
 }
 
 void CPU::ExecuteInstruction(uint8_t instruction)
 {
-    /*printf("Instruction: %x, a=%x f=%x  b=%x c=%x  d=%x e=%x  h=%x l=%x\n", instruction, a, f, b, c, d, e, h, l);
-    printf("PC: 0x%x, SP= 0x%x\n", PC, SP);*/
-
-    if (PC == 0x0C)
+    if (PC >= 0x0C)
     {
-        printf("");
+		printf("Instruction: %x, a=%x f=%x  b=%x c=%x  d=%x e=%x  h=%x l=%x\n", instruction, a, f, b, c, d, e, h, l);
+		printf("PC: 0x%x, SP= 0x%x\n", PC, SP);
     }
 
     switch (instruction)
@@ -1519,7 +1521,7 @@ void CPU::bitExtensions(uint8_t opcode)
         // bit 7, h
         setN(false);
         setH(true);
-        setZ(!(h & 0x80) == 0x80);
+        setZ(!((h & 0x80) == 0x80));
         PC++;
         break;
     default:
