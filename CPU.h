@@ -32,6 +32,7 @@ private:
 
     uint16_t fetchNext2BytesInverted(int PC);
     uint16_t receive2bytesFromRam(int ramPos);
+	uint16_t fetchAddressFromRam(int ramPos);
     void add2bytesToRam(int ramPos, uint16_t value);
 
     bool isFlagSet(Flag flag);

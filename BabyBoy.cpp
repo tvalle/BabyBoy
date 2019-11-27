@@ -16,7 +16,7 @@ int main(int argc, char* argv[])
         160, 144,
         SDL_WINDOW_OPENGL);
 
-    Rom rom = Rom("dmg0_rom.bin");
+    Rom rom = Rom("tetris.gb");
     CPU gbCpu = CPU(rom);
 
     SDL_Event e;
