@@ -11,7 +11,8 @@ SDLWindow windows[TOTAL_WINDOWS];
 int oldValue = -1;
 int cpuCycleCount = 0;
 
-uint8_t debuggerMatrix[32][128] = { 1 };
+// [y][x]
+uint8_t debuggerMatrix[128][128] = { 1 };
 
 int main(int argc, char* argv[])
 {
@@ -58,14 +59,17 @@ int main(int argc, char* argv[])
 
 		// TODO: Move this somewhere (after this is working separate debugger into a class)
 		// also separate SDL from CPU/Memory/Debugger architecture
-		for (int i = 0; i < 8; i++)
+		for (int tiles = 0; tiles < 0xFF; tiles++)
 		{
-			for (int j = 0; j < 8; j++)
+			for (int i = 0; i < 8; i++)
 			{
-				uint8_t pixel = (gbCpu.RAM[0x8010 + (i * 2)] >> (7 - j)) & 1;
-				pixel = pixel << 1;
-				pixel = pixel | ((gbCpu.RAM[0x8011 + (i * 2)] >> (7 - j)) & 1);
-				debuggerMatrix[i][j] = pixel;
+				for (int j = 0; j < 8; j++)
+				{
+					uint8_t pixel = (gbCpu.RAM[(0x8000 + (tiles * 0x10)) + (i * 2)] >> (7 - j)) & 1;
+					pixel = pixel << 1;
+					pixel = pixel | ((gbCpu.RAM[(0x8001 + (tiles * 0x10)) + (i * 2)] >> (7 - j)) & 1);
+					debuggerMatrix[i + ((tiles / 16) * 8)][j + ((tiles % 16)* 8)] = pixel;
+				}
 			}
 		}
 
