@@ -169,7 +169,7 @@ void SDLWindow::render(uint8_t *matrix, int width, int height)
 		}
 
 		//Update screen
-		SDL_RenderPresent(mRenderer);
+		//SDL_RenderPresent(mRenderer);
 	}
 }
 

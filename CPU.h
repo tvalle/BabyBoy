@@ -52,6 +52,8 @@ private:
     void decreaseRegister(uint8_t* reg);
     void decreaseRegister(uint8_t* reg1, uint8_t* reg2);
 
+    void addHL(uint16_t reg);
+
     void add(uint8_t reg);
     void adc(uint8_t reg);
     void sub(uint8_t reg);
