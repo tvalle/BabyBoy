@@ -1,30 +1,48 @@
+#ifdef _MSC_VER
+#define _CRT_SECURE_NO_WARNINGS
+#endif
+
 #include "CPU.h"
 #include <stdio.h>
 #include <algorithm>
 
-CPU::CPU(Rom rom)
+bool showDebug = false;
+
+FILE* pFile;
+
+CPU::CPU(RAM ram)
 {
     PC = 0x00;
     SP = 0;
 
     a = b = c = d = e = f = h = l = 0;
 
-    RAM = new uint8_t[0xFFFF];
+    //RAM = new uint8_t[0xFFFF];
+    this->ram = ram;
 
-    Rom bootRom = Rom("dmg0_rom.bin");
+    /*Rom bootRom = Rom("dmg0_rom.bin");
 
     auto romSize = std::clamp(static_cast<int>(rom.romBuffer.size()), 0, 0x7FFF);
     auto bootRomSize = std::clamp(static_cast<int>(bootRom.romBuffer.size()), 0, 0x7FFF);
     std::memcpy(RAM, &rom.romBuffer[0], romSize);
-    std::memcpy(RAM, &bootRom.romBuffer[0], bootRomSize);
+    std::memcpy(RAM, &bootRom.romBuffer[0], bootRomSize);*/
+
+    pFile = fopen("babyboy.log", "w");
+}
+
+CPU::~CPU()
+{
+    fclose(pFile);
 }
 
 void CPU::ExecuteInstruction(uint8_t instruction)
 {
-    if (PC == 0x96)
+    //if (showDebug || PC == 0x8F)
     {
-        printf("Instruction: %x, af=%02x%02x  bc=%02x%02x  de=%02x%02x  hl=%02x%02x\n", instruction, a, f, b, c, d, e, h, l);
-        printf("PC: 0x%x, SP= 0x%x\n\n", PC, SP);
+        // 0000: 31 A:00 B:00 C:00 D:00 E:00 F:00 H:00 L:00 LY:00 SP:00  Cy:8
+        fprintf(pFile, "%04x: %02x A:%02x B:%02x C:%02x D:%02x E:%02x F:%02x H:%02x L:%02x LY:%02x SP:%04x\n",
+            PC, instruction, a, b, c, d, e, f, h, l, 0, SP);
+        showDebug = true;
     }
 
     switch (instruction)
@@ -74,7 +92,7 @@ void CPU::ExecuteInstruction(uint8_t instruction)
 
         PC++;
         break;
-    
+
     case 0x23:
         // inc hl
         l++;
@@ -221,7 +239,9 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         break;
     case 0x86:
         // add a,(hl)
-        add(RAM[combineRegisters(h, l)]);
+        if (a == 0x6d)
+
+            add(ram.read(combineRegisters(h, l)));
         PC++;
         break;
     case 0x87:
@@ -261,7 +281,7 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         break;
     case 0x8E:
         // adc a,(hl)
-        adc(RAM[combineRegisters(h, l)]);
+        adc(ram.read(combineRegisters(h, l)));
         PC++;
         break;
     case 0x8F:
@@ -301,7 +321,7 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         break;
     case 0x96:
         // sub a,(hl)
-        sub(RAM[combineRegisters(h, l)]);
+        sub(ram.read(combineRegisters(h, l)));
         PC++;
         break;
     case 0x97:
@@ -341,7 +361,7 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         break;
     case 0x9E:
         // sbc a,(hl)
-        sbc(RAM[combineRegisters(h, l)]);
+        sbc(ram.read(combineRegisters(h, l)));
         PC++;
         break;
     case 0x9F:
@@ -381,7 +401,7 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         break;
     case 0xA6:
         // and (hl)
-        reg_and(RAM[combineRegisters(h, l)]);
+        reg_and(ram.read(combineRegisters(h, l)));
         PC++;
         break;
     case 0xA7:
@@ -421,7 +441,7 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         break;
     case 0xAE:
         // xor (hl)
-        reg_xor(RAM[combineRegisters(h, l)]);
+        reg_xor(ram.read(combineRegisters(h, l)));
         PC++;
         break;
     case 0xAF:
@@ -461,7 +481,7 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         break;
     case 0xB6:
         // or(hl)
-        reg_or(RAM[combineRegisters(h, l)]);
+        reg_or(ram.read(combineRegisters(h, l)));
         PC++;
         break;
     case 0xB7:
@@ -501,7 +521,7 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         break;
     case 0xBE:
         // cp (hl)
-        reg_cp(RAM[combineRegisters(h, l)]);
+        reg_cp(ram.read(combineRegisters(h, l)));
         PC++;
         break;
     case 0xBF:
@@ -511,42 +531,43 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         break;
     case 0xC6:
         // add *
-        add(RAM[PC + 1]);
+        add(ram.read(PC + 1));
         PC += 2;
         break;
     case 0xD6:
         // sub *
-        sub(RAM[PC + 1]);
+        sub(ram.read(PC + 1));
         PC += 2;
         break;
     case 0xE6:
         // and *
-        reg_and(RAM[PC + 1]);
+        reg_and(ram.read(PC + 1));
         PC += 2;
         break;
     case 0xF6:
         // or *
-        reg_or(RAM[PC + 1]);
+        reg_or(ram.read(PC + 1));
         PC += 2;
         break;
     case 0xCE:
         // adc *
-        adc(RAM[PC + 1]);
+        adc(ram.read(PC + 1));
         PC += 2;
         break;
     case 0xDE:
         // sbc *
-        sbc(RAM[PC + 1]);
+        sbc(ram.read(PC + 1));
         PC += 2;
         break;
     case 0xEE:
         // xor *
-        reg_xor(RAM[PC + 1]);
+        reg_xor(ram.read(PC + 1));
         PC += 2;
         break;
     case 0xFE:
         // cp *
-        reg_cp(RAM[PC + 1]);
+
+        reg_cp(ram.read(PC + 1));
         PC += 2;
         break;
 
@@ -554,34 +575,34 @@ void CPU::ExecuteInstruction(uint8_t instruction)
     case 0x20:
         // jr nz, *
         if (!isFlagSet(Flag::Z))
-            PC += (int8_t)RAM[PC + 1];
+            PC += ram.read(PC + 1);
 
         PC += 2;
         break;
     case 0x30:
         // jr nc, *
         if (!isFlagSet(Flag::C))
-            PC += (int8_t)RAM[PC + 1];
+            PC += ram.read(PC + 1);
         PC += 2;
         break;
 
 
     case 0x18:
         // jr *
-        PC += (int8_t)RAM[PC + 1];
+        PC += ram.read(PC + 1);
         PC += 2;
         break;
     case 0x28:
         // jr z, *
         if (isFlagSet(Flag::Z))
-            PC += (int8_t)RAM[PC + 1];
+            PC += ram.read(PC + 1);
 
         PC += 2;
         break;
     case 0x38:
         // jr c, *
         if (isFlagSet(Flag::C))
-            PC += (int8_t)RAM[PC + 1];
+            PC += ram.read(PC + 1);
 
         PC += 2;
         break;
@@ -775,71 +796,71 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         // PUSH/POP OPERATIONS *****************************************
     case 0xC1:
         // pop bc
-        c = RAM[SP++];
-        b = RAM[SP++];
+        c = ram.read(SP++);
+        b = ram.read(SP++);
         PC++;
         break;
     case 0xD1:
         // pop DE
-        e = RAM[SP++];
-        d = RAM[SP++];
+        e = ram.read(SP++);
+        d = ram.read(SP++);
         PC++;
         break;
     case 0xE1:
         // pop HL
-        l = RAM[SP++];
-        h = RAM[SP++];
+        l = ram.read(SP++);
+        h = ram.read(SP++);
         PC++;
         break;
     case 0xF1:
         // pop AF
-        f = RAM[SP++];
-        a = RAM[SP++];
+        f = ram.read(SP++);
+        a = ram.read(SP++);
         PC++;
         break;
 
     case 0xC5:
         // push bc
-        RAM[--SP] = b;
-        RAM[--SP] = c;
+        ram.write8(--SP, b);
+        ram.write8(--SP, c);
         PC++;
         break;
     case 0xD5:
         // push de
-        RAM[--SP] = d;
-        RAM[--SP] = e;
+        ram.write8(--SP, d);
+        ram.write8(--SP, e);
         PC++;
         break;
     case 0xE5:
         // push hl
-        RAM[--SP] = h;
-        RAM[--SP] = l;
+        ram.write8(--SP, h);
+        ram.write8(--SP, l);
         PC++;
         break;
     case 0xF5:
         // push af
-        RAM[--SP] = a;
-        RAM[--SP] = f;
+        ram.write8(--SP, a);
+        ram.write8(--SP, f);
         PC++;
         break;
 
         // LOAD OPERATIONS *****************************************
     case 0x01:
         // ld bc, **
-        c = RAM[PC + 1];
-        b = RAM[PC + 2];
+        c = ram.read(PC + 1);
+        b = ram.read(PC + 2);
         PC += 3;
         break;
     case 0x11:
         // ld de, **
-        e = RAM[PC + 1];
-        d = RAM[PC + 2];
+        e = ram.read(PC + 1);
+        d = ram.read(PC + 2);
         PC += 3;
         break;
     case 0x21:
         // ld hl **
-        l = RAM[PC + 1];
-        h = RAM[PC + 2];
+        l = ram.read(PC + 1);
+        h = ram.read(PC + 2);
         PC += 3;
         break;
     case 0x31:
@@ -849,17 +870,17 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         break;
     case 0x02:
         // ld (bc), a
-        RAM[combineRegisters(b, c)] = a;
+        ram.write8(combineRegisters(b, c), a);
         PC += 1;
         break;
     case 0x12:
         // ld (de), a
-        RAM[combineRegisters(d, e)] = a;
+        ram.write8(combineRegisters(d, e), a);
         PC += 1;
         break;
     case 0x22:
         // ldi (hl), a
-        RAM[combineRegisters(h, l)] = a;
+        ram.write8(combineRegisters(h, l), a);
 
         l++;
         if (l == 0)
@@ -869,28 +890,28 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         break;
     case 0x32:
         // ldd (hl), a
-        RAM[combineRegisters(h, l)] = a;
+        ram.write8(combineRegisters(h, l), a);
         decreaseRegister(&h, &l);
         PC++;
         break;
     case 0x06:
         // ld b, *
-        b = RAM[PC + 1];
+        b = ram.read(PC + 1);
         PC += 2;
         break;
     case 0x16:
         // ld d, *
-        d = RAM[PC + 1];
+        d = ram.read(PC + 1);
         PC += 2;
         break;
     case 0x26:
         // ld h, *
-        h = RAM[PC + 1];
+        h = ram.read(PC + 1);
         PC += 2;
         break;
     case 0x36:
         // ld h, *
-        h = RAM[PC + 1];
+        h = ram.read(PC + 1);
         PC += 2;
         break;
     case 0x08:
@@ -900,44 +921,44 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         break;
     case 0x0A:
         // ld a, (bc)
-        a = RAM[combineRegisters(b, c)];
+        a = ram.read(combineRegisters(b, c));
         PC++;
         break;
     case 0x1A:
         // ld a, (de)
-        a = RAM[combineRegisters(d, e)];
+        a = ram.read(combineRegisters(d, e));
         PC++;
         break;
     case 0x2A:
         // ldi a, (hl)
-        a = RAM[combineRegisters(h, l)];
+        a = ram.read(combineRegisters(h, l));
         increaseRegister(&h, &l);
         PC++;
         break;
     case 0x3A:
         // ldd a, (hl)
-        a = RAM[combineRegisters(h, l)];
+        a = ram.read(combineRegisters(h, l));
         decreaseRegister(&h, &l);
         PC++;
         break;
     case 0x0E:
         // ld c, *
-        c = RAM[PC + 1];
+        c = ram.read(PC + 1);
         PC += 2;
         break;
     case 0x1E:
         // ld e, *
-        e = RAM[PC + 1];
+        e = ram.read(PC + 1);
         PC += 2;
         break;
     case 0x2E:
         // ld l, *
-        l = RAM[PC + 1];
+        l = ram.read(PC + 1);
         PC += 2;
         break;
     case 0x3E:
         // ld a, *
-        a = RAM[PC + 1];
+        a = ram.read(PC + 1);
         PC += 2;
         break;
     case 0x40:
@@ -972,7 +993,7 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         break;
     case 0x46:
         // ld b, (hl)
-        b = RAM[combineRegisters(h, l)];
+        b = ram.read(combineRegisters(h, l));
         PC++;
         break;
     case 0x47:
@@ -1012,7 +1033,7 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         break;
     case 0x4E:
         // ld c, (hl)
-        c = RAM[combineRegisters(h, l)];
+        c = ram.read(combineRegisters(h, l));
         PC++;
         break;
     case 0x4F:
@@ -1052,7 +1073,7 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         break;
     case 0x56:
         // ld d, (hl)
-        d = RAM[combineRegisters(h, l)];
+        d = ram.read(combineRegisters(h, l));
         PC++;
         break;
     case 0x57:
@@ -1092,7 +1113,7 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         break;
     case 0x5E:
         // ld e, (hl)
-        e = RAM[combineRegisters(h, l)];
+        e = ram.read(combineRegisters(h, l));
         PC++;
         break;
     case 0x5F:
@@ -1132,7 +1153,7 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         break;
     case 0x66:
         // ld h, (hl)
-        h = RAM[combineRegisters(h, l)];
+        h = ram.read(combineRegisters(h, l));
         PC++;
         break;
     case 0x67:
@@ -1172,7 +1193,7 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         break;
     case 0x6E:
         // ld l, (hl)
-        l = RAM[combineRegisters(h, l)];
+        l = ram.read(combineRegisters(h, l));
         PC++;
         break;
     case 0x6F:
@@ -1182,32 +1203,32 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         break;
     case 0x70:
         // ld (hl), b
-        RAM[combineRegisters(h, l)] = b;
+        ram.write8(combineRegisters(h, l), b);
         PC++;
         break;
     case 0x71:
         // ld (hl), c
-        RAM[combineRegisters(h, l)] = c;
+        ram.write8(combineRegisters(h, l), c);
         PC++;
         break;
     case 0x72:
         // ld (hl), d
-        RAM[combineRegisters(h, l)] = d;
+        ram.write8(combineRegisters(h, l), d);
         PC++;
         break;
     case 0x73:
         // ld (hl), h
-        RAM[combineRegisters(h, l)] = h;
+        ram.write8(combineRegisters(h, l), h);
         PC++;
         break;
     case 0x74:
         // ld (hl), l
-        RAM[combineRegisters(h, l)] = l;
+        ram.write8(combineRegisters(h, l), l);
         PC++;
         break;
     case 0x75:
         // ld (hl), a
-        RAM[combineRegisters(h, l)] = a;
+        ram.write8(combineRegisters(h, l), a);
         PC++;
         break;
     case 0x76:
@@ -1217,7 +1238,7 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         break;
     case 0x77:
         // ld (hl), a
-        RAM[combineRegisters(h, l)] = a;
+        ram.write8(combineRegisters(h, l), a);
         PC++;
         break;
     case 0x78:
@@ -1252,7 +1273,7 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         break;
     case 0x7E:
         // ld a, (hl)
-        a = RAM[combineRegisters(h, l)];
+        a = ram.read(combineRegisters(h, l));
         PC++;
         break;
     case 0x7F:
@@ -1263,29 +1284,29 @@ void CPU::ExecuteInstruction(uint8_t instruction)
 
     case 0xE0:
         // ld ($FF00 + *), a
-        RAM[0xFF00 + RAM[PC + 1]] = a;
+        ram.write8(0xFF00 + ram.read(PC + 1), a);
         PC += 2;
         break;
     case 0xF0:
         // ld a, ($FF00 + *)
-        a = RAM[0xFF00 + RAM[PC + 1]];
+        a = ram.read(0xFF00 + ram.read(PC + 1));
         PC += 2;
         break;
 
     case 0xE2:
         // ld ($FF00 + C), A
-        RAM[0xFF00 + c] = a;
+        ram.write8(0xFF00 + c, a);
         PC++;
         break;
     case 0xF2:
         // ld ($FF00 + C), A
-        a = RAM[0xFF00 + c];
+        a = ram.read(0xFF00 + c);
         PC++;
         break;
     case 0xF8:
         // LD HL,SP+r8
     {
-        uint16_t tmp = SP + RAM[PC + 1];
+        uint16_t tmp = SP + ram.read(PC + 1);
         l = tmp | 0xff00;
         h = (tmp | 0x00ff) >> 8;
         PC += 2;
@@ -1299,12 +1320,12 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         break;
     case 0xEA:
         // LD (a16),A
-        RAM[fetchNext2BytesInverted(PC)] = a;
+        ram.write8(fetchNext2BytesInverted(PC), a);
         PC += 3;
         break;
     case 0xFA:
         // LD A,(a16)
-        a = RAM[fetchNext2BytesInverted(PC)];
+        a = ram.read(fetchNext2BytesInverted(PC));
         PC += 3;
         break;
 
@@ -1326,7 +1347,7 @@ void CPU::ExecuteInstruction(uint8_t instruction)
     // BITS EXTENSIONS **************************************
     case 0xCB:
         PC++;
-        bitExtensions(RAM[PC]);
+        bitExtensions(ram.read(PC));
         break;
 
     default:
@@ -1339,15 +1360,15 @@ void CPU::ExecuteInstruction(uint8_t instruction)
 
 uint16_t CPU::fetchNext2BytesInverted(int PC)
 {
-    return (RAM[PC + 1] | 0xff00) & ((RAM[PC + 2] << 8) | 0x00ff);
+    return (ram.read(PC + 1) | 0xff00) & ((ram.read(PC + 2) << 8) | 0x00ff);
 }
 
 uint16_t CPU::receive2bytesFromRam(int ramPos)
 {
     uint16_t result;
 
-    result = RAM[ramPos + 1] << 8;
-    result += RAM[ramPos];
+    result = ram.read(ramPos + 1) << 8;
+    result += ram.read(ramPos);
 
     return result;
 }
@@ -1356,16 +1377,16 @@ uint16_t CPU::fetchAddressFromRam(int ramPos)
 {
     uint16_t result;
 
-    result = RAM[ramPos] << 8;
-    result += RAM[ramPos + 1];
+    result = ram.read(ramPos) << 8;
+    result += ram.read(ramPos + 1);
 
     return result;
 }
 
 void CPU::add2bytesToRam(int ramPos, uint16_t value)
 {
-    RAM[ramPos] = value >> 8;
-    RAM[ramPos + 1] = (uint8_t)value;
+    ram.write8(ramPos, value >> 8);
+    ram.write8(ramPos + 1, (uint8_t)value);
 }
 
 bool CPU::isFlagSet(Flag flag)
@@ -1405,9 +1426,10 @@ uint16_t CPU::combineRegisters(uint8_t reg1, uint8_t reg2)
 
 void CPU::increaseMemoryAddress(uint16_t pointer)
 {
-    uint8_t previousValue = RAM[pointer];
-    RAM[pointer] = RAM[pointer]++;
-    uint8_t result = RAM[pointer];
+    uint8_t previousValue = ram.read(pointer);
+    auto t = ram.read(pointer);
+    ram.write8(pointer, t++);
+    uint8_t result = ram.read(pointer);
 
     if (result == 0)
     {
@@ -1428,9 +1450,10 @@ void CPU::increaseMemoryAddress(uint16_t pointer)
 
 void CPU::decreaseMemoryAddress(uint16_t pointer)
 {
-    uint8_t previousValue = RAM[pointer];
-    RAM[pointer] = RAM[pointer]--;
-    uint8_t result = RAM[pointer];
+    uint8_t previousValue = ram.read(pointer);
+    auto t = ram.read(pointer);
+    ram.write8(pointer, t--);
+    uint8_t result = ram.read(pointer);
 
     setZ(result == 0);
 
@@ -1504,7 +1527,7 @@ void CPU::addHL(uint16_t reg)
 void CPU::add(uint8_t reg)
 {
     setC((uint16_t)a + (uint16_t)reg > 0xff);
-    setH(((uint8_t)a << 4) + ((uint8_t)reg << 4) > 0xff);
+    setH((((a & 0xf) + (reg & 0xf)) & 0x10) == 0x10);
 
     a = a + reg;
 
@@ -1579,7 +1602,8 @@ void CPU::reg_or(uint8_t reg)
 void CPU::reg_cp(uint8_t reg)
 {
     setC((int16_t)a - (int16_t)reg < 0x00);
-    setH((a & 0x0f) - (reg & 0x0f) < 0x00);
+    //setH((a & 0x0f) - (reg & 0x0f) < 0x00);
+    setH(a - reg > 0x0f);
 
     setZ(reg - a <= 0);
     setN(true);

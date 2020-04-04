@@ -1,5 +1,7 @@
 #pragma once
-#include "Rom.h"
+//#include "Rom.h"
+#include <stdint.h>
+#include "RAM.h"
 
 enum Flag {
     C = 4,
@@ -14,10 +16,11 @@ public:
     // Program Counter
     uint16_t PC;
 
-    CPU(Rom rom);
+    CPU(RAM ram);
+    ~CPU();
     void ExecuteInstruction(uint8_t instruction);
 
-	uint8_t* RAM;
+	//uint8_t* RAM;
 private:
     // Registers
     uint8_t a;
@@ -29,6 +32,8 @@ private:
     uint8_t h;
     uint8_t l;
     uint16_t SP;
+
+    RAM ram;
 
     uint16_t fetchNext2BytesInverted(int PC);
     uint16_t receive2bytesFromRam(int ramPos);
