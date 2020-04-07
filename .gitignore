@@ -37,3 +37,7 @@ sites
 *.vcxproj*
 .vs
 *.sln
+
+*.tlog
+*.idb
+*.pdb

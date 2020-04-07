@@ -20,9 +20,6 @@ public:
     ~CPU();
     void ExecuteInstruction(uint8_t instruction);
 
-	//uint8_t* RAM;
-private:
-    // Registers
     uint8_t a;
     uint8_t b;
     uint8_t c;
@@ -33,6 +30,9 @@ private:
     uint8_t l;
     uint16_t SP;
 
+	//uint8_t* RAM;
+private:
+    // Registers
     RAM ram;
 
     uint16_t fetchNext2BytesInverted(int PC);
