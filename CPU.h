@@ -16,7 +16,7 @@ public:
     // Program Counter
     uint16_t PC;
 
-    CPU(RAM ram);
+    CPU(RAM &ram);
     ~CPU();
     void ExecuteInstruction(uint8_t instruction);
 
@@ -33,7 +33,7 @@ public:
 	//uint8_t* RAM;
 private:
     // Registers
-    RAM ram;
+    RAM *ram;
 
     uint16_t fetchNext2BytesInverted(int PC);
     uint16_t receive2bytesFromRam(int ramPos);
