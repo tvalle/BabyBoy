@@ -18,6 +18,8 @@ namespace BabyTests
             cpu.c = 0x01;
             cpu.b = 0xff;
 
+            Assert::AreEqual<uint8_t>(cpu.c, 0x01);
+
             cpu.ExecuteInstruction(0x48);
 
             Assert::AreEqual<uint8_t>(cpu.c, 0xff);
