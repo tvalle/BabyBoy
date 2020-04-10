@@ -18,12 +18,18 @@
     <ClCompile Include="pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CPULoadTests.cpp">
+    <ClCompile Include="CPULoad_b_x.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CPULoad_c_x.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CPULoad_c_x.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -6,10 +6,9 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace BabyTests
 {
-    TEST_CLASS(CPULoadTests)
+    TEST_CLASS(CPULoad_b_x)
     {
     public:
-
         TEST_METHOD(LoadRegisters_0x40)
         {
             RAM ram = RAM();
@@ -119,6 +118,22 @@ namespace BabyTests
             Assert::AreEqual<uint8_t>(cpu.b, 0x01);
 
             cpu.ExecuteInstruction(0x46);
+
+            Assert::AreEqual<uint8_t>(cpu.b, 0xff);
+        }
+
+        TEST_METHOD(LoadRegisters_0x47)
+        {
+            RAM ram = RAM();
+
+            // LD b, a
+            CPU cpu = CPU(ram);
+            cpu.a = 0xff;
+            cpu.b = 0x01;
+
+            Assert::AreEqual<uint8_t>(cpu.b, 0x01);
+
+            cpu.ExecuteInstruction(0x47);
 
             Assert::AreEqual<uint8_t>(cpu.b, 0xff);
         }
