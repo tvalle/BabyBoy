@@ -108,10 +108,10 @@ namespace BabyTests
 
             // LD d, (hl)
             CPU cpu = CPU(ram);
-            cpu.h = 0x00;
-            cpu.l = 0x00;
+            cpu.h = 0x45;
+            cpu.l = 0xff;
 
-            ram.write8(0x0000, 0xff);
+            ram.write8(0x45ff, 0xff);
 
             cpu.d = 0x01;
 
