@@ -172,7 +172,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CPULoad_c_x.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
