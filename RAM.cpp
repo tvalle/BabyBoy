@@ -15,3 +15,8 @@ uint8_t RAM::read(uint16_t address)
 {
     return ram[address];
 }
+
+void* RAM::memcpy(const void* src, std::size_t count)
+{
+    return std::memcpy(&ram, src, count);
+}

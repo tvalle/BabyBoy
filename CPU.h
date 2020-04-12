@@ -16,6 +16,7 @@ public:
     // Program Counter
     uint16_t PC;
 
+    CPU() = default;
     CPU(RAM &ram);
     ~CPU();
     void ExecuteInstruction(uint8_t instruction);
@@ -32,6 +33,7 @@ public:
 
 	//uint8_t* RAM;
 private:
+
     // Registers
     RAM *ram;
 
