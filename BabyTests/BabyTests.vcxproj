@@ -166,6 +166,7 @@
     <ClCompile Include="CPULoad_c_x.cpp" />
     <ClCompile Include="CPULoad_d_x.cpp" />
     <ClCompile Include="CPULoad_e_x.cpp" />
+    <ClCompile Include="CPULoad_hl_x.cpp" />
     <ClCompile Include="CPULoad_h_x.cpp" />
     <ClCompile Include="CPULoad_l_x.cpp" />
     <ClCompile Include="pch.cpp">
