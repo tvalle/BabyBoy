@@ -166,6 +166,8 @@
     <ClCompile Include="CPULoad_c_x.cpp" />
     <ClCompile Include="CPULoad_d_x.cpp" />
     <ClCompile Include="CPULoad_e_x.cpp" />
+    <ClCompile Include="CPULoad_h_x.cpp" />
+    <ClCompile Include="CPULoad_l_x.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
