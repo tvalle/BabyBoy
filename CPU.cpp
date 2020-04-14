@@ -147,10 +147,14 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         decreaseRegister(&b);
         PC++;
         break;
-    case 0x07:
+    case 0x0B:
         //dec bc
-        //decreaseRegister(&b);
-        //TODO: implement this
+        if (c == 0)
+        {
+            b--;
+        }
+
+        c--;
         PC++;
         break;
     case 0x0C:
