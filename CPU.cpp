@@ -10,7 +10,7 @@ bool showDebug = false;
 
 FILE* pFile;
 
-CPU::CPU(RAM &ram)
+CPU::CPU(RAM& ram)
 {
     PC = 0x00;
     SP = 0;
@@ -40,8 +40,8 @@ void CPU::ExecuteInstruction(uint8_t instruction)
     //if (showDebug || PC == 0x8F)
     {
         // 0000: 31 A:00 B:00 C:00 D:00 E:00 F:00 H:00 L:00 LY:00 SP:00  Cy:8
-        printf("%04x: %02x A:%02x B:%02x C:%02x D:%02x E:%02x F:%02x H:%02x L:%02x LY:%02x SP:%04x\n",
-            PC, instruction, a, b, c, d, e, f, h, l, 0, SP);
+        printf("%04x: %02x A:%02x B:%02x C:%02x D:%02x E:%02x F:%02x H:%02x L:%02x LY:%02x SP:%04x FF44:%02x\n",
+            PC, instruction, a, b, c, d, e, f, h, l, 0, SP, ram->read(0xff41));
         showDebug = true;
     }
 
@@ -66,6 +66,36 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         if (e == 0)
             d++;
 
+        PC++;
+        break;
+    case 0x0B:
+        //dec bc
+        if (c == 0)
+        {
+            b--;
+        }
+
+        c--;
+        PC++;
+        break;
+    case 0x1B:
+        //dec de
+        if (e == 0)
+        {
+            d--;
+        }
+
+        e--;
+        PC++;
+        break;
+    case 0x2B:
+        //dec hl
+        if (l == 0)
+        {
+            h--;
+        }
+
+        l--;
         PC++;
         break;
     case 0x09:
@@ -145,16 +175,6 @@ void CPU::ExecuteInstruction(uint8_t instruction)
     case 0x05:
         //dec b
         decreaseRegister(&b);
-        PC++;
-        break;
-    case 0x0B:
-        //dec bc
-        if (c == 0)
-        {
-            b--;
-        }
-
-        c--;
         PC++;
         break;
     case 0x0C:
@@ -585,34 +605,34 @@ void CPU::ExecuteInstruction(uint8_t instruction)
     case 0x20:
         // jr nz, *
         if (!isFlagSet(Flag::Z))
-            PC += ram->read(PC + 1);
+            PC += (int8_t)ram->read(PC + 1);
 
         PC += 2;
         break;
     case 0x30:
         // jr nc, *
         if (!isFlagSet(Flag::C))
-            PC += ram->read(PC + 1);
+            PC += (int8_t)ram->read(PC + 1);
         PC += 2;
         break;
 
 
     case 0x18:
         // jr *
-        PC += ram->read(PC + 1);
+        PC += (int8_t)ram->read(PC + 1);
         PC += 2;
         break;
     case 0x28:
         // jr z, *
         if (isFlagSet(Flag::Z))
-            PC += ram->read(PC + 1);
+            PC += (int8_t)ram->read(PC + 1);
 
         PC += 2;
         break;
     case 0x38:
         // jr c, *
         if (isFlagSet(Flag::C))
-            PC += ram->read(PC + 1);
+            PC += (int8_t)ram->read(PC + 1);
 
         PC += 2;
         break;
