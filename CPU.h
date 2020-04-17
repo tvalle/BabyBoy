@@ -31,6 +31,8 @@ public:
     uint8_t l;
     uint16_t SP;
 
+    int cycles;
+
 	//uint8_t* RAM;
 private:
 
