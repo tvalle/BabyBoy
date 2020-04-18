@@ -1,6 +1,11 @@
 #pragma once
 #include <SDL.h>
 
+#define COLOR_0 15, 56, 15
+#define COLOR_1 48, 98, 48
+#define COLOR_2 139, 172, 15
+#define COLOR_3 155, 188, 15
+
 // As seen on LazyFoo's SDL tutorials
 class SDLWindow
 {

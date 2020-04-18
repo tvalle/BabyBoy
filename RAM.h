@@ -11,6 +11,7 @@ public:
 
     void* memcpy(const void* src, std::size_t count);
 
+    void getVRAM_Tiles(uint8_t *matrix);
 private:
 
     std::array<uint8_t, 65535> ram;

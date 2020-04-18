@@ -12,10 +12,10 @@ public:
 
     void step();
 
-private:
-
     RAM ram;
     CPU cpu;
+
+private:
 
     bool hasBoot = true;
 };
