@@ -33,7 +33,7 @@ void* RAM::memcpy(const void* src, std::size_t count)
     return std::memcpy(&ram, src, count);
 }
 
-void RAM::getVRAM_Tiles(uint8_t* matrix)
+uint8_t** RAM::getVRAM_Tiles()
 {
     const uint8_t tiles_x = 16;
     const uint8_t tiles_y = 16;
@@ -41,22 +41,33 @@ void RAM::getVRAM_Tiles(uint8_t* matrix)
     const uint8_t width = 8 * tiles_x;
     const uint8_t height = 8 * tiles_y;
 
-    //uint8_t matrix[height][width];
+    uint8_t **matrix = new uint8_t*[height];
+    for (int y = 0; y < height; y++)
+    {
+        matrix[y] = new uint8_t[width];
+    }
 
-    for (int tiles = 0; tiles < 0xFF; tiles++)
+    for (int tiles = 0; tiles <= 0xFF; tiles++)
     {
         for (int i = 0; i < 8; i++)
         {
+            int addr = 0;
+
             for (int j = 0; j < 8; j++)
             {
+                addr = (0x8000 + (tiles * 0x10)) + (i * 2);
+
                 uint8_t pixel = (ram[(0x8000 + (tiles * 0x10)) + (i * 2)] >> (7 - j)) & 1;
                 pixel = pixel << 1;
                 pixel = pixel | ((ram[(0x8001 + (tiles * 0x10)) + (i * 2)] >> (7 - j)) & 1);
 
-                //matrix[i + ((tiles / 16) * 8)][j + ((tiles % 16) * 8)] = pixel;
+                matrix[i + ((tiles / 16) * 8)][j + ((tiles % 16) * 8)] = pixel;
             }
+
+            addr = addr;
         }
     }
 
     //auto color = *((matrix + i * width) + j);
+    return matrix;
 }

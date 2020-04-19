@@ -9,17 +9,37 @@ int main(int argc, char* argv[])
 
     SoC soc = SoC(rom);
 
+    SDL_Init(SDL_INIT_VIDEO);
+
     SDLWindow window = SDLWindow();
-    window.init("BabyBoy", 160, 144);
+    window.init("BabyBoy", 256, 256);
 
-    /*soc.ram.getVRAM_Tiles();
+    auto matrix = soc.ram.getVRAM_Tiles();
 
-    window.render(matrix, 128, 128);*/
-
-    while (soc.isRunning)
+    /*while (soc.isRunning)
     {
         soc.step();
+    }*/
+
+    SDL_Event e;
+
+    bool exit = false;
+    while (!exit)
+    {
+        while (SDL_PollEvent(&e) != 0)
+        {
+            if (e.type == SDL_QUIT)
+            {
+                exit = true;
+            }
+        }
+
+        window.handleEvent(e);
+
+        window.render(matrix, 128, 128);
     }
 
+    window.free();
+    SDL_Quit();
     return 0;
 }

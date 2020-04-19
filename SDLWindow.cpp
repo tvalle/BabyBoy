@@ -143,7 +143,7 @@ void SDLWindow::focus()
     SDL_RaiseWindow(mWindow);
 }
 
-void SDLWindow::render(uint8_t* matrix, int width, int height)
+void SDLWindow::render(uint8_t** matrix, int width, int height)
 {
     if (!mMinimized)
     {
@@ -157,15 +157,16 @@ void SDLWindow::render(uint8_t* matrix, int width, int height)
             {
                 for (int j = 0; j < width; j++)
                 {
-                    auto color = *((matrix + i * width) + j);
+                    //auto color = *((matrix + i * width) + j);
+                    auto color = matrix[i][j];
 
-                    if (color == 0x00)
+                    if (color == 0b00)
                         SDL_SetRenderDrawColor(mRenderer, COLOR_0, 255);
-                    else if (color == 0x01)
+                    else if (color == 0b01)
                         SDL_SetRenderDrawColor(mRenderer, COLOR_1, 255);
-                    else if (color == 0x01)
+                    else if (color == 0b10)
                         SDL_SetRenderDrawColor(mRenderer, COLOR_2, 255);
-                    else if (color == 0x11)
+                    else if (color == 0b11)
                         SDL_SetRenderDrawColor(mRenderer, COLOR_3, 255);
 
                     SDL_RenderDrawPoint(mRenderer, j, i);

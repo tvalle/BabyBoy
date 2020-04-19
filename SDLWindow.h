@@ -1,10 +1,16 @@
 #pragma once
 #include <SDL.h>
 
-#define COLOR_0 15, 56, 15
-#define COLOR_1 48, 98, 48
-#define COLOR_2 139, 172, 15
-#define COLOR_3 155, 188, 15
+//#define COLOR_0 15, 56, 15
+//#define COLOR_1 48, 98, 48
+//#define COLOR_2 139, 172, 15
+//#define COLOR_3 155, 188, 15
+
+#define COLOR_0 255, 239, 255
+#define COLOR_1 206, 231, 222
+#define COLOR_2 165, 214, 255
+#define COLOR_3 24, 16, 16
+
 
 // As seen on LazyFoo's SDL tutorials
 class SDLWindow
@@ -25,7 +31,7 @@ public:
 	void focus();
 
 	//Shows windows contents
-	void render(uint8_t* matrix, int width, int height);
+	void render(uint8_t** matrix, int width, int height);
 
 	//Deallocates internals
 	void free();
