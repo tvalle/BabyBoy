@@ -36,7 +36,7 @@ int main(int argc, char* argv[])
 
         window.handleEvent(e);
 
-        window.render(matrix, 128, 128);
+        window.render(matrix, 128, 192);
     }
 
     window.free();

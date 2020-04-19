@@ -36,7 +36,7 @@ void* RAM::memcpy(const void* src, std::size_t count)
 uint8_t** RAM::getVRAM_Tiles()
 {
     const uint8_t tiles_x = 16;
-    const uint8_t tiles_y = 16;
+    const uint8_t tiles_y = 24;
 
     const uint8_t width = 8 * tiles_x;
     const uint8_t height = 8 * tiles_y;
@@ -47,7 +47,7 @@ uint8_t** RAM::getVRAM_Tiles()
         matrix[y] = new uint8_t[width];
     }
 
-    for (int tiles = 0; tiles <= 0xFF; tiles++)
+    for (int tiles = 0; tiles <= 0x17F; tiles++)
     {
         for (int i = 0; i < 8; i++)
         {
