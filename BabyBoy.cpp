@@ -11,13 +11,11 @@ int main(int argc, char* argv[])
 
     SDL_Init(SDL_INIT_VIDEO);
 
-    
-    
     SDLWindow window= SDLWindow();
-    window.init("BabyBoy", 160, 144, false);
+    window.init("BabyBoy", 160, 144, true);
     
     SDLWindow bgMap = SDLWindow();
-    bgMap.init("BabyBoy", 256, 256, true);
+    bgMap.init("BabyBoy", 256, 256, false);
     
     SDLWindow vramWindow = SDLWindow();
     vramWindow.init("BabyBoy", 128, 192, false);
@@ -47,8 +45,9 @@ int main(int argc, char* argv[])
         /*vramWindow.handleEvent(e);
         vramWindow.render(vramMatrix, 128, 192);*/
 
-        bgMap.handleEvent(e);
-        bgMap.render(bgMatrix, 256, 256);
+        window.handleEvent(e);
+        window.render(bgMatrix, 160, 144);
+        //bgMap.render(bgMatrix, 256, 256);
     }
     window.free();
     bgMap.free();

@@ -82,9 +82,9 @@ uint8_t** RAM::getBGTileMapMatrix()
         matrix[y] = new uint8_t[width];
     }
 
-    uint16_t baseAddress = getLCDC_BGTileMap() ? 0x9800 : 0x9c00;
+    uint16_t baseAddress = getLCDC_BGTileMap() ? 0x9c00 : 0x9800;
     
-    for (int tiles = 0; tiles <= 1024; tiles++)
+    for (int tiles = 0; tiles < 1024; tiles++)
     {
         uint8_t currentTile = ram[baseAddress + tiles];
 
@@ -112,13 +112,14 @@ uint8_t** RAM::getBGTileMapMatrix()
         {
             for (int j = 0; j < 8; j++)
             {
+                int x = 0;
+                int y = 0;
+
                 uint8_t pixel = (ram[tileAddress + (i * 2)] >> (7 - j)) & 1;
                 pixel = pixel << 1;
                 pixel = pixel | ((ram[tileAddress + 1 + (i * 2)] >> (7 - j)) & 1);
 
-                // TODO: get correct offset for matrix given that tiles is contiguous
-                //matrix[i + ((tiles / 16) * 8)][j + ((tiles % 16) * 8)] = pixel;
-                //matrix[(tiles * 16) + i][(tiles * 16) + j] = pixel;
+                matrix[i + ((tiles / tiles_x) * 8)][j + ((tiles % tiles_x) * 8)] = pixel;
             }
         }
     }
