@@ -11,10 +11,20 @@ int main(int argc, char* argv[])
 
     SDL_Init(SDL_INIT_VIDEO);
 
-    SDLWindow window = SDLWindow();
-    window.init("BabyBoy", 256, 256);
+    
+    
+    SDLWindow window= SDLWindow();
+    window.init("BabyBoy", 160, 144, false);
+    
+    SDLWindow bgMap = SDLWindow();
+    bgMap.init("BabyBoy", 256, 256, true);
+    
+    SDLWindow vramWindow = SDLWindow();
+    vramWindow.init("BabyBoy", 128, 192, false);
 
-    auto matrix = soc.ram.getVRAM_Tiles();
+    //auto vramMatrix = soc.ram.getVRAM_Tiles();
+    auto bgMatrix = soc.ram.getBGTileMapMatrix();
+
 
     /*while (soc.isRunning)
     {
@@ -34,12 +44,15 @@ int main(int argc, char* argv[])
             }
         }
 
-        window.handleEvent(e);
+        /*vramWindow.handleEvent(e);
+        vramWindow.render(vramMatrix, 128, 192);*/
 
-        window.render(matrix, 128, 192);
+        bgMap.handleEvent(e);
+        bgMap.render(bgMatrix, 256, 256);
     }
-
     window.free();
+    bgMap.free();
+    vramWindow.free();
     SDL_Quit();
     return 0;
 }

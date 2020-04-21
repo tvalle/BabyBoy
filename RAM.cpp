@@ -35,13 +35,13 @@ void* RAM::memcpy(const void* src, std::size_t count)
 
 uint8_t** RAM::getVRAM_Tiles()
 {
-    const uint8_t tiles_x = 16;
-    const uint8_t tiles_y = 24;
+    const int tiles_x = 16;
+    const int tiles_y = 24;
 
-    const uint8_t width = 8 * tiles_x;
-    const uint8_t height = 8 * tiles_y;
+    const int width = 8 * tiles_x;
+    const int height = 8 * tiles_y;
 
-    uint8_t **matrix = new uint8_t*[height];
+    uint8_t** matrix = new uint8_t * [height];
     for (int y = 0; y < height; y++)
     {
         matrix[y] = new uint8_t[width];
@@ -51,11 +51,9 @@ uint8_t** RAM::getVRAM_Tiles()
     {
         for (int i = 0; i < 8; i++)
         {
-            int addr = 0;
-
             for (int j = 0; j < 8; j++)
             {
-                addr = (0x8000 + (tiles * 0x10)) + (i * 2);
+                //int addr = (0x8000 + (tiles * 0x10)) + (i * 2);
 
                 uint8_t pixel = (ram[(0x8000 + (tiles * 0x10)) + (i * 2)] >> (7 - j)) & 1;
                 pixel = pixel << 1;
@@ -63,11 +61,78 @@ uint8_t** RAM::getVRAM_Tiles()
 
                 matrix[i + ((tiles / 16) * 8)][j + ((tiles % 16) * 8)] = pixel;
             }
-
-            addr = addr;
         }
     }
 
     //auto color = *((matrix + i * width) + j);
     return matrix;
+}
+
+uint8_t** RAM::getBGTileMapMatrix()
+{
+    const int tiles_x = 32;
+    const int tiles_y = 32;
+
+    const int width = 8 * tiles_x;
+    const int height = 8 * tiles_y;
+
+    uint8_t** matrix = new uint8_t * [height];
+    for (int y = 0; y < height; y++)
+    {
+        matrix[y] = new uint8_t[width];
+    }
+
+    uint16_t baseAddress = getLCDC_BGTileMap() ? 0x9800 : 0x9c00;
+    
+    for (int tiles = 0; tiles <= 1024; tiles++)
+    {
+        uint8_t currentTile = ram[baseAddress + tiles];
+
+        uint16_t tileAddress;
+
+        if (getLCDC_BGTWindowTile())
+        {
+            // 8000-8fff - unsigned
+            tileAddress = 0x8000 + (currentTile * 0x10);
+        }
+        else
+        {
+            // 8800-97ff - signed
+            if (currentTile <= 127)
+            {
+                tileAddress = 0x9000 + (currentTile * 0x10);
+            }
+            else
+            {
+                tileAddress = 0x8800 + (currentTile * 0x10);
+            }
+        }
+
+        for (int i = 0; i < 8; i++)
+        {
+            for (int j = 0; j < 8; j++)
+            {
+                uint8_t pixel = (ram[tileAddress + (i * 2)] >> (7 - j)) & 1;
+                pixel = pixel << 1;
+                pixel = pixel | ((ram[tileAddress + 1 + (i * 2)] >> (7 - j)) & 1);
+
+                // TODO: get correct offset for matrix given that tiles is contiguous
+                //matrix[i + ((tiles / 16) * 8)][j + ((tiles % 16) * 8)] = pixel;
+                //matrix[(tiles * 16) + i][(tiles * 16) + j] = pixel;
+            }
+        }
+    }
+
+    //auto color = *((matrix + i * width) + j);
+    return matrix;
+}
+
+bool RAM::getLCDC_BGTileMap()
+{
+    return ram[0xFF40] & 0b00010000 == 0b00010000;
+}
+
+bool RAM::getLCDC_BGTWindowTile()
+{
+    return ram[0xFF40] & 0b00001000 == 0b00001000;
 }

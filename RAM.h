@@ -12,6 +12,11 @@ public:
     void* memcpy(const void* src, std::size_t count);
 
     uint8_t** getVRAM_Tiles();
+
+    uint8_t** getBGTileMapMatrix();
+
+    bool getLCDC_BGTileMap();
+    bool getLCDC_BGTWindowTile();
 private:
 
     std::array<uint8_t, 65535> ram;
