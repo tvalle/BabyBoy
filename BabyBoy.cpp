@@ -20,6 +20,8 @@ int main(int argc, char* argv[])
     SDLWindow vramWindow = SDLWindow();
     vramWindow.init("BabyBoy", 128, 192, false);
 
+    soc.ram.write8(0xFF47, 0xE4);
+
     //auto vramMatrix = soc.ram.getVRAM_Tiles();
     auto bgMatrix = soc.ram.getBGTileMapMatrix();
 

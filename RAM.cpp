@@ -119,7 +119,7 @@ uint8_t** RAM::getBGTileMapMatrix()
                 pixel = pixel << 1;
                 pixel = pixel | ((ram[tileAddress + 1 + (i * 2)] >> (7 - j)) & 1);
 
-                matrix[i + ((tiles / tiles_x) * 8)][j + ((tiles % tiles_x) * 8)] = pixel;
+                matrix[i + ((tiles / tiles_x) * 8)][j + ((tiles % tiles_x) * 8)] = getPaletteColor(pixel);
             }
         }
     }
@@ -136,4 +136,18 @@ bool RAM::getLCDC_BGTileMap()
 bool RAM::getLCDC_BGTWindowTile()
 {
     return ram[0xFF40] & 0b00001000 == 0b00001000;
+}
+
+uint8_t RAM::getPaletteColor(uint8_t index)
+{
+    // FF47 is the palette "register"
+
+    uint8_t palette[4] = { 0 };
+
+    palette[0] = ram[0xFF47] & 0b00000011;
+    palette[1] = (ram[0xFF47] & 0b0000110) >> 2;
+    palette[2] = (ram[0xFF47] & 0b00110000) >> 4;
+    palette[3] = (ram[0xFF47] & 0b11000000) >> 6;
+
+    return palette[index];
 }

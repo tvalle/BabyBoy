@@ -19,6 +19,8 @@ public:
     bool getLCDC_BGTWindowTile();
 private:
 
+    uint8_t getPaletteColor(uint8_t index);
+
     std::array<uint8_t, 65535> ram;
 };
 
