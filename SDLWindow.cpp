@@ -179,6 +179,41 @@ void SDLWindow::render(uint8_t** matrix, int width, int height)
     }
 }
 
+void SDLWindow::renderWrapping(uint8_t** matrix, uint8_t scx, uint8_t scy)
+{
+    if (!mMinimized)
+    {
+        //Clear screen
+        SDL_SetRenderDrawColor(mRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+        SDL_RenderClear(mRenderer);
+
+        if (matrix != nullptr)
+        {
+            for (int i = 0; i < 144; i++)
+            {
+                for (int j = 0; j < 160; j++)
+                {
+                    auto color = matrix[uint8_t(i + scy)][uint8_t(j + scx)];
+
+                    if (color == 0b00)
+                        SDL_SetRenderDrawColor(mRenderer, COLOR_0, 255);
+                    else if (color == 0b01)
+                        SDL_SetRenderDrawColor(mRenderer, COLOR_1, 255);
+                    else if (color == 0b10)
+                        SDL_SetRenderDrawColor(mRenderer, COLOR_2, 255);
+                    else if (color == 0b11)
+                        SDL_SetRenderDrawColor(mRenderer, COLOR_3, 255);
+
+                    SDL_RenderDrawPoint(mRenderer, j, i);
+                }
+            }
+        }
+
+        //Update screen
+        SDL_RenderPresent(mRenderer);
+    }
+}
+
 void SDLWindow::free()
 {
     SDL_DestroyWindow(mWindow);

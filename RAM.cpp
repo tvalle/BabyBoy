@@ -138,6 +138,16 @@ bool RAM::getLCDC_BGTWindowTile()
     return ram[0xFF40] & 0b00001000 == 0b00001000;
 }
 
+uint8_t RAM::getSCX()
+{
+    return ram[0xFF43];
+}
+
+uint8_t RAM::getSCY()
+{
+    return ram[0xFF42];
+}
+
 uint8_t RAM::getPaletteColor(uint8_t index)
 {
     // FF47 is the palette "register"

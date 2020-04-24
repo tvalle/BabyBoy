@@ -33,6 +33,8 @@ public:
 	//Shows windows contents
 	void render(uint8_t** matrix, int width, int height);
 
+    void renderWrapping(uint8_t** matrix, uint8_t scx, uint8_t scy);
+
 	//Deallocates internals
 	void free();
 

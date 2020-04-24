@@ -17,6 +17,10 @@ public:
 
     bool getLCDC_BGTileMap();
     bool getLCDC_BGTWindowTile();
+
+    uint8_t getSCX();
+    uint8_t getSCY();
+
 private:
 
     uint8_t getPaletteColor(uint8_t index);
