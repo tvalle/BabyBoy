@@ -1594,6 +1594,18 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         break;
 
         // 8 BIT ROTATION ***************************************
+    case 0x07:
+        // RLCA
+    {
+        auto original_a = a;
+        a = a << 1;
+        a = a | (original_a >> 7);
+        setC(original_a >> 7);
+        setZ(0);
+        setH(0);
+        setN(0);
+        PC++;
+    }
     case 0x17:
         // RLA
     {
