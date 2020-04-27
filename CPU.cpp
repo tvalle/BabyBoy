@@ -104,6 +104,12 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         PC++;
         cycles += 8;
         break;
+    case 0x3B:
+        //dec sp
+        SP--;
+        PC++;
+        cycles += 8;
+        break;
     case 0x09:
         // add hl, bc
         addHL(combineRegisters(b, c));
