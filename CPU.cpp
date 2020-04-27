@@ -1576,9 +1576,10 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         l = tmp | 0xff00;
         h = (tmp | 0x00ff) >> 8;
         PC += 2;
+        cycles += 12;
+        break;
     }
-    cycles += 12;
-    break;
+
     case 0xF9:
         // LD SP,HL
         SP = h << 8;
@@ -1611,6 +1612,8 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         setH(0);
         setN(0);
         PC++;
+        cycles += 4;
+        break;
     }
     case 0x17:
         // RLA
@@ -1623,9 +1626,38 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         setH(0);
         setN(0);
         PC++;
+        cycles += 4;
+        break;
     }
-    cycles += 4;
-    break;
+    case 0x0F:
+        // RRCA
+    {
+        auto bit0 = a & 0b00000001;
+        a = a >> 1;
+        a = modifyBit(a, 7, bit0);
+        setC(bit0);
+        setZ(0);
+        setH(0);
+        setN(0);
+        PC++;
+        cycles += 4;
+        break;
+    }
+    case 0x1F:
+        // RRA
+    {
+        auto bit0 = a & 0b00000001;
+        auto previousC = getC();
+        a = a >> 1;
+        a = modifyBit(a, 7, previousC);
+        setC(bit0);
+        setZ(0);
+        setH(0);
+        setN(0);
+        PC++;
+        cycles += 4;
+        break;
+    }
 
     // BITS EXTENSIONS **************************************
     case 0xCB:
@@ -1640,6 +1672,12 @@ void CPU::ExecuteInstruction(uint8_t instruction)
     }
 
     //printf("\n");
+}
+
+uint8_t CPU::modifyBit(uint8_t number, uint8_t position, uint8_t value)
+{
+    int mask = 1 << position;
+    return (number & ~mask) | ((value << position) & mask);
 }
 
 uint16_t CPU::fetchNext2BytesInverted(int PC)
