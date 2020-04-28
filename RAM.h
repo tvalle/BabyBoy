@@ -21,6 +21,8 @@ public:
     uint8_t getSCX();
     uint8_t getSCY();
 
+    void writeToFF44(uint8_t value);
+
 private:
 
     uint8_t getPaletteColor(uint8_t index);

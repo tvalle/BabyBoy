@@ -18,5 +18,13 @@ public:
 private:
 
     bool hasBoot = true;
+
+    int modeclock;
+    int graphicsMode;
+
+    uint8_t currentScanline();
+    void increaseScanline();
+
+    void gpuStep();
 };
 

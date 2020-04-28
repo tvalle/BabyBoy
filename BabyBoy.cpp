@@ -22,19 +22,7 @@ int main(int argc, char* argv[])
 
     soc.ram.write8(0xFF47, 0xE4);
 
-    //auto vramMatrix = soc.ram.getVRAM_Tiles();
-    auto bgMatrix = soc.ram.getBGTileMapMatrix();
-
-
-    /*while (soc.isRunning)
-    {
-        soc.step();
-    }*/
-
     SDL_Event e;
-
-    uint8_t scx = 0x00;
-    uint8_t scy = 0x00;
 
     bool exit = false;
     while (!exit)
@@ -45,35 +33,22 @@ int main(int argc, char* argv[])
             {
                 exit = true;
             }
-
-            if (e.type == SDL_KEYDOWN)
-            {
-                switch (e.key.keysym.sym)
-                {
-                case SDLK_RIGHT:
-                    scx++;
-                    break;
-                case SDLK_LEFT:
-                    scx--;
-                    break;
-                case SDLK_UP:
-                    scy--;
-                    break;
-                case SDLK_DOWN:
-                    scy++;
-                    break;
-                default:
-                    break;
-                }
-            }
         }
 
-        /*vramWindow.handleEvent(e);
-        vramWindow.render(vramMatrix, 128, 192);*/
+        soc.step();
+
+        //auto vramMatrix = soc.ram.getVRAM_Tiles();
+
+        //vramWindow.handleEvent(e);
+        //vramWindow.render(vramMatrix, 128, 192);
+
+        /*auto bgMatrix = soc.ram.getBGTileMapMatrix();
 
         window.handleEvent(e);
-        window.renderWrapping(bgMatrix, scx, scy);
+        window.renderWrapping(bgMatrix, 0x00, 0x00);*/
         //bgMap.render(bgMatrix, 256, 256);
+
+        exit = !soc.isRunning;
     }
     window.free();
     bgMap.free();

@@ -8,13 +8,13 @@ RAM::RAM()
     ram.fill(0);
 
     // TODO: remove, for testing only
-    std::ifstream dumpFile("vram.dump", std::ios_base::binary);
+    /*std::ifstream dumpFile("vram.dump", std::ios_base::binary);
 
     int pos = 0x8000;
     while (dumpFile) {
         ram[pos] = dumpFile.get();
         pos++;
-    }
+    }*/
 
 }
 
@@ -146,6 +146,11 @@ uint8_t RAM::getSCX()
 uint8_t RAM::getSCY()
 {
     return ram[0xFF42];
+}
+
+void RAM::writeToFF44(uint8_t value)
+{
+    ram[0xFF44] = value;
 }
 
 uint8_t RAM::getPaletteColor(uint8_t index)
