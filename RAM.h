@@ -27,6 +27,6 @@ private:
 
     uint8_t getPaletteColor(uint8_t index);
 
-    std::array<uint8_t, 65535> ram;
+    std::array<uint8_t, 0x10000> ram;
 };
 

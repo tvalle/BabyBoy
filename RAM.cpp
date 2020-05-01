@@ -20,6 +20,15 @@ RAM::RAM()
 
 void RAM::write8(uint16_t address, uint8_t value)
 {
+    if (address < 0x8000 || (address >= 0xFEA0 && address <= 0xFEFF))
+        return;
+
+    //echo
+    if (address >= 0xE000 && address < 0xFE00)
+    {
+        ram[address - 0x2000] = value;
+    }
+
     ram[address] = value;
 }
 
