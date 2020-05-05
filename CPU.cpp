@@ -1486,12 +1486,6 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         PC++;
         lastInstructionCycle = 8;
         break;
-    case 0x76:
-        // HALT
-        //TODO: Implement halt
-        PC++;
-        lastInstructionCycle = 4;
-        break;
     case 0x77:
         // ld (hl), a
         ram->write8(combineRegisters(h, l), a);
@@ -1661,6 +1655,25 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         lastInstructionCycle = 4;
         break;
     }
+    // CPU CONTROL
+    case 0x76:
+        // HALT
+        //TODO: Implement halt
+        PC++;
+        lastInstructionCycle = 4;
+        break;
+    case 0xF3:
+        // DI
+        //TODO: Implement DI
+        PC++;
+        lastInstructionCycle = 4;
+        break;
+    case 0xFB:
+        // EI
+        //TODO: Implement EI
+        PC++;
+        lastInstructionCycle = 4;
+        break;
 
     // BITS EXTENSIONS **************************************
     case 0xCB:

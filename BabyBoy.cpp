@@ -17,7 +17,7 @@ int main(int argc, char* argv[])
     window.init("BabyBoy", 160, 144, true);
 
     SDLWindow bgMap = SDLWindow();
-    bgMap.init("BabyBoy", 256, 256, false);
+    bgMap.init("BabyBoy", 256, 256, true);
 
     SDLWindow vramWindow = SDLWindow();
     vramWindow.init("BabyBoy", 128, 192, false);
@@ -44,21 +44,26 @@ int main(int argc, char* argv[])
             }
         }
 
-        soc.step();
+        while (soc.cpu.cycles < 69905)
+        {
+            soc.step();
+        }
+        soc.cpu.cycles = 0;
 
-        //auto vramMatrix = soc.ram.getVRAM_Tiles();
+        /*auto vramMatrix = soc.ram.getVRAM_Tiles();
 
-        //vramWindow.handleEvent(e);
-        //vramWindow.render(vramMatrix, 128, 192);
+        vramWindow.handleEvent(e);
+        vramWindow.render(vramMatrix, 128, 192);*/
 
-        /*auto bgMatrix = soc.ram.getBGTileMapMatrix();
+        auto bgMatrix = soc.ram.getBGTileMapMatrix();
 
         window.handleEvent(e);
-        window.renderWrapping(bgMatrix, 0x00, 0x00);*/
-        //bgMap.render(bgMatrix, 256, 256);
+        window.renderWrapping(bgMatrix, soc.ram.getSCX(), soc.ram.getSCY());
+        bgMap.render(bgMatrix, 256, 256);
 
         while (SDL_GetTicks() - timer < 16.666)
         {
+            //wait
         }
 
         frames++;
