@@ -139,12 +139,12 @@ uint8_t** RAM::getBGTileMapMatrix()
 
 bool RAM::getLCDC_BGTileMap()
 {
-    return ram[0xFF40] & 0b00010000 == 0b00010000;
+    return (ram[0xFF40] & 0b00010000) == 0b00010000;
 }
 
 bool RAM::getLCDC_BGTWindowTile()
 {
-    return ram[0xFF40] & 0b00001000 == 0b00001000;
+    return (ram[0xFF40] & 0b00001000) == 0b00001000;
 }
 
 uint8_t RAM::getSCX()
