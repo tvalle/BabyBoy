@@ -92,14 +92,16 @@ uint8_t** RAM::getBGTileMapMatrix()
     }
 
     uint16_t baseAddress = getLCDC_BGTileMap() ? 0x9c00 : 0x9800;
-    
+
+    baseAddress = 0x9800;
+
     for (int tiles = 0; tiles < 1024; tiles++)
     {
         uint8_t currentTile = ram[baseAddress + tiles];
 
         uint16_t tileAddress;
 
-        if (getLCDC_BGTWindowTile())
+        if (!getLCDC_BGTWindowTile())
         {
             // 8000-8fff - unsigned
             tileAddress = 0x8000 + (currentTile * 0x10);
