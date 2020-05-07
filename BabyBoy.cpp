@@ -44,7 +44,7 @@ int main(int argc, char* argv[])
             }
         }
 
-        while (soc.cpu.cycles < 69905 / 4)
+        while (soc.cpu.cycles < 69905)
         {
             soc.step();
         }

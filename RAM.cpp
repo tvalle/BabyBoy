@@ -15,7 +15,6 @@ RAM::RAM()
         ram[pos] = dumpFile.get();
         pos++;
     }*/
-
 }
 
 void RAM::write8(uint16_t address, uint8_t value)
@@ -92,16 +91,14 @@ uint8_t** RAM::getBGTileMapMatrix()
     }
 
     uint16_t baseAddress = getLCDC_BGTileMap() ? 0x9c00 : 0x9800;
-
-    baseAddress = 0x9800;
-
+    
     for (int tiles = 0; tiles < 1024; tiles++)
     {
         uint8_t currentTile = ram[baseAddress + tiles];
 
         uint16_t tileAddress;
 
-        if (!getLCDC_BGTWindowTile())
+        if (getLCDC_BGTWindowTile())
         {
             // 8000-8fff - unsigned
             tileAddress = 0x8000 + (currentTile * 0x10);
@@ -141,12 +138,12 @@ uint8_t** RAM::getBGTileMapMatrix()
 
 bool RAM::getLCDC_BGTileMap()
 {
-    return (ram[0xFF40] & 0b00010000) == 0b00010000;
+    return (ram[0xFF40] & 0b00001000) == 0b00001000;
 }
 
 bool RAM::getLCDC_BGTWindowTile()
 {
-    return (ram[0xFF40] & 0b00001000) == 0b00001000;
+    return (ram[0xFF40] & 0b00010000) == 0b00010000;
 }
 
 uint8_t RAM::getSCX()
