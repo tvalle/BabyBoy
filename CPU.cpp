@@ -1675,7 +1675,7 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         lastInstructionCycle = 4;
         break;
 
-    // BITS EXTENSIONS **************************************
+        // BITS EXTENSIONS **************************************
     case 0xCB:
         PC++;
         bitExtensions(ram->read(PC));
@@ -1971,8 +1971,24 @@ void CPU::bitExtensions(uint8_t opcode)
         setZ(!((h & 0x80) == 0x80));
         PC++;
         break;
+    case 0x37:
+        // swap A
+        a = swap8(a);
+        PC++;
+        break;
     default:
         printf("Not implemented CB %x - PC %x (extension)\n", opcode, PC);
         break;
     }
+
+  
+}
+
+uint8_t CPU::swap8(uint8_t reg)
+{
+    uint8_t tmp = reg;
+    reg = reg << 4;
+    reg = reg | (tmp >> 4);
+
+    return reg;
 }

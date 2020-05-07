@@ -76,4 +76,6 @@ private:
     void reg_cp(uint8_t reg);
 
     void bitExtensions(uint8_t opcode);
+
+    uint8_t swap8(uint8_t reg);
 };
