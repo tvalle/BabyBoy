@@ -1971,9 +1971,81 @@ void CPU::bitExtensions(uint8_t opcode)
         setZ(!((h & 0x80) == 0x80));
         PC++;
         break;
+
+// SWAP
+    case 0x30:
+        // swap B
+        b = swap8(b);
+        setC(0);
+        setH(0);
+        setZ(0);
+        setN(0);
+        PC++;
+        break;
+    case 0x31:
+        // swap C
+        c = swap8(c);
+        setC(0);
+        setH(0);
+        setZ(0);
+        setN(0);
+        PC++;
+        break;
+    case 0x32:
+        // swap D
+        d = swap8(d);
+        setC(0);
+        setH(0);
+        setZ(0);
+        setN(0);
+        PC++;
+        break;
+    case 0x33:
+        // swap E
+        e = swap8(e);
+        setC(0);
+        setH(0);
+        setZ(0);
+        setN(0);
+        PC++;
+        break;
+    case 0x34:
+        // swap H
+        h = swap8(h);
+        setC(0);
+        setH(0);
+        setZ(0);
+        setN(0);
+        PC++;
+        break;
+    case 0x35:
+        // swap L
+        l = swap8(l);
+        setC(0);
+        setH(0);
+        setZ(0);
+        setN(0);
+        PC++;
+        break;
+    case 0x36:
+        // swap (hl)
+    {
+        auto hl = combineRegisters(h, l);
+        ram->write8(hl, swap8(ram->read(hl)));
+        setC(0);
+        setH(0);
+        setZ(0);
+        setN(0);
+        PC++;
+    }
+        break;
     case 0x37:
         // swap A
         a = swap8(a);
+        setC(0);
+        setH(0);
+        setZ(0);
+        setN(0);
         PC++;
         break;
     default:
