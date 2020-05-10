@@ -2040,7 +2040,7 @@ void CPU::bitExtensions(uint8_t opcode)
         setN(0);
         PC++;
         break;
-        // BIT
+// BIT
     case 0x40:
         // bit 0, b
         testBitInstruction(0, b);
@@ -2361,6 +2361,329 @@ void CPU::bitExtensions(uint8_t opcode)
         testBitInstruction(7, a);
         PC++;
         break;
+
+// RESET BITS
+    case 0x80:
+        // reset 0, b
+        modifyBit(b, 0, 0);
+        PC++;
+        break;
+    case 0x81:
+        // reset 0, c
+        modifyBit(c, 0, 0);
+        PC++;
+        break;
+    case 0x82:
+        // reset 0, d
+        modifyBit(d, 0, 0);
+        PC++;
+        break;
+    case 0x83:
+        // reset 0, e
+        modifyBit(e, 0, 0);
+        PC++;
+        break;
+    case 0x84:
+        // reset 0, h
+        modifyBit(h, 0, 0);
+        PC++;
+        break;
+    case 0x85:
+        // reset 0, l
+        modifyBit(l, 0, 0);
+        PC++;
+        break;
+    case 0x86:
+        // reset 0, (hl)
+        modifyBit(ram->read(combineRegisters(h, l)), 0, 0);
+        PC++;
+        break;
+    case 0x87:
+        // reset 0, a
+        modifyBit(a, 0, 0);
+        PC++;
+        break;
+    case 0x88:
+        // reset 1, b
+        modifyBit(b, 1, 0);
+        PC++;
+        break;
+    case 0x89:
+        // reset 1, c
+        modifyBit(c, 1, 0);
+        PC++;
+        break;
+    case 0x8A:
+        // reset 1, d
+        modifyBit(d, 1, 0);
+        PC++;
+        break;
+    case 0x8B:
+        // reset 1, e
+        modifyBit(e, 1, 0);
+        PC++;
+        break;
+    case 0x8C:
+        // reset 1, h
+        modifyBit(h, 1, 0);
+        PC++;
+        break;
+    case 0x8D:
+        // reset 1, l
+        modifyBit(l, 1, 0);
+        PC++;
+        break;
+    case 0x8E:
+        // reset 1, (hl)
+        modifyBit(ram->read(combineRegisters(h, l)), 1, 0);
+        PC++;
+        break;
+    case 0x8F:
+        // reset 1, a
+        modifyBit(a, 1, 0);
+        PC++;
+        break;
+    case 0x90:
+        // reset 2, b
+        modifyBit(b, 2, 0);
+        PC++;
+        break;
+    case 0x91:
+        // reset 2, c
+        modifyBit(c, 2, 0);
+        PC++;
+        break;
+    case 0x92:
+        // reset 2, d
+        modifyBit(d, 2, 0);
+        PC++;
+        break;
+    case 0x93:
+        // reset 2, e
+        modifyBit(e, 2, 0);
+        PC++;
+        break;
+    case 0x94:
+        // reset 2, h
+        modifyBit(h, 2, 0);
+        PC++;
+        break;
+    case 0x95:
+        // reset 2, l
+        modifyBit(l, 2, 0);
+        PC++;
+        break;
+    case 0x96:
+        // reset 2, (hl)
+        modifyBit(ram->read(combineRegisters(h, l)), 2, 0);
+        PC++;
+        break;
+    case 0x97:
+        // reset 2, a
+        modifyBit(a, 2, 0);
+        PC++;
+        break;
+    case 0x98:
+        // reset 3, b
+        modifyBit(b, 3, 0);
+        PC++;
+        break;
+    case 0x99:
+        // reset 3, c
+        modifyBit(c, 3, 0);
+        PC++;
+        break;
+    case 0x9A:
+        // reset 3, d
+        modifyBit(d, 3, 0);
+        PC++;
+        break;
+    case 0x9B:
+        // reset 3, e
+        modifyBit(e, 3, 0);
+        PC++;
+        break;
+    case 0x9C:
+        // reset 3, h
+        modifyBit(h, 3, 0);
+        PC++;
+        break;
+    case 0x9D:
+        // reset 3, l
+        modifyBit(l, 3, 0);
+        PC++;
+        break;
+    case 0x9E:
+        // reset 3, (hl)
+        modifyBit(ram->read(combineRegisters(h, l)), 3, 0);
+        PC++;
+        break;
+    case 0x9F:
+        // reset 3, a
+        modifyBit(a, 3, 0);
+        PC++;
+        break;
+    case 0xA0:
+        // reset 4, b
+        modifyBit(b, 4, 0);
+        PC++;
+        break;
+    case 0xA1:
+        // reset 4, c
+        modifyBit(c, 4, 0);
+        PC++;
+        break;
+    case 0xA2:
+        // reset 4, d
+        modifyBit(d, 4, 0);
+        PC++;
+        break;
+    case 0xA3:
+        // reset 4, e
+        modifyBit(e, 4, 0);
+        PC++;
+        break;
+    case 0xA4:
+        // reset 4, h
+        modifyBit(h, 4, 0);
+        PC++;
+        break;
+    case 0xA5:
+        // reset 4, l
+        modifyBit(l, 4, 0);
+        PC++;
+        break;
+    case 0xA6:
+        // reset 4, (hl)
+        modifyBit(ram->read(combineRegisters(h, l)), 4, 0);
+        PC++;
+        break;
+    case 0xA7:
+        // reset 4, a
+        modifyBit(a, 4, 0);
+        PC++;
+        break;
+    case 0xA8:
+        // reset 5, b
+        modifyBit(b, 5, 0);
+        PC++;
+        break;
+    case 0xA9:
+        // reset 5, c
+        modifyBit(c, 5, 0);
+        PC++;
+        break;
+    case 0xAA:
+        // reset 5, d
+        modifyBit(d, 5, 0);
+        PC++;
+        break;
+    case 0xAB:
+        // reset 5, e
+        modifyBit(e, 5, 0);
+        PC++;
+        break;
+    case 0xAC:
+        // reset 5, h
+        modifyBit(h, 5, 0);
+        PC++;
+        break;
+    case 0xAD:
+        // reset 5, l
+        modifyBit(l, 5, 0);
+        PC++;
+        break;
+    case 0xAE:
+        // reset 5, (hl)
+        modifyBit(ram->read(combineRegisters(h, l)), 5, 0);
+        PC++;
+        break;
+    case 0xAF:
+        // reset 5, a
+        modifyBit(a, 5, 0);
+        PC++;
+        break;
+    case 0xB0:
+        // reset 6, b
+        modifyBit(b, 6, 0);
+        PC++;
+        break;
+    case 0xB1:
+        // reset 6, c
+        modifyBit(c, 6, 0);
+        PC++;
+        break;
+    case 0xB2:
+        // reset 6, d
+        modifyBit(d, 6, 0);
+        PC++;
+        break;
+    case 0xB3:
+        // reset 6, e
+        modifyBit(e, 6, 0);
+        PC++;
+        break;
+    case 0xB4:
+        // reset 6, h
+        modifyBit(h, 6, 0);
+        PC++;
+        break;
+    case 0xB5:
+        // reset 6, l
+        modifyBit(l, 6, 0);
+        PC++;
+        break;
+    case 0xB6:
+        // reset 6, (hl)
+        modifyBit(ram->read(combineRegisters(h, l)), 6, 0);
+        PC++;
+        break;
+    case 0xB7:
+        // reset 6, a
+        modifyBit(a, 6, 0);
+        PC++;
+        break;
+    case 0xB8:
+        // reset 7, b
+        modifyBit(b, 7, 0);
+        PC++;
+        break;
+    case 0xB9:
+        // reset 7, c
+        modifyBit(c, 7, 0);
+        PC++;
+        break;
+    case 0xBA:
+        // reset 7, d
+        modifyBit(d, 7, 0);
+        PC++;
+        break;
+    case 0xBB:
+        // reset 7, e
+        modifyBit(e, 7, 0);
+        PC++;
+        break;
+    case 0xBC:
+        // reset 7, h
+        modifyBit(h, 7, 0);
+        PC++;
+        break;
+    case 0xBD:
+        // reset 7, l
+        modifyBit(l, 7, 0);
+        PC++;
+        break;
+    case 0xBE:
+        // reset 7, (hl)
+        modifyBit(ram->read(combineRegisters(h, l)), 7, 0);
+        PC++;
+        break;
+    case 0xBF:
+        // reset 7, a
+        modifyBit(a, 7, 0);
+        PC++;
+        break;
+
     default:
         printf("Not implemented CB %x - PC %x (extension)\n", opcode, PC);
         break;
