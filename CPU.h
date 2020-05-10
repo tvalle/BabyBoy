@@ -78,4 +78,5 @@ private:
     void bitExtensions(uint8_t opcode);
 
     uint8_t swap8(uint8_t reg);
+    void testBitInstruction(uint8_t pos, uint8_t reg);
 };

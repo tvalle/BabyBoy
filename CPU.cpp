@@ -1964,15 +1964,7 @@ void CPU::bitExtensions(uint8_t opcode)
         PC++;
     }
     break;
-    case 0x7C:
-        // bit 7, h
-        setN(false);
-        setH(true);
-        setZ(!((h & 0x80) == 0x80));
-        PC++;
-        break;
-
-// SWAP
+        // SWAP
     case 0x30:
         // swap B
         b = swap8(b);
@@ -2038,7 +2030,7 @@ void CPU::bitExtensions(uint8_t opcode)
         setN(0);
         PC++;
     }
-        break;
+    break;
     case 0x37:
         // swap A
         a = swap8(a);
@@ -2048,12 +2040,333 @@ void CPU::bitExtensions(uint8_t opcode)
         setN(0);
         PC++;
         break;
+        // BIT
+    case 0x40:
+        // bit 0, b
+        testBitInstruction(0, b);
+        PC++;
+        break;
+    case 0x41:
+        // bit 0, c
+        testBitInstruction(0, c);
+        PC++;
+        break;
+    case 0x42:
+        // bit 0, d
+        testBitInstruction(0, d);
+        PC++;
+        break;
+    case 0x43:
+        // bit 0, e
+        testBitInstruction(0, e);
+        PC++;
+        break;
+    case 0x44:
+        // bit 0, h
+        testBitInstruction(0, h);
+        PC++;
+        break;
+    case 0x45:
+        // bit 0, l
+        testBitInstruction(0, l);
+        PC++;
+        break;
+    case 0x46:
+        // bit 0, (hl)
+        testBitInstruction(0, ram->read(combineRegisters(h, l)));
+        PC++;
+        break;
+    case 0x47:
+        // bit 0, a
+        testBitInstruction(0, a);
+        PC++;
+        break;
+    case 0x48:
+        // bit 1, b
+        testBitInstruction(1, b);
+        PC++;
+        break;
+    case 0x49:
+        // bit 1, c
+        testBitInstruction(1, c);
+        PC++;
+        break;
+    case 0x4A:
+        // bit 1, d
+        testBitInstruction(1, d);
+        PC++;
+        break;
+    case 0x4B:
+        // bit 1, e
+        testBitInstruction(1, e);
+        PC++;
+        break;
+    case 0x4C:
+        // bit 1, h
+        testBitInstruction(1, h);
+        PC++;
+        break;
+    case 0x4D:
+        // bit 1, l
+        testBitInstruction(1, l);
+        PC++;
+        break;
+    case 0x4E:
+        // bit 1, (hl)
+        testBitInstruction(1, ram->read(combineRegisters(h, l)));
+        PC++;
+        break;
+    case 0x4F:
+        // bit 1, a
+        testBitInstruction(1, a);
+        PC++;
+        break;
+    case 0x50:
+        // bit 2, b
+        testBitInstruction(2, b);
+        PC++;
+        break;
+    case 0x51:
+        // bit 2, c
+        testBitInstruction(2, c);
+        PC++;
+        break;
+    case 0x52:
+        // bit 2, d
+        testBitInstruction(2, d);
+        PC++;
+        break;
+    case 0x53:
+        // bit 2, e
+        testBitInstruction(2, e);
+        PC++;
+        break;
+    case 0x54:
+        // bit 2, h
+        testBitInstruction(2, h);
+        PC++;
+        break;
+    case 0x55:
+        // bit 2, l
+        testBitInstruction(2, l);
+        PC++;
+        break;
+    case 0x56:
+        // bit 2, (hl)
+        testBitInstruction(2, ram->read(combineRegisters(h, l)));
+        PC++;
+        break;
+    case 0x57:
+        // bit 2, a
+        testBitInstruction(2, a);
+        PC++;
+        break;
+    case 0x58:
+        // bit 3, b
+        testBitInstruction(3, b);
+        PC++;
+        break;
+    case 0x59:
+        // bit 3, c
+        testBitInstruction(3, c);
+        PC++;
+        break;
+    case 0x5A:
+        // bit 3, d
+        testBitInstruction(3, d);
+        PC++;
+        break;
+    case 0x5B:
+        // bit 3, e
+        testBitInstruction(3, e);
+        PC++;
+        break;
+    case 0x5C:
+        // bit 3, h
+        testBitInstruction(3, h);
+        PC++;
+        break;
+    case 0x5D:
+        // bit 3, l
+        testBitInstruction(3, l);
+        PC++;
+        break;
+    case 0x5E:
+        // bit 3, (hl)
+        testBitInstruction(3, ram->read(combineRegisters(h, l)));
+        PC++;
+        break;
+    case 0x5F:
+        // bit 3, a
+        testBitInstruction(3, a);
+        PC++;
+        break;
+    case 0x60:
+        // bit 4, b
+        testBitInstruction(4, b);
+        PC++;
+        break;
+    case 0x61:
+        // bit 4, c
+        testBitInstruction(4, c);
+        PC++;
+        break;
+    case 0x62:
+        // bit 4, d
+        testBitInstruction(4, d);
+        PC++;
+        break;
+    case 0x63:
+        // bit 4, e
+        testBitInstruction(4, e);
+        PC++;
+        break;
+    case 0x64:
+        // bit 4, h
+        testBitInstruction(4, h);
+        PC++;
+        break;
+    case 0x65:
+        // bit 4, l
+        testBitInstruction(4, l);
+        PC++;
+        break;
+    case 0x66:
+        // bit 4, (hl)
+        testBitInstruction(4, ram->read(combineRegisters(h, l)));
+        PC++;
+        break;
+    case 0x67:
+        // bit 4, a
+        testBitInstruction(4, a);
+        PC++;
+        break;
+    case 0x68:
+        // bit 5, b
+        testBitInstruction(5, b);
+        PC++;
+        break;
+    case 0x69:
+        // bit 5, c
+        testBitInstruction(5, c);
+        PC++;
+        break;
+    case 0x6A:
+        // bit 5, d
+        testBitInstruction(5, d);
+        PC++;
+        break;
+    case 0x6B:
+        // bit 5, e
+        testBitInstruction(5, e);
+        PC++;
+        break;
+    case 0x6C:
+        // bit 5, h
+        testBitInstruction(5, h);
+        PC++;
+        break;
+    case 0x6D:
+        // bit 5, l
+        testBitInstruction(5, l);
+        PC++;
+        break;
+    case 0x6E:
+        // bit 5, (hl)
+        testBitInstruction(5, ram->read(combineRegisters(h, l)));
+        PC++;
+        break;
+    case 0x6F:
+        // bit 5, a
+        testBitInstruction(5, a);
+        PC++;
+        break;
+    case 0x70:
+        // bit 6, b
+        testBitInstruction(6, b);
+        PC++;
+        break;
+    case 0x71:
+        // bit 6, c
+        testBitInstruction(6, c);
+        PC++;
+        break;
+    case 0x72:
+        // bit 6, d
+        testBitInstruction(6, d);
+        PC++;
+        break;
+    case 0x73:
+        // bit 6, e
+        testBitInstruction(6, e);
+        PC++;
+        break;
+    case 0x74:
+        // bit 6, h
+        testBitInstruction(6, h);
+        PC++;
+        break;
+    case 0x75:
+        // bit 6, l
+        testBitInstruction(6, l);
+        PC++;
+        break;
+    case 0x76:
+        // bit 6, (hl)
+        testBitInstruction(6, ram->read(combineRegisters(h, l)));
+        PC++;
+        break;
+    case 0x77:
+        // bit 6, a
+        testBitInstruction(6, a);
+        PC++;
+        break;
+    case 0x78:
+        // bit 7, b
+        testBitInstruction(7, b);
+        PC++;
+        break;
+    case 0x79:
+        // bit 7, c
+        testBitInstruction(7, c);
+        PC++;
+        break;
+    case 0x7A:
+        // bit 7, d
+        testBitInstruction(7, d);
+        PC++;
+        break;
+    case 0x7B:
+        // bit 7, e
+        testBitInstruction(7, e);
+        PC++;
+        break;
+    case 0x7C:
+        // bit 7, h
+        testBitInstruction(7, h);
+        PC++;
+        break;
+    case 0x7D:
+        // bit 7, l
+        testBitInstruction(7, l);
+        PC++;
+        break;
+    case 0x7E:
+        // bit 7, (hl)
+        testBitInstruction(7, ram->read(combineRegisters(h, l)));
+        PC++;
+        break;
+    case 0x7F:
+        // bit 7, a
+        testBitInstruction(7, a);
+        PC++;
+        break;
     default:
         printf("Not implemented CB %x - PC %x (extension)\n", opcode, PC);
         break;
     }
 
-  
+
 }
 
 uint8_t CPU::swap8(uint8_t reg)
@@ -2063,4 +2376,11 @@ uint8_t CPU::swap8(uint8_t reg)
     reg = reg | (tmp >> 4);
 
     return reg;
+}
+
+void CPU::testBitInstruction(uint8_t pos, uint8_t reg)
+{
+    setN(false);
+    setH(true);
+    setZ(((1 << pos) & reg) != (1 << pos));
 }
