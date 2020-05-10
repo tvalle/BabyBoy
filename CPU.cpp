@@ -1951,6 +1951,19 @@ void CPU::bitExtensions(uint8_t opcode)
 {
     switch (opcode)
     {
+    case 0x10:
+        // rl b
+    {
+        auto original_b = b;
+        b = b << 1;
+        b = b | (getC() ? 1 : 0);
+        setC(original_b >> 7);
+        setZ(b == 0);
+        setH(0);
+        setN(0);
+        PC++;
+    }
+    break;
     case 0x11:
         // rl c
     {
@@ -1964,7 +1977,87 @@ void CPU::bitExtensions(uint8_t opcode)
         PC++;
     }
     break;
-        // SWAP
+    case 0x12:
+        // rl d
+    {
+        auto original_d = d;
+        d = d << 1;
+        d = d | (getC() ? 1 : 0);
+        setC(original_d >> 7);
+        setZ(d == 0);
+        setH(0);
+        setN(0);
+        PC++;
+    }
+    break;
+    case 0x13:
+        // rl e
+    {
+        auto original_e = e;
+        e = e << 1;
+        e = e | (getC() ? 1 : 0);
+        setC(original_e >> 7);
+        setZ(e == 0);
+        setH(0);
+        setN(0);
+        PC++;
+    }
+    break;
+    case 0x14:
+        // rl h
+    {
+        auto original_h = h;
+        h = h << 1;
+        h = h | (getC() ? 1 : 0);
+        setC(original_h >> 7);
+        setZ(h == 0);
+        setH(0);
+        setN(0);
+        PC++;
+    }
+    break;
+    case 0x15:
+        // rl l
+    {
+        auto original_l = l;
+        l = l << 1;
+        l = l | (getC() ? 1 : 0);
+        setC(original_l >> 7);
+        setZ(l == 0);
+        setH(0);
+        setN(0);
+        PC++;
+    }
+    break;
+    case 0x16:
+        // rl (hl)
+    {
+        auto original_hl = ram->read(combineRegisters(h, l));
+        auto temp_hl = ram->read(combineRegisters(h, l));
+        temp_hl = temp_hl << 1;
+        temp_hl = temp_hl | (getC() ? 1 : 0);
+        ram->write8(combineRegisters(h, l), temp_hl);
+        setC(original_hl >> 7);
+        setZ(temp_hl == 0);
+        setH(0);
+        setN(0);
+        PC++;
+    }
+    break;
+    case 0x17:
+        // rl a
+    {
+        auto original_a = a;
+        a = a << 1;
+        a = a | (getC() ? 1 : 0);
+        setC(original_a >> 7);
+        setZ(a == 0);
+        setH(0);
+        setN(0);
+        PC++;
+    }
+    break;
+    // SWAP
     case 0x30:
         // swap B
         b = swap8(b);
@@ -2040,7 +2133,7 @@ void CPU::bitExtensions(uint8_t opcode)
         setN(0);
         PC++;
         break;
-// BIT
+        // BIT
     case 0x40:
         // bit 0, b
         testBitInstruction(0, b);
@@ -2362,7 +2455,7 @@ void CPU::bitExtensions(uint8_t opcode)
         PC++;
         break;
 
-// RESET BITS
+        // RESET BITS
     case 0x80:
         // reset 0, b
         modifyBit(b, 0, 0);
@@ -2684,7 +2777,7 @@ void CPU::bitExtensions(uint8_t opcode)
         PC++;
         break;
 
-// SET BITS
+        // SET BITS
     case 0xC0:
         // set 0, b
         modifyBit(b, 0, 1);
