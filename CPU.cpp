@@ -1951,6 +1951,219 @@ void CPU::bitExtensions(uint8_t opcode)
 {
     switch (opcode)
     {
+    case 0x00:
+        // rlc b
+    {
+        auto original_b = b;
+        b = b << 1;
+        b = b | (original_b >> 7);
+        setC(original_b >> 7);
+        setZ(b == 0);
+        setH(0);
+        setN(0);
+        PC++;
+    }
+    break;
+    case 0x01:
+        // rlc c
+    {
+        auto original_c = c;
+        c = c << 1;
+        c = c | (original_c >> 7);
+        setC(original_c >> 7);
+        setZ(c == 0);
+        setH(0);
+        setN(0);
+        PC++;
+    }
+    break;
+    case 0x02:
+        // rlc d
+    {
+        auto original_d = d;
+        d = d << 1;
+        d = d | (original_d >> 7);
+        setC(original_d >> 7);
+        setZ(d == 0);
+        setH(0);
+        setN(0);
+        PC++;
+    }
+    break;
+    case 0x03:
+        // rlc e
+    {
+        auto original_e = e;
+        e = e << 1;
+        e = e | (original_e >> 7);
+        setC(original_e >> 7);
+        setZ(e == 0);
+        setH(0);
+        setN(0);
+        PC++;
+    }
+    break;
+    case 0x04:
+        // rlc h
+    {
+        auto original_h = h;
+        h = h << 1;
+        h = h | (original_h >> 7);
+        setC(original_h >> 7);
+        setZ(h == 0);
+        setH(0);
+        setN(0);
+        PC++;
+    }
+    break;
+    case 0x05:
+        // rlc l
+    {
+        auto original_l = l;
+        l = l << 1;
+        l = l | (original_l >> 7);
+        setC(original_l >> 7);
+        setZ(l == 0);
+        setH(0);
+        setN(0);
+        PC++;
+    }
+    break;
+    case 0x06:
+        // rlc (hl)
+    {
+        auto original_hl = ram->read(combineRegisters(h, l));
+        auto hl = original_hl;
+        hl = hl << 1;
+        hl = hl | (original_hl >> 7);
+        setC(original_hl >> 7);
+        setZ(hl == 0);
+        setH(0);
+        setN(0);
+        ram->write8(combineRegisters(h, l), hl);
+        PC++;
+    }
+    break;
+    case 0x07:
+        // rlc a
+    {
+        auto original_a = a;
+        a = a << 1;
+        a = a | (original_a >> 7);
+        setC(original_a >> 7);
+        setZ(a == 0);
+        setH(0);
+        setN(0);
+        PC++;
+    }
+    break;
+    case 0x08:
+        // rrc b
+    {
+        auto original_b = b;
+        b = b >> 1;
+        b = b | (original_b & 0b00000001);
+        setC(original_b & 0b00000001);
+        setZ(b == 0);
+        setH(0);
+        setN(0);
+        PC++;
+    }
+    break;
+    case 0x09:
+        // rrc c
+    {
+        auto original_c = c;
+        c = c >> 1;
+        c = c | (original_c & 0b00000001);
+        setC(original_c & 0b00000001);
+        setZ(c == 0);
+        setH(0);
+        setN(0);
+        PC++;
+    }
+    break;
+    case 0x0A:
+        // rrc d
+    {
+        auto original_d = d;
+        d = d >> 1;
+        d = d | (original_d & 0b00000001);
+        setC(original_d & 0b00000001);
+        setZ(d == 0);
+        setH(0);
+        setN(0);
+        PC++;
+    }
+    break;
+    case 0x0B:
+        // rrc e
+    {
+        auto original_e = e;
+        e = e >> 1;
+        e = e | (original_e & 0b00000001);
+        setC(original_e & 0b00000001);
+        setZ(e == 0);
+        setH(0);
+        setN(0);
+        PC++;
+    }
+    break;
+    case 0x0C:
+        // rrc h
+    {
+        auto original_h = h;
+        h = h >> 1;
+        h = h | (original_h & 0b00000001);
+        setC(original_h & 0b00000001);
+        setZ(h == 0);
+        setH(0);
+        setN(0);
+        PC++;
+    }
+    break;
+    case 0x0D:
+        // rrc l
+    {
+        auto original_l = l;
+        l = l >> 1;
+        l = l | (original_l & 0b00000001);
+        setC(original_l & 0b00000001);
+        setZ(l == 0);
+        setH(0);
+        setN(0);
+        PC++;
+    }
+    break;
+    case 0x0E:
+        // rrc (hl)
+    {
+        auto original_hl = ram->read(combineRegisters(h, l));
+        auto hl = original_hl;
+        hl = hl >> 1;
+        hl = hl | (original_hl & 0b00000001);
+        setC(original_hl & 0b00000001);
+        setZ(hl == 0);
+        setH(0);
+        setN(0);
+        ram->write8(combineRegisters(h, l), hl);
+        PC++;
+    }
+    break;
+    case 0x0F:
+        // rrc a
+    {
+        auto original_a = a;
+        a = a >> 1;
+        a = a | (original_a & 0b00000001);
+        setC(original_a & 0b00000001);
+        setZ(a == 0);
+        setH(0);
+        setN(0);
+        PC++;
+    }
+    break;
+
     case 0x10:
         // rl b
     {
@@ -2057,6 +2270,415 @@ void CPU::bitExtensions(uint8_t opcode)
         PC++;
     }
     break;
+    case 0x18:
+        // rr b
+    {
+        auto original_b = b;
+        b = b >> 1;
+        b = modifyBit(b, 7, getC());
+        setC(original_b & 0b00000001);
+        setZ(b == 0);
+        setH(0);
+        setN(0);
+        PC++;
+    }
+    break;
+    case 0x19:
+        // rr c
+    {
+        auto original_c = c;
+        c = c >> 1;
+        c = modifyBit(c, 7, getC());
+        setC(original_c & 0b00000001);
+        setZ(c == 0);
+        setH(0);
+        setN(0);
+        PC++;
+    }
+    break;
+    case 0x1A:
+        // rr d
+    {
+        auto original_d = d;
+        d = d >> 1;
+        d = modifyBit(d, 7, getC());
+        setC(original_d & 0b00000001);
+        setZ(d == 0);
+        setH(0);
+        setN(0);
+        PC++;
+    }
+    break;
+    case 0x1B:
+        // rr e
+    {
+        auto original_e = e;
+        e = e >> 1;
+        e = modifyBit(e, 7, getC());
+        setC(original_e & 0b00000001);
+        setZ(e == 0);
+        setH(0);
+        setN(0);
+        PC++;
+    }
+    break;
+    case 0x1C:
+        // rr h
+    {
+        auto original_h = h;
+        h = h >> 1;
+        h = modifyBit(h, 7, getC());
+        setC(original_h & 0b00000001);
+        setZ(h == 0);
+        setH(0);
+        setN(0);
+        PC++;
+    }
+    break;
+    case 0x1D:
+        // rr l
+    {
+        auto original_l = l;
+        l = l >> 1;
+        l = modifyBit(l, 7, getC());
+        setC(original_l & 0b00000001);
+        setZ(l == 0);
+        setH(0);
+        setN(0);
+        PC++;
+    }
+    break;
+    case 0x1E:
+        // rr (hl)
+    {
+        auto original_hl = ram->read(combineRegisters(h, l));
+        auto hl = original_hl;
+        hl = hl >> 1;
+        hl = modifyBit(hl, 7, getC());
+        setC(original_hl & 0b00000001);
+        setZ(l == 0);
+        setH(0);
+        setN(0);
+        ram->write8(combineRegisters(h, l), hl);
+        PC++;
+    }
+    break;
+    case 0x1F:
+        // rr a
+    {
+        auto original_a = a;
+        a = a >> 1;
+        a = modifyBit(a, 7, getC());
+        setC(original_a & 0b00000001);
+        setZ(a == 0);
+        setH(0);
+        setN(0);
+        PC++;
+    }
+    break;
+    case 0x20:
+        // sla b
+    {
+        auto original_b = b;
+        b = b << 1;
+        setC(original_b >> 7);
+        setZ(b == 0);
+        setH(0);
+        setN(0);
+        PC++;
+    }
+    break;
+    case 0x21:
+        // sla c
+    {
+        auto original_c = c;
+        c = c << 1;
+        setC(original_c >> 7);
+        setZ(c == 0);
+        setH(0);
+        setN(0);
+        PC++;
+    }
+    break;
+    case 0x22:
+        // sla d
+    {
+        auto original_d = d;
+        d = d << 1;
+        setC(original_d >> 7);
+        setZ(d == 0);
+        setH(0);
+        setN(0);
+        PC++;
+    }
+    break;
+    case 0x23:
+        // sla e
+    {
+        auto original_e = e;
+        e = e << 1;
+        setC(original_e >> 7);
+        setZ(e == 0);
+        setH(0);
+        setN(0);
+        PC++;
+    }
+    break;
+    case 0x24:
+        // sla h
+    {
+        auto original_h = h;
+        h = h << 1;
+        setC(original_h >> 7);
+        setZ(h == 0);
+        setH(0);
+        setN(0);
+        PC++;
+    }
+    break;
+    case 0x25:
+        // sla l
+    {
+        auto original_l = l;
+        l = l << 1;
+        setC(original_l >> 7);
+        setZ(l == 0);
+        setH(0);
+        setN(0);
+        PC++;
+    }
+    break;
+    case 0x26:
+        // sla (hl)
+    {
+        auto original_hl = ram->read(combineRegisters(h, l));
+        auto temp_hl = ram->read(combineRegisters(h, l));
+        temp_hl = temp_hl << 1;
+        ram->write8(combineRegisters(h, l), temp_hl);
+        setC(original_hl >> 7);
+        setZ(temp_hl == 0);
+        setH(0);
+        setN(0);
+        PC++;
+    }
+    break;
+    case 0x27:
+        // sla a
+    {
+        auto original_a = a;
+        a = a << 1;
+        setC(original_a >> 7);
+        setZ(a == 0);
+        setH(0);
+        setN(0);
+        PC++;
+    }
+    break;
+    case 0x28:
+        // sra b
+    {
+        auto original_b = b;
+        b = b >> 1;
+        b = modifyBit(b, 8, original_b >> 7);
+        setC(original_b & 0b00000001);
+        setZ(b == 0);
+        setH(0);
+        setN(0);
+        PC++;
+    }
+    break;
+    case 0x29:
+        // sra c
+    {
+        auto original_c = c;
+        c = c >> 1;
+        c = modifyBit(c, 8, original_c >> 7);
+        setC(original_c & 0b00000001);
+        setZ(c == 0);
+        setH(0);
+        setN(0);
+        PC++;
+    }
+    break;
+    case 0x2A:
+        // sra d
+    {
+        auto original_d = d;
+        d = d >> 1;
+        d = modifyBit(d, 8, original_d >> 7);
+        setC(original_d & 0b00000001);
+        setZ(d == 0);
+        setH(0);
+        setN(0);
+        PC++;
+    }
+    break;
+    case 0x2B:
+        // sra e
+    {
+        auto original_e = e;
+        e = e >> 1;
+        e = modifyBit(e, 8, original_e >> 7);
+        setC(original_e & 0b00000001);
+        setZ(e == 0);
+        setH(0);
+        setN(0);
+        PC++;
+    }
+    break;
+    case 0x2C:
+        // sra h
+    {
+        auto original_h = h;
+        h = h >> 1;
+        h = modifyBit(h, 8, original_h >> 7);
+        setC(original_h & 0b00000001);
+        setZ(h == 0);
+        setH(0);
+        setN(0);
+        PC++;
+    }
+    break;
+    case 0x2D:
+        // sra l
+    {
+        auto original_l = l;
+        l = l >> 1;
+        l = modifyBit(l, 8, original_l >> 7);
+        setC(original_l & 0b00000001);
+        setZ(l == 0);
+        setH(0);
+        setN(0);
+        PC++;
+    }
+    break;
+    case 0x2E:
+        // sra (hl)
+    {
+        auto original_hl = ram->read(combineRegisters(h, l));
+        auto hl = original_hl;
+        hl = hl >> 1;
+        hl = modifyBit(hl, 8, original_hl >> 7);
+        setC(original_hl & 0b00000001);
+        setZ(l == 0);
+        setH(0);
+        setN(0);
+        ram->write8(combineRegisters(h, l), hl);
+        PC++;
+    }
+    break;
+    case 0x2F:
+        // sra a
+    {
+        auto original_a = a;
+        a = a >> 1;
+        a = modifyBit(a, 8, original_a >> 7);
+        setC(original_a & 0b00000001);
+        setZ(a == 0);
+        setH(0);
+        setN(0);
+        PC++;
+    }
+    break;
+    case 0x38:
+        // srl b
+    {
+        auto original_b = b;
+        b = b >> 1;
+        setC(original_b & 0b00000001);
+        setZ(b == 0);
+        setH(0);
+        setN(0);
+        PC++;
+    }
+    break;
+    case 0x39:
+        // srl c
+    {
+        auto original_c = c;
+        c = c >> 1;
+        setC(original_c & 0b00000001);
+        setZ(c == 0);
+        setH(0);
+        setN(0);
+        PC++;
+    }
+    break;
+    case 0x3A:
+        // srl d
+    {
+        auto original_d = d;
+        d = d >> 1;
+        setC(original_d & 0b00000001);
+        setZ(d == 0);
+        setH(0);
+        setN(0);
+        PC++;
+    }
+    break;
+    case 0x3B:
+        // srl e
+    {
+        auto original_e = e;
+        e = e >> 1;
+        setC(original_e & 0b00000001);
+        setZ(e == 0);
+        setH(0);
+        setN(0);
+        PC++;
+    }
+    break;
+    case 0x3C:
+        // srl h
+    {
+        auto original_h = h;
+        h = h >> 1;
+        setC(original_h & 0b00000001);
+        setZ(h == 0);
+        setH(0);
+        setN(0);
+        PC++;
+    }
+    break;
+    case 0x3D:
+        // srl l
+    {
+        auto original_l = l;
+        l = l >> 1;
+        setC(original_l & 0b00000001);
+        setZ(l == 0);
+        setH(0);
+        setN(0);
+        PC++;
+    }
+    break;
+    case 0x3E:
+        // srl (hl)
+    {
+        auto original_hl = ram->read(combineRegisters(h, l));
+        auto hl = original_hl;
+        hl = hl >> 1;
+        setC(original_hl & 0b00000001);
+        setZ(l == 0);
+        setH(0);
+        setN(0);
+        ram->write8(combineRegisters(h, l), hl);
+        PC++;
+    }
+    break;
+    case 0x3F:
+        // srl a
+    {
+        auto original_a = a;
+        a = a >> 1;
+        setC(original_a & 0b00000001);
+        setZ(a == 0);
+        setH(0);
+        setN(0);
+        PC++;
+    }
+    break;
+
     // SWAP
     case 0x30:
         // swap B
