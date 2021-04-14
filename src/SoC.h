@@ -2,6 +2,7 @@
 #include "Rom.h"
 #include "RAM.h"
 #include "CPU.h"
+#include <algorithm>
 
 class SoC
 {

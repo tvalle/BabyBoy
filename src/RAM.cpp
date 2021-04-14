@@ -1,6 +1,7 @@
 #include "RAM.h"
 #include <fstream>
 #include <iterator>
+#include <cstring>
 
 RAM::RAM()
 {
