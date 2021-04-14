@@ -41,3 +41,5 @@ sites
 *.tlog
 *.idb
 *.pdb
+
+[Bb]uild/
