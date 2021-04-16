@@ -18,8 +18,6 @@ public:
 
 private:
 
-    bool hasBoot = true;
-
     int modeclock;
     int graphicsMode;
 

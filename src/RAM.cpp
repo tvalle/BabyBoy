@@ -6,7 +6,7 @@
 RAM::RAM()
 {
     //TODO: fill with random numbers in the same manner as gameboy does
-    ram.fill(0);
+    ram = std::vector<uint8_t>(0x10000);
 
     // TODO: remove, for testing only
     /*std::ifstream dumpFile("vram.dump", std::ios_base::binary);
@@ -37,9 +37,9 @@ uint8_t RAM::read(uint16_t address)
     return ram[address];
 }
 
-void* RAM::memcpy(const void* src, std::size_t count)
+void RAM::copy(std::vector<uint8_t> src, std::size_t count)
 {
-    return std::memcpy(&ram, src, count);
+    std::copy(src.begin(), src.begin() + count, ram.begin());
 }
 
 uint8_t** RAM::getVRAM_Tiles()

@@ -1,21 +1,23 @@
 #include "SoC.h"
+#include "Config.h"
 
 SoC::SoC(Rom rom)
 {
     ram = RAM();
     cpu = CPU(ram);
 
-    if (hasBoot)
+    if (Config::GetInstance()->HasBoot())
     {
-        Rom bootRom = Rom("dmg0_rom.bin");
+        Rom bootRom = Rom(Config::GetInstance()->GetBootFileName());
 
         auto romSize = std::clamp(static_cast<int>(rom.romBuffer.size()), 0, 0x7FFF);
         auto bootRomSize = std::clamp(static_cast<int>(bootRom.romBuffer.size()), 0, 0x7FFF);
-        ram.memcpy(&rom.romBuffer[0], romSize);
-        ram.memcpy(&bootRom.romBuffer[0], bootRomSize);
+        ram.copy(rom.romBuffer, romSize);
+        ram.copy(bootRom.romBuffer, bootRomSize);
     }
 
     modeclock = 0;
+    graphicsMode = 2;
 
     isRunning = true;
 }

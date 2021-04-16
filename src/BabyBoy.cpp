@@ -7,7 +7,7 @@
 
 int main(int argc, char* argv[])
 {
-    Rom rom = Rom("tetris.gb");
+    Rom rom = Rom("cpu_instrs.gb");
 
     SoC soc = SoC(rom);
 
@@ -50,10 +50,10 @@ int main(int argc, char* argv[])
         }
         soc.cpu.cycles = 0;
 
-        //auto vramMatrix = soc.ram.getVRAM_Tiles();
+        /*auto vramMatrix = soc.ram.getVRAM_Tiles();
 
-        //vramWindow.handleEvent(e);
-        //vramWindow.render(vramMatrix, 128, 192);
+        vramWindow.handleEvent(e);
+        vramWindow.render(vramMatrix, 128, 192);*/
 
         window.handleEvent(e);
         auto scy = soc.ram.getSCY();
@@ -71,12 +71,12 @@ int main(int argc, char* argv[])
             //wait
         }
 
-        frames++;
+        /*frames++;
         if (frames >= 60)
         {
             frames = 0;
             printf("%d\n", ++seconds);
-        }
+        }*/
 
         exit = !soc.isRunning;
     }

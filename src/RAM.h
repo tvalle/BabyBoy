@@ -1,6 +1,6 @@
 #pragma once
 #include <stdint.h>
-#include <array>
+#include <vector>
 class RAM
 {
 public: 
@@ -9,7 +9,7 @@ public:
     void write8(uint16_t address, uint8_t value);
     uint8_t read(uint16_t address);
 
-    void* memcpy(const void* src, std::size_t count);
+    void copy(std::vector<uint8_t> origin, std::size_t count);
 
     uint8_t** getVRAM_Tiles();
 
@@ -27,6 +27,6 @@ private:
 
     uint8_t getPaletteColor(uint8_t index);
 
-    std::array<uint8_t, 0x10000> ram;
+    std::vector<uint8_t> ram;
 };
 

@@ -11,7 +11,8 @@ set(SOURCES
 	src/RAM.cpp
 	src/Rom.cpp
 	src/SDLWindow.cpp
-	src/SoC.cpp)
+	src/SoC.cpp
+	src/Config.cpp)
 
 find_package(SDL2 REQUIRED)
 include_directories(${SDL2_INCLUDE_DIRS})
