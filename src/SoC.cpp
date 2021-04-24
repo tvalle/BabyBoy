@@ -15,6 +15,9 @@ SoC::SoC(Rom rom)
         ram.copy(rom.romBuffer, romSize);
         ram.copy(bootRom.romBuffer, bootRomSize);
     }
+    else {
+        setInitialValuesWhenNoBoot();
+    }
 
     modeclock = 0;
     graphicsMode = 2;
@@ -107,4 +110,52 @@ void SoC::increaseScanline()
 {
     auto scanline = currentScanline();
     ram.writeToFF44(++scanline);
+}
+
+void SoC::setInitialValuesWhenNoBoot()
+{
+    cpu.PC = 0x100;
+
+    cpu.a = 0x01;
+    cpu.f = 0xB0;
+    cpu.b = 0x00;
+    cpu.c = 0x13;
+    cpu.d = 0x00;
+    cpu.e = 0xD8;
+    cpu.h = 0x01;
+    cpu.l = 0x4D;
+    
+    cpu.SP = 0xFFFE;
+
+    ram.write8(0xFF05, 0x00);
+    ram.write8(0xFF06, 0x00);
+    ram.write8(0xFF07, 0x00);
+    ram.write8(0xFF10, 0x80);
+    ram.write8(0xFF11, 0xBF);
+    ram.write8(0xFF12, 0xF3);
+    ram.write8(0xFF14, 0xBF);
+    ram.write8(0xFF16, 0x3F);
+    ram.write8(0xFF17, 0x00);
+    ram.write8(0xFF19, 0xBF);
+    ram.write8(0xFF1A, 0x7F);
+    ram.write8(0xFF1B, 0xFF);
+    ram.write8(0xFF1C, 0x9F);
+    ram.write8(0xFF1E, 0xBF);
+    ram.write8(0xFF20, 0xFF);
+    ram.write8(0xFF21, 0x00);
+    ram.write8(0xFF22, 0x00);
+    ram.write8(0xFF23, 0xBF);
+    ram.write8(0xFF24, 0x77);
+    ram.write8(0xFF25, 0xF3);
+    ram.write8(0xFF26, 0xF1);
+    ram.write8(0xFF40, 0x91);
+    ram.write8(0xFF42, 0x00);
+    ram.write8(0xFF43, 0x00);
+    ram.write8(0xFF45, 0x00);
+    ram.write8(0xFF47, 0xFC);
+    ram.write8(0xFF48, 0xFF);
+    ram.write8(0xFF49, 0xFF);
+    ram.write8(0xFF4A, 0x00);
+    ram.write8(0xFF4B, 0x00);
+    ram.write8(0xFFFF, 0x00);
 }

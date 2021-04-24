@@ -25,5 +25,7 @@ private:
     void increaseScanline();
 
     void gpuStep();
+
+    void setInitialValuesWhenNoBoot();
 };
 

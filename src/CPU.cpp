@@ -43,8 +43,8 @@ void CPU::ExecuteInstruction(uint8_t instruction)
     //if (showDebug || PC == 0x8F)
     {
         // 0000: 31 A:00 B:00 C:00 D:00 E:00 F:00 H:00 L:00 LY:00 SP:00  Cy:8
-        printf("%04x: %02x A:%02x B:%02x C:%02x D:%02x E:%02x F:%02x H:%02x L:%02x LY:%02x SP:%04x FF44:%02x\n",
-            PC, instruction, a, b, c, d, e, f, h, l, 0, SP, ram->read(0xff44));
+        //printf("%04x: %02x A:%02x B:%02x C:%02x D:%02x E:%02x F:%02x H:%02x L:%02x LY:%02x SP:%04x FF44:%02x\n",
+        //    PC, instruction, a, b, c, d, e, f, h, l, 0, SP, ram->read(0xff44));
         showDebug = true;
     }
 

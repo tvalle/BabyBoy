@@ -78,7 +78,7 @@ int main(int argc, char* argv[])
             printf("%d\n", ++seconds);
         }*/
 
-        exit = !soc.isRunning;
+        //exit = !soc.isRunning;
     }
     window.free();
     bgMap.free();
