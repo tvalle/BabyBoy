@@ -32,7 +32,7 @@ public:
     uint16_t SP;
 
     int cycles;
-    int lastInstructionCycle;
+    int lastClockCycle;
 
 	//uint8_t* RAM;
 private:

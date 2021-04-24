@@ -25,13 +25,13 @@ SoC::SoC(Rom rom)
 void SoC::step()
 {
     cpu.ExecuteInstruction(ram.read(cpu.PC));
-    cpu.cycles += cpu.lastInstructionCycle;
+    cpu.cycles += cpu.lastClockCycle;
     gpuStep();
 }
 
 void SoC::gpuStep()
 {
-    modeclock += cpu.lastInstructionCycle;
+    modeclock += cpu.lastClockCycle;
 
     switch (graphicsMode)
     {

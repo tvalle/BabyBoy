@@ -18,7 +18,7 @@ CPU::CPU(RAM& ram)
     a = b = c = d = e = f = h = l = 0;
 
     cycles = 0;
-    lastInstructionCycle = 0;
+    lastClockCycle = 0;
 
     //RAM = new uint8_t[0xFFFF];
     this->ram = &ram;
@@ -52,7 +52,7 @@ void CPU::ExecuteInstruction(uint8_t instruction)
     {
     case 0x00:
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
 
         // ARITHMETIC/LOGICAL OPERATIONS *****************************************
@@ -63,7 +63,7 @@ void CPU::ExecuteInstruction(uint8_t instruction)
             b++;
 
         PC++;
-        lastInstructionCycle = 8;
+        lastClockCycle = 8;
         break;
     case 0x13:
         // inc de
@@ -72,7 +72,7 @@ void CPU::ExecuteInstruction(uint8_t instruction)
             d++;
 
         PC++;
-        lastInstructionCycle = 8;
+        lastClockCycle = 8;
         break;
     case 0x0B:
         //dec bc
@@ -83,7 +83,7 @@ void CPU::ExecuteInstruction(uint8_t instruction)
 
         c--;
         PC++;
-        lastInstructionCycle = 8;
+        lastClockCycle = 8;
         break;
     case 0x1B:
         //dec de
@@ -94,7 +94,7 @@ void CPU::ExecuteInstruction(uint8_t instruction)
 
         e--;
         PC++;
-        lastInstructionCycle = 8;
+        lastClockCycle = 8;
         break;
     case 0x2B:
         //dec hl
@@ -105,41 +105,41 @@ void CPU::ExecuteInstruction(uint8_t instruction)
 
         l--;
         PC++;
-        lastInstructionCycle = 8;
+        lastClockCycle = 8;
         break;
     case 0x3B:
         //dec sp
         SP--;
         PC++;
-        lastInstructionCycle = 8;
+        lastClockCycle = 8;
         break;
     case 0x09:
         // add hl, bc
         addHL(combineRegisters(b, c));
 
         PC++;
-        lastInstructionCycle = 8;
+        lastClockCycle = 8;
         break;
     case 0x19:
         // add hl, de
         addHL(combineRegisters(d, e));
 
         PC++;
-        lastInstructionCycle = 8;
+        lastClockCycle = 8;
         break;
     case 0x29:
         // add hl, hl
         addHL(combineRegisters(h, l));
 
         PC++;
-        lastInstructionCycle = 8;
+        lastClockCycle = 8;
         break;
     case 0x39:
         // add hl, sp
         addHL(SP);
 
         PC++;
-        lastInstructionCycle = 8;
+        lastClockCycle = 8;
         break;
 
     case 0x23:
@@ -149,25 +149,25 @@ void CPU::ExecuteInstruction(uint8_t instruction)
             h++;
 
         PC++;
-        lastInstructionCycle = 8;
+        lastClockCycle = 8;
         break;
     case 0x33:
         // inc sp
         SP++;
         PC++;
-        lastInstructionCycle = 8;
+        lastClockCycle = 8;
         break;
     case 0x34:
         // inc (hl)
         increaseMemoryAddress(combineRegisters(h, l));
         PC++;
-        lastInstructionCycle = 12;
+        lastClockCycle = 12;
         break;
     case 0x35:
         // dec (hl)
         decreaseMemoryAddress(combineRegisters(h, l));
         PC++;
-        lastInstructionCycle = 12;
+        lastClockCycle = 12;
         break;
     case 0x37:
         // scf
@@ -175,7 +175,7 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         setH(false);
         setC(true);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x2F:
         // cpl
@@ -183,7 +183,7 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         setN(true);
         setH(true);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x3F:
         // ccf
@@ -191,127 +191,127 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         setH(false);
         setC(!c);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x04:
         //inc b
         increaseRegister(&b);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x05:
         //dec b
         decreaseRegister(&b);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x0C:
         //inc C
         increaseRegister(&c);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x0D:
         //dec C
         decreaseRegister(&c);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x14:
         //inc D
         increaseRegister(&d);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x15:
         //dec D
         decreaseRegister(&d);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x24:
         //inc H
         increaseRegister(&h);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x25:
         //dec H
         decreaseRegister(&h);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x1C:
         //inc E
         increaseRegister(&e);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x1D:
         //dec E
         decreaseRegister(&e);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x2C:
         //inc L
         increaseRegister(&l);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x2D:
         //dec L
         decreaseRegister(&l);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x3C:
         //inc A
         increaseRegister(&a);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x3D:
         //dec A
         decreaseRegister(&a);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x80:
         // add a,b
         add(b);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x81:
         // add a,c
         add(c);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x82:
         // add a,d
         add(d);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x83:
         // add a,e
         add(e);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x84:
         // add a,h
         add(h);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x85:
         // add a,l
         add(l);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x86:
         // add a,(hl)
@@ -319,398 +319,398 @@ void CPU::ExecuteInstruction(uint8_t instruction)
 
             add(ram->read(combineRegisters(h, l)));
         PC++;
-        lastInstructionCycle = 8;
+        lastClockCycle = 8;
         break;
     case 0x87:
         // add a,a
         add(a);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x88:
         // adc a,b
         adc(b);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x89:
         // adc a,c
         adc(c);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x8A:
         // adc a,d
         adc(d);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x8B:
         // adc a,e
         adc(e);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x8C:
         // adc a,h
         adc(h);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x8D:
         // adc a,l
         adc(l);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x8E:
         // adc a,(hl)
         adc(ram->read(combineRegisters(h, l)));
         PC++;
-        lastInstructionCycle = 8;
+        lastClockCycle = 8;
         break;
     case 0x8F:
         // adc a,a
         adc(a);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x90:
         // sub a,b
         sub(b);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x91:
         // sub a,c
         sub(c);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x92:
         // sub a,d
         sub(d);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x93:
         // sub a,e
         sub(e);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x94:
         // sub a,h
         sub(h);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x95:
         // sub a,l
         sub(l);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x96:
         // sub a,(hl)
         sub(ram->read(combineRegisters(h, l)));
         PC++;
-        lastInstructionCycle = 8;
+        lastClockCycle = 8;
         break;
     case 0x97:
         // sub a,a
         sub(a);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x98:
         // sbc a,b
         sbc(b);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x99:
         // sbc a,c
         sbc(c);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x9A:
         // sbc a,d
         sbc(d);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x9B:
         // sbc a,e
         sbc(e);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x9C:
         // sbc a,h
         sbc(h);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x9D:
         // sbc a,l
         sbc(l);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x9E:
         // sbc a,(hl)
         sbc(ram->read(combineRegisters(h, l)));
         PC++;
-        lastInstructionCycle = 8;
+        lastClockCycle = 8;
         break;
     case 0x9F:
         // sbc a,a
         sbc(a);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0xA0:
         // and b
         reg_and(b);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0xA1:
         // and c
         reg_and(c);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0xA2:
         // and d
         reg_and(d);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0xA3:
         // and e
         reg_and(e);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0xA4:
         // and h
         reg_and(h);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0xA5:
         // and l
         reg_and(l);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0xA6:
         // and (hl)
         reg_and(ram->read(combineRegisters(h, l)));
         PC++;
-        lastInstructionCycle = 8;
+        lastClockCycle = 8;
         break;
     case 0xA7:
         // and a
         reg_and(a);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0xA8:
         // xor b
         reg_xor(b);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0xA9:
         // xor c
         reg_xor(c);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0xAA:
         // xor d
         reg_xor(d);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0xAB:
         // xor e
         reg_xor(e);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0xAC:
         // xor h
         reg_xor(h);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0xAD:
         // xor l
         reg_xor(l);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0xAE:
         // xor (hl)
         reg_xor(ram->read(combineRegisters(h, l)));
         PC++;
-        lastInstructionCycle = 8;
+        lastClockCycle = 8;
         break;
     case 0xAF:
         // xor a
         reg_xor(a);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0xB0:
         // orb
         reg_or(b);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0xB1:
         // orc
         reg_or(c);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0xB2:
         // ord
         reg_or(d);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0xB3:
         // ore
         reg_or(e);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0xB4:
         // orh
         reg_or(h);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0xB5:
         // orl
         reg_or(l);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0xB6:
         // or(hl)
         reg_or(ram->read(combineRegisters(h, l)));
         PC++;
-        lastInstructionCycle = 8;
+        lastClockCycle = 8;
         break;
     case 0xB7:
         // ora
         reg_or(a);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0xB8:
         // cp b
         reg_cp(b);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0xB9:
         // cp c
         reg_cp(c);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0xBA:
         // cp d
         reg_cp(d);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0xBB:
         // cp e
         reg_cp(e);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0xBC:
         // cp h
         reg_cp(h);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0xBD:
         // cp l
         reg_cp(l);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0xBE:
         // cp (hl)
         reg_cp(ram->read(combineRegisters(h, l)));
         PC++;
-        lastInstructionCycle = 8;
+        lastClockCycle = 8;
         break;
     case 0xBF:
         // cp a
         reg_cp(a);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0xC6:
         // add *
         add(ram->read(PC + 1));
         PC += 2;
-        lastInstructionCycle = 8;
+        lastClockCycle = 8;
         break;
     case 0xD6:
         // sub *
         sub(ram->read(PC + 1));
         PC += 2;
-        lastInstructionCycle = 8;
+        lastClockCycle = 8;
         break;
     case 0xE6:
         // and *
         reg_and(ram->read(PC + 1));
         PC += 2;
-        lastInstructionCycle = 8;
+        lastClockCycle = 8;
         break;
     case 0xF6:
         // or *
         reg_or(ram->read(PC + 1));
         PC += 2;
-        lastInstructionCycle = 8;
+        lastClockCycle = 8;
         break;
     case 0xCE:
         // adc *
         adc(ram->read(PC + 1));
         PC += 2;
-        lastInstructionCycle = 8;
+        lastClockCycle = 8;
         break;
     case 0xDE:
         // sbc *
         sbc(ram->read(PC + 1));
         PC += 2;
-        lastInstructionCycle = 8;
+        lastClockCycle = 8;
         break;
     case 0xEE:
         // xor *
         reg_xor(ram->read(PC + 1));
         PC += 2;
-        lastInstructionCycle = 8;
+        lastClockCycle = 8;
         break;
     case 0xFE:
         // cp *
 
         reg_cp(ram->read(PC + 1));
         PC += 2;
-        lastInstructionCycle = 8;
+        lastClockCycle = 8;
         break;
 
         // JUMP/CALL OPERATIONS *****************************************
@@ -720,14 +720,14 @@ void CPU::ExecuteInstruction(uint8_t instruction)
             PC += (int8_t)ram->read(PC + 1);
 
         PC += 2;
-        lastInstructionCycle = 12;
+        lastClockCycle = 12;
         break;
     case 0x30:
         // jr nc, *
         if (!isFlagSet(Flag::C))
             PC += (int8_t)ram->read(PC + 1);
         PC += 2;
-        lastInstructionCycle = 12;
+        lastClockCycle = 12;
         break;
 
 
@@ -735,7 +735,7 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         // jr *
         PC += (int8_t)ram->read(PC + 1);
         PC += 2;
-        lastInstructionCycle = 12;
+        lastClockCycle = 12;
         break;
     case 0x28:
         // jr z, *
@@ -743,7 +743,7 @@ void CPU::ExecuteInstruction(uint8_t instruction)
             PC += (int8_t)ram->read(PC + 1);
 
         PC += 2;
-        lastInstructionCycle = 12;
+        lastClockCycle = 12;
         break;
     case 0x38:
         // jr c, *
@@ -751,37 +751,37 @@ void CPU::ExecuteInstruction(uint8_t instruction)
             PC += (int8_t)ram->read(PC + 1);
 
         PC += 2;
-        lastInstructionCycle = 12;
+        lastClockCycle = 12;
         break;
     case 0xC2:
         // jp nz, **
         PC = !isFlagSet(Flag::Z) ? fetchNext2BytesInverted(PC) : PC += 3;
-        lastInstructionCycle = 16;
+        lastClockCycle = 16;
         break;
     case 0xD2:
         // jp nc, **
         PC = !isFlagSet(Flag::C) ? fetchNext2BytesInverted(PC) : PC += 3;
-        lastInstructionCycle = 16;
+        lastClockCycle = 16;
         break;
     case 0xC3:
         // jp **
         PC = fetchNext2BytesInverted(PC);
-        lastInstructionCycle = 16;
+        lastClockCycle = 16;
         break;
     case 0xCA:
         // jp z, **
         PC = isFlagSet(Flag::Z) ? fetchNext2BytesInverted(PC) : PC += 3;
-        lastInstructionCycle = 16;
+        lastClockCycle = 16;
         break;
     case 0xDA:
         // jp c, **
         PC = !isFlagSet(Flag::C) ? fetchNext2BytesInverted(PC) : PC += 3;
-        lastInstructionCycle = 16;
+        lastClockCycle = 16;
         break;
     case 0xE9:
         // jp (hl), **
         PC = receive2bytesFromRam(combineRegisters(h, l));
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0xC0:
         // ret nz
@@ -793,7 +793,7 @@ void CPU::ExecuteInstruction(uint8_t instruction)
             PC += 1;
 
         SP += 2;
-        lastInstructionCycle = 20;
+        lastClockCycle = 20;
         break;
     case 0xD0:
         // ret nc
@@ -805,7 +805,7 @@ void CPU::ExecuteInstruction(uint8_t instruction)
             PC += 1;
 
         SP += 2;
-        lastInstructionCycle = 20;
+        lastClockCycle = 20;
         break;
     case 0xC8:
         // ret z
@@ -817,7 +817,7 @@ void CPU::ExecuteInstruction(uint8_t instruction)
             PC += 1;
 
         SP += 2;
-        lastInstructionCycle = 20;
+        lastClockCycle = 20;
         break;
     case 0xD8:
         // ret c
@@ -829,76 +829,76 @@ void CPU::ExecuteInstruction(uint8_t instruction)
             PC += 1;
 
         SP += 2;
-        lastInstructionCycle = 20;
+        lastClockCycle = 20;
         break;
     case 0xC9:
         // ret
         PC = fetchAddressFromRam(SP);
         SP += 2;
-        lastInstructionCycle = 16;
+        lastClockCycle = 16;
         break;
     case 0xD9:
         // reti
         PC = fetchAddressFromRam(SP);
         SP += 2;
         //TODO ENABLE INTERRUPTS
-        lastInstructionCycle = 16;
+        lastClockCycle = 16;
         break;
     case 0xC7:
         // rst 00h
         SP += 2;
         add2bytesToRam(SP, PC + 1);
         PC = 0x00;
-        lastInstructionCycle = 16;
+        lastClockCycle = 16;
         break;
     case 0xD7:
         // rst 10h
         SP += 2;
         add2bytesToRam(SP, PC + 1);
         PC = 0x10;
-        lastInstructionCycle = 16;
+        lastClockCycle = 16;
         break;
     case 0xE7:
         // rst 20h
         SP += 2;
         add2bytesToRam(SP, PC + 1);
         PC = 0x20;
-        lastInstructionCycle = 16;
+        lastClockCycle = 16;
         break;
     case 0xF7:
         // rst 30h
         SP += 2;
         add2bytesToRam(SP, PC + 1);
         PC = 0x30;
-        lastInstructionCycle = 16;
+        lastClockCycle = 16;
         break;
     case 0xCF:
         // rst 08h
         SP += 2;
         add2bytesToRam(SP, PC + 1);
         PC = 0x08;
-        lastInstructionCycle = 16;
+        lastClockCycle = 16;
         break;
     case 0xDF:
         // rst 18h
         SP += 2;
         add2bytesToRam(SP, PC + 1);
         PC = 0x18;
-        lastInstructionCycle = 16;
+        lastClockCycle = 16;
         break;
     case 0xEF:
         // rst 28h
         SP += 2;
         add2bytesToRam(SP, PC + 1);
         PC = 0x28;
-        lastInstructionCycle = 16;
+        lastClockCycle = 16;
         break;
     case 0xFF:
         // rst 38h
         SP += 2;
         add2bytesToRam(SP, PC + 1);
         PC = 0x38;
-        lastInstructionCycle = 16;
+        lastClockCycle = 16;
         break;
     case 0xC4:
         // call nz, **
@@ -912,7 +912,7 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         {
             PC += 1;
         }
-        lastInstructionCycle = 24;
+        lastClockCycle = 24;
         break;
     case 0xD4:
         // call nc, **
@@ -926,7 +926,7 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         {
             PC += 1;
         }
-        lastInstructionCycle = 24;
+        lastClockCycle = 24;
         break;
     case 0xCC:
         // call z, **
@@ -940,7 +940,7 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         {
             PC += 1;
         }
-        lastInstructionCycle = 24;
+        lastClockCycle = 24;
         break;
     case 0xDC:
         // call c, **
@@ -954,14 +954,14 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         {
             PC += 1;
         }
-        lastInstructionCycle = 24;
+        lastClockCycle = 24;
         break;
     case 0xCD:
         // call **
         SP -= 2;
         add2bytesToRam(SP, PC + 3);
         PC = fetchNext2BytesInverted(PC);
-        lastInstructionCycle = 24;
+        lastClockCycle = 24;
         break;
 
 
@@ -971,28 +971,28 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         c = ram->read(SP++);
         b = ram->read(SP++);
         PC++;
-        lastInstructionCycle = 12;
+        lastClockCycle = 12;
         break;
     case 0xD1:
         // pop DE
         e = ram->read(SP++);
         d = ram->read(SP++);
         PC++;
-        lastInstructionCycle = 12;
+        lastClockCycle = 12;
         break;
     case 0xE1:
         // pop HL
         l = ram->read(SP++);
         h = ram->read(SP++);
         PC++;
-        lastInstructionCycle = 12;
+        lastClockCycle = 12;
         break;
     case 0xF1:
         // pop AF
         f = ram->read(SP++);
         a = ram->read(SP++);
         PC++;
-        lastInstructionCycle = 12;
+        lastClockCycle = 12;
         break;
 
     case 0xC5:
@@ -1000,28 +1000,28 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         ram->write8(--SP, b);
         ram->write8(--SP, c);
         PC++;
-        lastInstructionCycle = 16;
+        lastClockCycle = 16;
         break;
     case 0xD5:
         // push de
         ram->write8(--SP, d);
         ram->write8(--SP, e);
         PC++;
-        lastInstructionCycle = 16;
+        lastClockCycle = 16;
         break;
     case 0xE5:
         // push hl
         ram->write8(--SP, h);
         ram->write8(--SP, l);
         PC++;
-        lastInstructionCycle = 16;
+        lastClockCycle = 16;
         break;
     case 0xF5:
         // push af
         ram->write8(--SP, a);
         ram->write8(--SP, f);
         PC++;
-        lastInstructionCycle = 16;
+        lastClockCycle = 16;
         break;
 
         // LOAD OPERATIONS *****************************************
@@ -1030,39 +1030,39 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         c = ram->read(PC + 1);
         b = ram->read(PC + 2);
         PC += 3;
-        lastInstructionCycle = 12;
+        lastClockCycle = 12;
         break;
     case 0x11:
         // ld de, **
         e = ram->read(PC + 1);
         d = ram->read(PC + 2);
         PC += 3;
-        lastInstructionCycle = 12;
+        lastClockCycle = 12;
         break;
     case 0x21:
         // ld hl **
         l = ram->read(PC + 1);
         h = ram->read(PC + 2);
         PC += 3;
-        lastInstructionCycle = 12;
+        lastClockCycle = 12;
         break;
     case 0x31:
         // ld sp **
         SP = fetchNext2BytesInverted(PC);
         PC += 3;
-        lastInstructionCycle = 12;
+        lastClockCycle = 12;
         break;
     case 0x02:
         // ld (bc), a
         ram->write8(combineRegisters(b, c), a);
         PC += 1;
-        lastInstructionCycle = 8;
+        lastClockCycle = 8;
         break;
     case 0x12:
         // ld (de), a
         ram->write8(combineRegisters(d, e), a);
         PC += 1;
-        lastInstructionCycle = 8;
+        lastClockCycle = 8;
         break;
     case 0x22:
         // ldi (hl), a
@@ -1073,498 +1073,498 @@ void CPU::ExecuteInstruction(uint8_t instruction)
             h++;
 
         PC++;
-        lastInstructionCycle = 8;
+        lastClockCycle = 8;
         break;
     case 0x32:
         // ldd (hl), a
         ram->write8(combineRegisters(h, l), a);
         decreaseRegister(&h, &l);
         PC++;
-        lastInstructionCycle = 8;
+        lastClockCycle = 8;
         break;
     case 0x06:
         // ld b, *
         b = ram->read(PC + 1);
         PC += 2;
-        lastInstructionCycle = 8;
+        lastClockCycle = 8;
         break;
     case 0x16:
         // ld d, *
         d = ram->read(PC + 1);
         PC += 2;
-        lastInstructionCycle = 8;
+        lastClockCycle = 8;
         break;
     case 0x26:
         // ld h, *
         h = ram->read(PC + 1);
         PC += 2;
-        lastInstructionCycle = 8;
+        lastClockCycle = 8;
         break;
     case 0x36:
         // ld h, *
         h = ram->read(PC + 1);
         PC += 2;
-        lastInstructionCycle = 12;
+        lastClockCycle = 12;
         break;
     case 0x08:
         // ld (a16), SP
         add2bytesToRam(receive2bytesFromRam(fetchNext2BytesInverted(PC)), SP);
         PC += 3;
-        lastInstructionCycle = 20;
+        lastClockCycle = 20;
         break;
     case 0x0A:
         // ld a, (bc)
         a = ram->read(combineRegisters(b, c));
         PC++;
-        lastInstructionCycle = 8;
+        lastClockCycle = 8;
         break;
     case 0x1A:
         // ld a, (de)
         a = ram->read(combineRegisters(d, e));
         PC++;
-        lastInstructionCycle = 8;
+        lastClockCycle = 8;
         break;
     case 0x2A:
         // ldi a, (hl)
         a = ram->read(combineRegisters(h, l));
         increaseRegister(&h, &l);
         PC++;
-        lastInstructionCycle = 8;
+        lastClockCycle = 8;
         break;
     case 0x3A:
         // ldd a, (hl)
         a = ram->read(combineRegisters(h, l));
         decreaseRegister(&h, &l);
         PC++;
-        lastInstructionCycle = 8;
+        lastClockCycle = 8;
         break;
     case 0x0E:
         // ld c, *
         c = ram->read(PC + 1);
         PC += 2;
-        lastInstructionCycle = 8;
+        lastClockCycle = 8;
         break;
     case 0x1E:
         // ld e, *
         e = ram->read(PC + 1);
         PC += 2;
-        lastInstructionCycle = 8;
+        lastClockCycle = 8;
         break;
     case 0x2E:
         // ld l, *
         l = ram->read(PC + 1);
         PC += 2;
-        lastInstructionCycle = 8;
+        lastClockCycle = 8;
         break;
     case 0x3E:
         // ld a, *
         a = ram->read(PC + 1);
         PC += 2;
-        lastInstructionCycle = 8;
+        lastClockCycle = 8;
         break;
     case 0x40:
         // ld b, b
         b = b;
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x41:
         // ld b, c
         b = c;
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x42:
         // ld b, d
         b = d;
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x43:
         // ld b, e
         b = e;
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x44:
         // ld b, h
         b = h;
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x45:
         // ld b, l
         b = l;
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x46:
         // ld b, (hl)
         b = ram->read(combineRegisters(h, l));
         PC++;
-        lastInstructionCycle = 8;
+        lastClockCycle = 8;
         break;
     case 0x47:
         // ld b, a
         b = a;
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x48:
         // ld c, b
         c = b;
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x49:
         // ld c, c
         c = c;
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x4A:
         // ld c, d
         c = d;
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x4B:
         // ld c, e
         c = e;
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x4C:
         // ld c, h
         c = h;
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x4D:
         // ld c, l
         c = l;
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x4E:
         // ld c, (hl)
         c = ram->read(combineRegisters(h, l));
         PC++;
-        lastInstructionCycle = 8;
+        lastClockCycle = 8;
         break;
     case 0x4F:
         // ld c, a
         c = a;
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x50:
         // ld d, b
         d = b;
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x51:
         // ld d, c
         d = c;
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x52:
         // ld d, d
         d = d;
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x53:
         // ld d, e
         d = e;
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x54:
         // ld d, h
         d = h;
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x55:
         // ld d, l
         d = l;
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x56:
         // ld d, (hl)
         d = ram->read(combineRegisters(h, l));
         PC++;
-        lastInstructionCycle = 8;
+        lastClockCycle = 8;
         break;
     case 0x57:
         // ld d, a
         d = a;
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x58:
         // ld e, b
         e = b;
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x59:
         // ld e, c
         e = c;
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x5A:
         // ld e, d
         e = d;
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x5B:
         // ld e, e
         e = e;
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x5C:
         // ld e, h
         e = h;
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x5D:
         // ld e, l
         e = l;
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x5E:
         // ld e, (hl)
         e = ram->read(combineRegisters(h, l));
         PC++;
-        lastInstructionCycle = 8;
+        lastClockCycle = 8;
         break;
     case 0x5F:
         // ld e, a
         e = a;
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x60:
         // ld h, b
         h = b;
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x61:
         // ld h, c
         h = c;
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x62:
         // ld h, d
         h = d;
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x63:
         // ld h, e
         h = e;
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x64:
         // ld h, h
         h = h;
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x65:
         // ld h, l
         h = l;
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x66:
         // ld h, (hl)
         h = ram->read(combineRegisters(h, l));
         PC++;
-        lastInstructionCycle = 8;
+        lastClockCycle = 8;
         break;
     case 0x67:
         // ld h, a
         h = a;
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x68:
         // ld l, b
         l = b;
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x69:
         // ld l, c
         l = c;
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x6A:
         // ld l, d
         l = d;
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x6B:
         // ld l, e
         l = e;
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x6C:
         // ld l, h
         l = h;
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x6D:
         // ld l, l
         l = l;
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x6E:
         // ld l, (hl)
         l = ram->read(combineRegisters(h, l));
         PC++;
-        lastInstructionCycle = 8;
+        lastClockCycle = 8;
         break;
     case 0x6F:
         // ld l, a
         l = a;
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x70:
         // ld (hl), b
         ram->write8(combineRegisters(h, l), b);
         PC++;
-        lastInstructionCycle = 8;
+        lastClockCycle = 8;
         break;
     case 0x71:
         // ld (hl), c
         ram->write8(combineRegisters(h, l), c);
         PC++;
-        lastInstructionCycle = 8;
+        lastClockCycle = 8;
         break;
     case 0x72:
         // ld (hl), d
         ram->write8(combineRegisters(h, l), d);
         PC++;
-        lastInstructionCycle = 8;
+        lastClockCycle = 8;
         break;
     case 0x73:
         // ld (hl), h
         ram->write8(combineRegisters(h, l), h);
         PC++;
-        lastInstructionCycle = 8;
+        lastClockCycle = 8;
         break;
     case 0x74:
         // ld (hl), l
         ram->write8(combineRegisters(h, l), l);
         PC++;
-        lastInstructionCycle = 8;
+        lastClockCycle = 8;
         break;
     case 0x75:
         // ld (hl), a
         ram->write8(combineRegisters(h, l), a);
         PC++;
-        lastInstructionCycle = 8;
+        lastClockCycle = 8;
         break;
     case 0x77:
         // ld (hl), a
         ram->write8(combineRegisters(h, l), a);
         PC++;
-        lastInstructionCycle = 8;
+        lastClockCycle = 8;
         break;
     case 0x78:
         // ld a, b
         a = b;
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x79:
         // ld a, c
         a = c;
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x7A:
         // ld a, d
         a = d;
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x7B:
         // ld a, e
         a = e;
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x7C:
         // ld a, h
         a = h;
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x7D:
         // ld a, l
         a = l;
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0x7E:
         // ld a, (hl)
         a = ram->read(combineRegisters(h, l));
         PC++;
-        lastInstructionCycle = 8;
+        lastClockCycle = 8;
         break;
     case 0x7F:
         // ld a, a
         a = a;
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
 
     case 0xE0:
         // ld ($FF00 + *), a
         ram->write8(0xFF00 + ram->read(PC + 1), a);
         PC += 2;
-        lastInstructionCycle = 12;
+        lastClockCycle = 12;
         break;
     case 0xF0:
         // ld a, ($FF00 + *)
         a = ram->read(0xFF00 + ram->read(PC + 1));
         PC += 2;
-        lastInstructionCycle = 12;
+        lastClockCycle = 12;
         break;
 
     case 0xE2:
         // ld ($FF00 + C), A
         ram->write8(0xFF00 + c, a);
         PC++;
-        lastInstructionCycle = 8;
+        lastClockCycle = 8;
         break;
     case 0xF2:
         // ld ($FF00 + C), A
         a = ram->read(0xFF00 + c);
         PC++;
-        lastInstructionCycle = 8;
+        lastClockCycle = 8;
         break;
     case 0xF8:
         // LD HL,SP+r8
@@ -1573,7 +1573,7 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         l = tmp | 0xff00;
         h = (tmp | 0x00ff) >> 8;
         PC += 2;
-        lastInstructionCycle = 12;
+        lastClockCycle = 12;
         break;
     }
 
@@ -1582,19 +1582,19 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         SP = h << 8;
         SP += l;
         PC += 1;
-        lastInstructionCycle = 8;
+        lastClockCycle = 8;
         break;
     case 0xEA:
         // LD (a16),A
         ram->write8(fetchNext2BytesInverted(PC), a);
         PC += 3;
-        lastInstructionCycle = 16;
+        lastClockCycle = 16;
         break;
     case 0xFA:
         // LD A,(a16)
         a = ram->read(fetchNext2BytesInverted(PC));
         PC += 3;
-        lastInstructionCycle = 16;
+        lastClockCycle = 16;
         break;
 
         // 8 BIT ROTATION ***************************************
@@ -1609,7 +1609,7 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         setH(0);
         setN(0);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     }
     case 0x17:
@@ -1623,7 +1623,7 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         setH(0);
         setN(0);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     }
     case 0x0F:
@@ -1637,7 +1637,7 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         setH(0);
         setN(0);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     }
     case 0x1F:
@@ -1652,7 +1652,7 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         setH(0);
         setN(0);
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     }
     // CPU CONTROL
@@ -1660,26 +1660,26 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         // HALT
         //TODO: Implement halt
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0xF3:
         // DI
         //TODO: Implement DI
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
     case 0xFB:
         // EI
         //TODO: Implement EI
         PC++;
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
 
         // BITS EXTENSIONS **************************************
     case 0xCB:
         PC++;
         bitExtensions(ram->read(PC));
-        lastInstructionCycle = 4;
+        lastClockCycle = 4;
         break;
 
     default:
