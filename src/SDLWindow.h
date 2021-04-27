@@ -52,6 +52,7 @@ private:
 	//Window data
 	SDL_Window* mWindow;
 	SDL_Renderer* mRenderer;
+	SDL_Texture* mScreenTexture;
 	int mWindowID;
 
 	//Window dimensions
@@ -64,5 +65,8 @@ private:
 	bool mFullScreen;
 	bool mMinimized;
 	bool mShown;
+
+	Uint32* pixels;
+	void initializePixels();
 };
 

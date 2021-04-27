@@ -36,6 +36,10 @@ bool SDLWindow::init(const char* title, int width, int height, bool opened)
             //Flag as opened
             mShown = opened;
         }
+
+        // Create texture to draw pixels on
+        mScreenTexture = SDL_CreateTexture(mRenderer, SDL_PIXELFORMAT_ABGR8888, SDL_TEXTUREACCESS_STATIC, 160, 144);
+        initializePixels();
     }
     else
     {
@@ -184,7 +188,7 @@ void SDLWindow::renderWrapping(uint8_t** matrix, uint8_t scx, uint8_t scy)
     if (!mMinimized)
     {
         //Clear screen
-        SDL_SetRenderDrawColor(mRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+        //SDL_SetRenderDrawColor(mRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
         SDL_RenderClear(mRenderer);
 
         if (matrix != nullptr)
@@ -196,20 +200,26 @@ void SDLWindow::renderWrapping(uint8_t** matrix, uint8_t scx, uint8_t scy)
                     auto color = matrix[uint8_t(i + scy)][uint8_t(j + scx)];
 
                     if (color == 0b00)
-                        SDL_SetRenderDrawColor(mRenderer, COLOR_0, 255);
+                        pixels[i * 160 + j] = 255;
+                        //SDL_SetRenderDrawColor(mRenderer, COLOR_0, 255);
                     else if (color == 0b01)
-                        SDL_SetRenderDrawColor(mRenderer, COLOR_1, 255);
+                        //SDL_SetRenderDrawColor(mRenderer, COLOR_1, 255);
+                        pixels[i * 160 + j] = 0;
                     else if (color == 0b10)
-                        SDL_SetRenderDrawColor(mRenderer, COLOR_2, 255);
+                        //SDL_SetRenderDrawColor(mRenderer, COLOR_2, 255);
+                        pixels[i * 160 + j] = 0;
                     else if (color == 0b11)
-                        SDL_SetRenderDrawColor(mRenderer, COLOR_3, 255);
+                        //SDL_SetRenderDrawColor(mRenderer, COLOR_3, 255);
+                        pixels[i * 160 + j] = 0;
 
-                    SDL_RenderDrawPoint(mRenderer, j, i);
+                    //SDL_RenderDrawPoint(mRenderer, j, i);
                 }
             }
         }
 
         //Update screen
+        SDL_UpdateTexture(mScreenTexture, nullptr, pixels, 160 * sizeof(int));
+        SDL_RenderCopy(mRenderer, mScreenTexture, nullptr, nullptr);
         SDL_RenderPresent(mRenderer);
     }
 }
@@ -217,4 +227,10 @@ void SDLWindow::renderWrapping(uint8_t** matrix, uint8_t scx, uint8_t scy)
 void SDLWindow::free()
 {
     SDL_DestroyWindow(mWindow);
+}
+
+void SDLWindow::initializePixels()
+{
+    pixels = new Uint32[160 * 144];
+    memset(pixels, 255, 160 * 144 * sizeof(Uint32));
 }

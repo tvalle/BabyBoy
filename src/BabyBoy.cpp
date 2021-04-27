@@ -55,15 +55,6 @@ int main(int argc, char* argv[])
         vramWindow.handleEvent(e);
         vramWindow.render(vramMatrix, 128, 192);*/
 
-        window.handleEvent(e);
-        auto scy = soc.ram.getSCY();
-        if (scy != 0)
-        {
-            auto bgMatrix = soc.ram.getBGTileMapMatrix();
-            window.renderWrapping(bgMatrix, soc.ram.getSCX(), soc.ram.getSCY());
-        }
-        
-
         //bgMap.render(bgMatrix, 256, 256);
 
         while (SDL_GetTicks() - timer < 16.666)
@@ -71,12 +62,20 @@ int main(int argc, char* argv[])
             //wait
         }
 
-        /*frames++;
+        window.handleEvent(e);
+        auto scy = soc.ram.getSCY();
+        if (scy != 0)
+        {
+            auto bgMatrix = soc.ram.getBGTileMapMatrix();
+            window.renderWrapping(bgMatrix, soc.ram.getSCX(), soc.ram.getSCY());
+        }
+
+        frames++;
         if (frames >= 60)
         {
             frames = 0;
             printf("%d\n", ++seconds);
-        }*/
+        }
 
         //exit = !soc.isRunning;
     }
