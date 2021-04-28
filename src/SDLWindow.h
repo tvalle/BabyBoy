@@ -6,10 +6,10 @@
 //#define COLOR_2 139, 172, 15
 //#define COLOR_3 155, 188, 15
 
-#define COLOR_0 255, 239, 255
-#define COLOR_1 206, 231, 222
-#define COLOR_2 165, 214, 255
-#define COLOR_3 24, 16, 16
+#define COLOR_0 0xffefffff
+#define COLOR_1 0xcee7deff
+#define COLOR_2 0xa5d6ffff
+#define COLOR_3 0x181010ff
 
 
 // As seen on LazyFoo's SDL tutorials

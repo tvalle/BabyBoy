@@ -38,7 +38,7 @@ bool SDLWindow::init(const char* title, int width, int height, bool opened)
         }
 
         // Create texture to draw pixels on
-        mScreenTexture = SDL_CreateTexture(mRenderer, SDL_PIXELFORMAT_ABGR8888, SDL_TEXTUREACCESS_STATIC, 160, 144);
+        mScreenTexture = SDL_CreateTexture(mRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STATIC, 160, 144);
         initializePixels();
     }
     else
@@ -164,14 +164,14 @@ void SDLWindow::render(uint8_t** matrix, int width, int height)
                     //auto color = *((matrix + i * width) + j);
                     auto color = matrix[i][j];
 
-                    if (color == 0b00)
+                    /*if (color == 0b00)
                         SDL_SetRenderDrawColor(mRenderer, COLOR_0, 255);
                     else if (color == 0b01)
                         SDL_SetRenderDrawColor(mRenderer, COLOR_1, 255);
                     else if (color == 0b10)
                         SDL_SetRenderDrawColor(mRenderer, COLOR_2, 255);
                     else if (color == 0b11)
-                        SDL_SetRenderDrawColor(mRenderer, COLOR_3, 255);
+                        SDL_SetRenderDrawColor(mRenderer, COLOR_3, 255);*/
 
                     SDL_RenderDrawPoint(mRenderer, j, i);
                 }
@@ -200,17 +200,13 @@ void SDLWindow::renderWrapping(uint8_t** matrix, uint8_t scx, uint8_t scy)
                     auto color = matrix[uint8_t(i + scy)][uint8_t(j + scx)];
 
                     if (color == 0b00)
-                        pixels[i * 160 + j] = 255;
-                        //SDL_SetRenderDrawColor(mRenderer, COLOR_0, 255);
+                        pixels[i * 160 + j] = COLOR_0;
                     else if (color == 0b01)
-                        //SDL_SetRenderDrawColor(mRenderer, COLOR_1, 255);
-                        pixels[i * 160 + j] = 0;
+                        pixels[i * 160 + j] = COLOR_1;
                     else if (color == 0b10)
-                        //SDL_SetRenderDrawColor(mRenderer, COLOR_2, 255);
-                        pixels[i * 160 + j] = 0;
+                        pixels[i * 160 + j] = COLOR_2;
                     else if (color == 0b11)
-                        //SDL_SetRenderDrawColor(mRenderer, COLOR_3, 255);
-                        pixels[i * 160 + j] = 0;
+                        pixels[i * 160 + j] = COLOR_3;
 
                     //SDL_RenderDrawPoint(mRenderer, j, i);
                 }
