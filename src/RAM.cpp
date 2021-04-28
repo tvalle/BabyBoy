@@ -3,6 +3,12 @@
 #include <iterator>
 #include <cstring>
 
+const int tiles_x = 32;
+const int tiles_y = 32;
+
+const int width = 8 * tiles_x;
+const int height = 8 * tiles_y;
+
 RAM::RAM()
 {
     //TODO: fill with random numbers in the same manner as gameboy does
@@ -16,6 +22,12 @@ RAM::RAM()
         ram[pos] = dumpFile.get();
         pos++;
     }*/
+
+    matrix = new uint8_t * [height];
+    for (int y = 0; y < height; y++)
+    {
+        matrix[y] = new uint8_t[width];
+    }
 }
 
 void RAM::write8(uint16_t address, uint8_t value)
@@ -79,18 +91,6 @@ uint8_t** RAM::getVRAM_Tiles()
 
 uint8_t** RAM::getBGTileMapMatrix()
 {
-    const int tiles_x = 32;
-    const int tiles_y = 32;
-
-    const int width = 8 * tiles_x;
-    const int height = 8 * tiles_y;
-
-    uint8_t** matrix = new uint8_t * [height];
-    for (int y = 0; y < height; y++)
-    {
-        matrix[y] = new uint8_t[width];
-    }
-
     uint16_t baseAddress = getLCDC_BGTileMap() ? 0x9c00 : 0x9800;
     
     for (int tiles = 0; tiles < 1024; tiles++)

@@ -28,5 +28,7 @@ private:
     uint8_t getPaletteColor(uint8_t index);
 
     std::vector<uint8_t> ram;
+
+    uint8_t** matrix;
 };
 

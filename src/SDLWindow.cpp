@@ -207,8 +207,6 @@ void SDLWindow::renderWrapping(uint8_t** matrix, uint8_t scx, uint8_t scy)
                         pixels[i * 160 + j] = COLOR_2;
                     else if (color == 0b11)
                         pixels[i * 160 + j] = COLOR_3;
-
-                    //SDL_RenderDrawPoint(mRenderer, j, i);
                 }
             }
         }
