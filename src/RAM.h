@@ -17,6 +17,7 @@ public:
 
     bool getLCDC_BGTileMap();
     bool getLCDC_BGTWindowTile();
+    bool getLCDC_IsDisplayOn();
 
     uint8_t getSCX();
     uint8_t getSCY();

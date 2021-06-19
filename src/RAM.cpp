@@ -147,6 +147,11 @@ bool RAM::getLCDC_BGTWindowTile()
     return (ram[0xFF40] & 0b00010000) == 0b00010000;
 }
 
+bool RAM::getLCDC_IsDisplayOn()
+{
+    return (ram[0xFF40] & 0b10000000) == 0b10000000;
+}
+
 uint8_t RAM::getSCX()
 {
     return ram[0xFF43];

@@ -34,6 +34,9 @@ void SoC::step()
 
 void SoC::gpuStep()
 {
+    if (!ram.getLCDC_IsDisplayOn())
+        return;
+
     modeclock += cpu.lastClockCycle;
 
     switch (graphicsMode)
