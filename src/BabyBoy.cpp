@@ -27,6 +27,7 @@ int main(int argc, char* argv[])
     SDL_Event e;
 
     Uint32 timer = 0;
+    Uint32 secondsTimer = 0;
 
     int frames = 0;
     int seconds = 0;
@@ -73,8 +74,9 @@ int main(int argc, char* argv[])
         frames++;
         if (frames >= 60)
         {
+            printf("%d\n", SDL_GetTicks() - secondsTimer);
             frames = 0;
-            printf("%d\n", ++seconds);
+            secondsTimer = SDL_GetTicks();
         }
 
         //exit = !soc.isRunning;

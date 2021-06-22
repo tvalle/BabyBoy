@@ -7,6 +7,7 @@
 #include <algorithm>
 
 bool showDebug = false;
+bool writeFile = true;
 
 FILE* pFile;
 
@@ -30,7 +31,7 @@ CPU::CPU(RAM& ram)
     std::memcpy(RAM, &rom.romBuffer[0], romSize);
     std::memcpy(RAM, &bootRom.romBuffer[0], bootRomSize);*/
 
-    //pFile = fopen("babyboy.log", "w");
+    pFile = fopen("log", "w");
 }
 
 CPU::~CPU()
@@ -43,8 +44,19 @@ void CPU::ExecuteInstruction(uint8_t instruction)
     //if (showDebug || PC == 0x8F)
     {
         // 0000: 31 A:00 B:00 C:00 D:00 E:00 F:00 H:00 L:00 LY:00 SP:00  Cy:8
-        //printf("%04x: %02x A:%02x B:%02x C:%02x D:%02x E:%02x F:%02x H:%02x L:%02x LY:%02x SP:%04x FF44:%02x\n",
-        //    PC, instruction, a, b, c, d, e, f, h, l, 0, SP, ram->read(0xff44));
+        /*printf("%04x: %02x A:%02x B:%02x C:%02x D:%02x E:%02x F:%02x H:%02x L:%02x LY:%02x SP:%04x FF44:%02x\n",
+            PC, instruction, a, b, c, d, e, f, h, l, 0, SP, ram->read(0xff44));*/
+        if (PC < 0x100 && writeFile) {
+            fprintf(pFile, "%04x: %02x AF:%02x%02x BC:%02x%02x DE:%02x%02x HL:%02x%02x, FF44:%02x\n",
+                PC, instruction, a, f, b, c, d, e, h, l, ram->read(0xff44));
+            // 33203 sem o FF44
+        }
+        else {
+            writeFile = false;
+            fclose(pFile);
+        }
+
+        
         showDebug = true;
     }
 
@@ -1805,38 +1817,28 @@ void CPU::decreaseMemoryAddress(uint16_t pointer)
 
 void CPU::increaseRegister(uint8_t* reg)
 {
+    setH((*reg & 0x0F) == 0x0F);
+    setN(0);
     (*reg)++;
-    if (*reg == 0)
-    {
-        setZ(true);
-        setH(true);
-    }
-    else
-    {
-        setZ(false);
-        setH(false);
-    }
+    setZ(*reg == 0);
 }
 
 void CPU::increaseRegister(uint8_t* reg1, uint8_t* reg2)
 {
-
+    // TODO: DO
 }
 
 
 void CPU::decreaseRegister(uint8_t* reg)
 {
+    setH((*reg & 0x0F) == 0);
+
     (*reg)--;
 
     if (*reg == 0)
         setZ(true);
     else
         setZ(false);
-
-    if (*reg == 0xFF)
-        setH(true);
-    else
-        setH(false);
 
     setN(true);
 }
@@ -1940,8 +1942,7 @@ void CPU::reg_or(uint8_t reg)
 void CPU::reg_cp(uint8_t reg)
 {
     setC((int16_t)a - (int16_t)reg < 0x00);
-    //setH((a & 0x0f) - (reg & 0x0f) < 0x00);
-    setH(a - reg > 0x0f);
+    setH((a & 0xF) < (reg & 0xF));
 
     setZ(reg - a <= 0);
     setN(true);
