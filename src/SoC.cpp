@@ -93,7 +93,7 @@ void SoC::gpuStep()
             modeclock = 0;
             increaseScanline();
 
-            if (currentScanline() > 153)
+            if (currentScanline() >= 153)
             {
                 // Restart scanning modes
                 graphicsMode = 2;

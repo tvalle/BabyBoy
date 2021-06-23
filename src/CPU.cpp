@@ -1944,7 +1944,7 @@ void CPU::reg_cp(uint8_t reg)
     setC((int16_t)a - (int16_t)reg < 0x00);
     setH((a & 0xF) < (reg & 0xF));
 
-    setZ(reg - a <= 0);
+    setZ(reg - a == 0);
     setN(true);
 }
 
