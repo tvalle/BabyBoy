@@ -10,6 +10,9 @@ SoC::SoC(Rom rom)
     {
         Rom bootRom = Rom(Config::GetInstance()->GetBootFileName());
 
+        backupInitRom = std::vector<uint8_t>(0xFF);
+        std::copy(rom.romBuffer.begin(), rom.romBuffer.begin() + 0xFF, backupInitRom.begin());
+
         auto romSize = std::clamp(static_cast<int>(rom.romBuffer.size()), 0, 0x7FFF);
         auto bootRomSize = std::clamp(static_cast<int>(bootRom.romBuffer.size()), 0, 0x7FFF);
         ram.copy(rom.romBuffer, romSize);
@@ -28,6 +31,14 @@ SoC::SoC(Rom rom)
 void SoC::step()
 {
     cpu.ExecuteInstruction(ram.read(cpu.PC));
+
+    //Check if Boot was disabled
+    if (ram.read(0xFF50) != 0 && !hasBIOSbeenDisabled)
+    {
+        hasBIOSbeenDisabled = true;
+        ram.copy(backupInitRom, 0xFF);
+    }
+
     cpu.cycles += cpu.lastClockCycle;
     gpuStep();
 }
@@ -127,7 +138,7 @@ void SoC::setInitialValuesWhenNoBoot()
     cpu.e = 0xD8;
     cpu.h = 0x01;
     cpu.l = 0x4D;
-    
+
     cpu.SP = 0xFFFE;
 
     ram.write8(0xFF05, 0x00);
