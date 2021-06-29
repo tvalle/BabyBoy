@@ -31,7 +31,7 @@ CPU::CPU(RAM& ram)
     std::memcpy(RAM, &rom.romBuffer[0], romSize);
     std::memcpy(RAM, &bootRom.romBuffer[0], bootRomSize);*/
 
-    pFile = fopen("log", "w");
+    //pFile = fopen("log", "w");
 }
 
 CPU::~CPU()
@@ -46,15 +46,15 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         // 0000: 31 A:00 B:00 C:00 D:00 E:00 F:00 H:00 L:00 LY:00 SP:00  Cy:8
         /*printf("%04x: %02x A:%02x B:%02x C:%02x D:%02x E:%02x F:%02x H:%02x L:%02x LY:%02x SP:%04x FF44:%02x\n",
             PC, instruction, a, b, c, d, e, f, h, l, 0, SP, ram->read(0xff44));*/
-        if (PC < 0x100 && writeFile) {
-            fprintf(pFile, "%04x: %02x AF:%02x%02x BC:%02x%02x DE:%02x%02x HL:%02x%02x, FF44:%02x\n",
-                PC, instruction, a, f, b, c, d, e, h, l, ram->read(0xff44));
-            // 33203 sem o FF44
-        }
-        else {
-            writeFile = false;
-            fclose(pFile);
-        }
+        //if (PC < 0x100 && writeFile) {
+        //    fprintf(pFile, "%04x: %02x AF:%02x%02x BC:%02x%02x DE:%02x%02x HL:%02x%02x, FF44:%02x\n",
+        //        PC, instruction, a, f, b, c, d, e, h, l, ram->read(0xff44));
+        //    // 33203 sem o FF44
+        //}
+        //else {
+        //    writeFile = false;
+        //    fclose(pFile);
+        //}
 
         
         showDebug = true;
@@ -1825,7 +1825,11 @@ void CPU::increaseRegister(uint8_t* reg)
 
 void CPU::increaseRegister(uint8_t* reg1, uint8_t* reg2)
 {
-    // TODO: DO
+    if (*reg2 == 0xff) {
+        (*reg1)++;
+    }
+
+    (*reg2)++;
 }
 
 
