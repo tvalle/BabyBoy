@@ -6,8 +6,8 @@
 const int tiles_x = 32;
 const int tiles_y = 32;
 
-const int width = 8 * tiles_x;
-const int height = 8 * tiles_y;
+const int width = 160;
+const int height = 144;
 
 RAM::RAM()
 {
@@ -23,10 +23,10 @@ RAM::RAM()
         pos++;
     }*/
 
-    matrix = new uint8_t * [height];
+    frameBuffer = new uint8_t * [height];
     for (int y = 0; y < height; y++)
     {
-        matrix[y] = new uint8_t[width];
+        frameBuffer[y] = new uint8_t[width];
     }
 }
 
@@ -91,50 +91,50 @@ uint8_t** RAM::getVRAM_Tiles()
 
 uint8_t** RAM::getBGTileMapMatrix()
 {
-    uint16_t baseAddress = getLCDC_BGTileMap() ? 0x9c00 : 0x9800;
+    // uint16_t baseAddress = getLCDC_BGTileMap() ? 0x9c00 : 0x9800;
     
-    for (int tiles = 0; tiles < 1024; tiles++)
-    {
-        uint8_t currentTile = ram[baseAddress + tiles];
+    // for (int tiles = 0; tiles < 1024; tiles++)
+    // {
+    //     uint8_t currentTile = ram[baseAddress + tiles];
 
-        uint16_t tileAddress;
+    //     uint16_t tileAddress;
 
-        if (getLCDC_BGTWindowTile())
-        {
-            // 8000-8fff - unsigned
-            tileAddress = 0x8000 + (currentTile * 0x10);
-        }
-        else
-        {
-            // 8800-97ff - signed
-            if (currentTile <= 127)
-            {
-                tileAddress = 0x9000 + (currentTile * 0x10);
-            }
-            else
-            {
-                tileAddress = 0x8800 + (currentTile * 0x10);
-            }
-        }
+    //     if (getLCDC_BGWindowTileData())
+    //     {
+    //         // 8000-8fff - unsigned
+    //         tileAddress = 0x8000 + (currentTile * 0x10);
+    //     }
+    //     else
+    //     {
+    //         // 8800-97ff - signed
+    //         if (currentTile <= 127)
+    //         {
+    //             tileAddress = 0x9000 + (currentTile * 0x10);
+    //         }
+    //         else
+    //         {
+    //             tileAddress = 0x8800 + (currentTile * 0x10);
+    //         }
+    //     }
 
-        for (int i = 0; i < 8; i++)
-        {
-            for (int j = 0; j < 8; j++)
-            {
-                int x = 0;
-                int y = 0;
+    //     for (int i = 0; i < 8; i++)
+    //     {
+    //         for (int j = 0; j < 8; j++)
+    //         {
+    //             int x = 0;
+    //             int y = 0;
 
-                uint8_t pixel = (ram[tileAddress + (i * 2)] >> (7 - j)) & 1;
-                pixel = pixel << 1;
-                pixel = pixel | ((ram[tileAddress + 1 + (i * 2)] >> (7 - j)) & 1);
+    //             uint8_t pixel = (ram[tileAddress + (i * 2)] >> (7 - j)) & 1;
+    //             pixel = pixel << 1;
+    //             pixel = pixel | ((ram[tileAddress + 1 + (i * 2)] >> (7 - j)) & 1);
 
-                matrix[i + ((tiles / tiles_x) * 8)][j + ((tiles % tiles_x) * 8)] = getPaletteColor(pixel);
-            }
-        }
-    }
+    //             frameBuffer[i + ((tiles / tiles_x) * 8)][j + ((tiles % tiles_x) * 8)] = getPaletteColor(pixel);
+    //         }
+    //     }
+    // }
 
     //auto color = *((matrix + i * width) + j);
-    return matrix;
+    return frameBuffer;
 }
 
 bool RAM::getLCDC_BGTileMap()
@@ -142,7 +142,7 @@ bool RAM::getLCDC_BGTileMap()
     return (ram[0xFF40] & 0b00001000) == 0b00001000;
 }
 
-bool RAM::getLCDC_BGTWindowTile()
+bool RAM::getLCDC_BGWindowTileData()
 {
     return (ram[0xFF40] & 0b00010000) == 0b00010000;
 }
@@ -179,4 +179,62 @@ uint8_t RAM::getPaletteColor(uint8_t index)
     palette[3] = (ram[0xFF47] & 0b11000000) >> 6;
 
     return palette[index];
+}
+
+int RAM::getTileForX(int x)
+{
+    const int TILE_SIZE = 8;
+    const int HORIZONTAL_TILES = 20;
+    const int VERTICAL_TILES = 18;
+
+    auto scx = getSCX() / TILE_SIZE;
+
+    auto scy = getSCY() / TILE_SIZE;
+    auto y = ram[0xFF44] / TILE_SIZE; // 0xFF44 = current scanline
+
+    uint16_t baseAddress = getLCDC_BGTileMap() ? 0x9c00 : 0x9800;
+
+    y = ((y + scy) % 32) * 32;
+    x = (x + scx) % 32;
+
+    return ram[baseAddress + y + x];
+}
+
+uint16_t RAM::getTileAddress(int tileId)
+{
+    uint16_t tileAddress;
+
+    if (getLCDC_BGWindowTileData())
+    {
+        // 8000-8fff - unsigned
+        tileAddress = 0x8000 + (tileId * 0x10);
+    }
+    else
+    {
+        // 8800-97ff - signed
+        if (tileId <= 127)
+        {
+            tileAddress = 0x9000 + (tileId * 0x10);
+        }
+        else
+        {
+            tileAddress = 0x8800 + (tileId * 0x10);
+        }
+    }
+
+    return tileAddress;
+}
+
+void RAM::fillFrameBufferWithTile(uint16_t tileAddress, int x)
+{
+    auto y = ram[0xFF44] % 8;
+
+    for (int j = 0; j < 8; j++)
+    {
+        uint8_t pixel = (ram[tileAddress + (y * 2)] >> (7 - j)) & 1;
+        pixel = pixel << 1;
+        pixel = pixel | ((ram[tileAddress + y + (y * 2)] >> (7 - j)) & 1);
+
+        frameBuffer[ram[0xFF44]][(x * 8) + j] = getPaletteColor(pixel);
+    }
 }

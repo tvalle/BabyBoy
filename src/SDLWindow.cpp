@@ -1,12 +1,13 @@
 #include <stdio.h>
 #include <sstream>
 #include "SDLWindow.h"
-bool SDLWindow::init(const char* title, int width, int height)
+
+bool SDLWindow::init(const char *title, int width, int height)
 {
     return init(title, width, height, true);
 }
 
-bool SDLWindow::init(const char* title, int width, int height, bool opened)
+bool SDLWindow::init(const char *title, int width, int height, bool opened)
 {
     //Create window
     mWindow = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, (opened ? SDL_WINDOW_SHOWN : SDL_WINDOW_HIDDEN) | SDL_WINDOW_RESIZABLE);
@@ -49,7 +50,7 @@ bool SDLWindow::init(const char* title, int width, int height, bool opened)
     return mWindow != NULL && mRenderer != NULL;
 }
 
-void SDLWindow::handleEvent(SDL_Event& e)
+void SDLWindow::handleEvent(SDL_Event &e)
 {
     //If an event was detected for this window
     if (e.type == SDL_WINDOWEVENT && e.window.windowID == mWindowID)
@@ -147,12 +148,11 @@ void SDLWindow::focus()
     SDL_RaiseWindow(mWindow);
 }
 
-void SDLWindow::render(uint8_t** matrix, int width, int height)
+void SDLWindow::render(uint8_t **matrix, int width, int height)
 {
     if (!mMinimized)
     {
         //Clear screen
-        SDL_SetRenderDrawColor(mRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
         SDL_RenderClear(mRenderer);
 
         if (matrix != nullptr)
@@ -163,41 +163,6 @@ void SDLWindow::render(uint8_t** matrix, int width, int height)
                 {
                     //auto color = *((matrix + i * width) + j);
                     auto color = matrix[i][j];
-
-                    /*if (color == 0b00)
-                        SDL_SetRenderDrawColor(mRenderer, COLOR_0, 255);
-                    else if (color == 0b01)
-                        SDL_SetRenderDrawColor(mRenderer, COLOR_1, 255);
-                    else if (color == 0b10)
-                        SDL_SetRenderDrawColor(mRenderer, COLOR_2, 255);
-                    else if (color == 0b11)
-                        SDL_SetRenderDrawColor(mRenderer, COLOR_3, 255);*/
-
-                    SDL_RenderDrawPoint(mRenderer, j, i);
-                }
-            }
-        }
-
-        //Update screen
-        SDL_RenderPresent(mRenderer);
-    }
-}
-
-void SDLWindow::renderWrapping(uint8_t** matrix, uint8_t scx, uint8_t scy)
-{
-    if (!mMinimized)
-    {
-        //Clear screen
-        //SDL_SetRenderDrawColor(mRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
-        SDL_RenderClear(mRenderer);
-
-        if (matrix != nullptr)
-        {
-            for (int i = 0; i < 144; i++)
-            {
-                for (int j = 0; j < 160; j++)
-                {
-                    auto color = matrix[uint8_t(i + scy)][uint8_t(j + scx)];
 
                     if (color == 0b00)
                         pixels[i * 160 + j] = COLOR_0;

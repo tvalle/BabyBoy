@@ -72,7 +72,7 @@ void SoC::gpuStep()
             graphicsMode = 0;
 
             // Write a scanline to the framebuffer
-            //GPU.renderscan();
+            drawCurrentLine();
         }
         break;
 
@@ -172,4 +172,31 @@ void SoC::setInitialValuesWhenNoBoot()
     ram.write8(0xFF4A, 0x00);
     ram.write8(0xFF4B, 0x00);
     ram.write8(0xFFFF, 0x00);
+}
+
+void SoC::drawCurrentLine()
+{
+    auto y = currentScanline();
+
+    if (y >= 144)
+        return;
+
+    // Verify boundaries
+
+    // 20 = 160 / 8 (Number of horizontal tiles)
+    for (int i = 0; i < 20; i++)
+    {
+        // Draw BG
+        auto tileId = ram.getTileForX(i);
+        auto tileAddress = ram.getTileAddress(tileId);
+        ram.fillFrameBufferWithTile(tileAddress, i);
+
+            // Get Current Pixel (Tile) 
+            // Draw on framebuffer
+
+
+        // Draw Sprite
+
+        // Draw Window
+    }
 }

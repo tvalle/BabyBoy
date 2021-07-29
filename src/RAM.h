@@ -16,7 +16,7 @@ public:
     uint8_t** getBGTileMapMatrix();
 
     bool getLCDC_BGTileMap();
-    bool getLCDC_BGTWindowTile();
+    bool getLCDC_BGWindowTileData();
     bool getLCDC_IsDisplayOn();
 
     uint8_t getSCX();
@@ -24,12 +24,16 @@ public:
 
     void writeToFF44(uint8_t value);
 
+    int getTileForX(int x);
+    uint16_t getTileAddress(int tileId);
+    void fillFrameBufferWithTile(uint16_t tileAddress, int x);
+
 private:
 
     uint8_t getPaletteColor(uint8_t index);
 
     std::vector<uint8_t> ram;
 
-    uint8_t** matrix;
+    uint8_t** frameBuffer;
 };
 

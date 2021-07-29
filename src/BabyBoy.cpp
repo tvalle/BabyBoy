@@ -63,7 +63,7 @@ int main(int argc, char* argv[])
         if (scy != 0)
         {
             auto bgMatrix = soc.ram.getBGTileMapMatrix();
-            window.renderWrapping(bgMatrix, soc.ram.getSCX(), soc.ram.getSCY());
+            window.render(bgMatrix, 160, 144);
         }
 
         while (SDL_GetTicks() - timer < 16.666)
