@@ -169,12 +169,12 @@ void RAM::writeToFF44(uint8_t value)
 
 uint8_t RAM::getPaletteColor(uint8_t index)
 {
-    // FF47 is the palette "register"
+    // FF47 is the palette register
 
     uint8_t palette[4] = { 0 };
 
-    palette[0] = ram[0xFF47] & 0b00000011;
-    palette[1] = (ram[0xFF47] & 0b0000110) >> 2;
+    palette[0] = ram[0xFF47]  & 0b00000011;
+    palette[1] = (ram[0xFF47] & 0b00001100) >> 2;
     palette[2] = (ram[0xFF47] & 0b00110000) >> 4;
     palette[3] = (ram[0xFF47] & 0b11000000) >> 6;
 
@@ -227,14 +227,21 @@ uint16_t RAM::getTileAddress(int tileId)
 
 void RAM::fillFrameBufferWithTile(uint16_t tileAddress, int x)
 {
+    // 32768
+
     auto y = ram[0xFF44] % 8;
 
     for (int j = 0; j < 8; j++)
     {
         uint8_t pixel = (ram[tileAddress + (y * 2)] >> (7 - j)) & 1;
         pixel = pixel << 1;
-        pixel = pixel | ((ram[tileAddress + y + (y * 2)] >> (7 - j)) & 1);
+        pixel = pixel | ((ram[tileAddress + 1 + (y * 2)] >> (7 - j)) & 1);
 
-        frameBuffer[ram[0xFF44]][(x * 8) + j] = getPaletteColor(pixel);
+        auto offsetY = ram[0xFF44] - (getSCY() % 8);
+
+        if (offsetY >= 0)
+        {
+            frameBuffer[offsetY][(x * 8) + j] = getPaletteColor(pixel);
+        }
     }
 }

@@ -181,8 +181,6 @@ void SoC::drawCurrentLine()
     if (y >= 144)
         return;
 
-    // Verify boundaries
-
     // 20 = 160 / 8 (Number of horizontal tiles)
     for (int i = 0; i < 20; i++)
     {
@@ -190,9 +188,6 @@ void SoC::drawCurrentLine()
         auto tileId = ram.getTileForX(i);
         auto tileAddress = ram.getTileAddress(tileId);
         ram.fillFrameBufferWithTile(tileAddress, i);
-
-            // Get Current Pixel (Tile) 
-            // Draw on framebuffer
 
 
         // Draw Sprite
