@@ -19,6 +19,8 @@ SoC::SoC(Rom rom)
         ram.copy(bootRom.romBuffer, bootRomSize);
     }
     else {
+        auto romSize = std::clamp(static_cast<int>(rom.romBuffer.size()), 0, 0x7FFF);
+        ram.copy(rom.romBuffer, romSize);
         setInitialValuesWhenNoBoot();
     }
 
