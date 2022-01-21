@@ -125,14 +125,6 @@ void SDLWindow::handleEvent(SDL_Event &e)
             SDL_HideWindow(mWindow);
             break;
         }
-
-        //Update window caption with new data
-        if (updateCaption)
-        {
-            std::stringstream caption;
-            caption << "SDL Tutorial - ID: " << mWindowID << " MouseFocus:" << ((mMouseFocus) ? "On" : "Off") << " KeyboardFocus:" << ((mKeyboardFocus) ? "On" : "Off");
-            SDL_SetWindowTitle(mWindow, caption.str().c_str());
-        }
     }
 }
 

@@ -2,6 +2,9 @@
 #include <fstream>
 #include <iterator>
 
+Rom::Rom()
+{
+}
 
 Rom::Rom(std::string fileName)
 {
@@ -19,8 +22,8 @@ Rom::Rom(std::string fileName)
         romBuffer.reserve(size);
 
         romBuffer.insert(romBuffer.begin(),
-            std::istream_iterator<uint8_t>(romFile),
-            std::istream_iterator<uint8_t>());
+                         std::istream_iterator<uint8_t>(romFile),
+                         std::istream_iterator<uint8_t>());
 
         romFile.close();
     }

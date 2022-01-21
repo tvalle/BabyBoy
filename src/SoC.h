@@ -7,6 +7,7 @@
 class SoC
 {
 public:
+    SoC();
     SoC(Rom rom);
 
     bool isRunning;
@@ -17,7 +18,6 @@ public:
     CPU cpu;
 
 private:
-
     int modeclock;
     int graphicsMode;
 
@@ -32,4 +32,3 @@ private:
 
     void setInitialValuesWhenNoBoot();
 };
-

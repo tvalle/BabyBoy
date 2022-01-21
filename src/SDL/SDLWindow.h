@@ -11,8 +11,6 @@
 #define COLOR_2 0xa5d6ffff
 #define COLOR_3 0x181010ff
 
-
-// As seen on LazyFoo's SDL tutorials
 class SDLWindow
 {
 public:
@@ -20,20 +18,20 @@ public:
 	/*SDLWindow();*/
 
 	//Creates window
-	bool init(const char* title, int width, int height);
+	bool init(const char *title, int width, int height);
 
-	bool init(const char* title, int width, int height, bool opened);
+	bool init(const char *title, int width, int height, bool opened);
 
 	//Handles window events
-	void handleEvent(SDL_Event& e);
+	void handleEvent(SDL_Event &e);
 
 	//Focuses on window
 	void focus();
 
 	//Shows windows contents
-	void render(uint8_t** matrix, int width, int height);
+	void render(uint8_t **matrix, int width, int height);
 
-    void renderWrapping(uint8_t** matrix, uint8_t scx, uint8_t scy);
+	void renderWrapping(uint8_t **matrix, uint8_t scx, uint8_t scy);
 
 	//Deallocates internals
 	void free();
@@ -50,9 +48,9 @@ public:
 
 private:
 	//Window data
-	SDL_Window* mWindow;
-	SDL_Renderer* mRenderer;
-	SDL_Texture* mScreenTexture;
+	SDL_Window *mWindow;
+	SDL_Renderer *mRenderer;
+	SDL_Texture *mScreenTexture;
 	int mWindowID;
 
 	//Window dimensions
@@ -66,7 +64,6 @@ private:
 	bool mMinimized;
 	bool mShown;
 
-	Uint32* pixels;
+	Uint32 *pixels;
 	void initializePixels();
 };
-

@@ -43,3 +43,5 @@ sites
 *.pdb
 
 [Bb]uild/
+
+.vscode/

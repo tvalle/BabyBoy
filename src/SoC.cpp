@@ -1,6 +1,10 @@
 #include "SoC.h"
 #include "Config.h"
 
+SoC::SoC()
+{
+}
+
 SoC::SoC(Rom rom)
 {
     ram = RAM();
@@ -18,7 +22,8 @@ SoC::SoC(Rom rom)
         ram.copy(rom.romBuffer, romSize);
         ram.copy(bootRom.romBuffer, bootRomSize);
     }
-    else {
+    else
+    {
         auto romSize = std::clamp(static_cast<int>(rom.romBuffer.size()), 0, 0x7FFF);
         ram.copy(rom.romBuffer, romSize);
         setInitialValuesWhenNoBoot();
@@ -190,7 +195,6 @@ void SoC::drawCurrentLine()
         auto tileId = ram.getTileForX(i);
         auto tileAddress = ram.getTileAddress(tileId);
         ram.fillFrameBufferWithTile(tileAddress, i);
-
 
         // Draw Sprite
 

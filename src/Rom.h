@@ -6,8 +6,8 @@
 class Rom
 {
 public:
+	Rom();
 	Rom(std::string fileName);
 
 	std::vector<uint8_t> romBuffer;
 };
-
