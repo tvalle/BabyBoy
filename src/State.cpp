@@ -22,9 +22,10 @@ void State::run()
     {
         auto current_timepoint = std::chrono::steady_clock::now();
 
+        updateWindows(m_Windows);
+
         while (current_timepoint - last_timepoint < std::chrono::milliseconds(16))
         {
-            updateWindows(m_Windows);
             current_timepoint = std::chrono::steady_clock::now();
         }
         last_timepoint = current_timepoint;
