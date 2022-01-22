@@ -11,6 +11,7 @@ public:
 
     State();
     void run();
+    void add(Window *window);
 
 private:
     std::vector<Window *> m_Windows;

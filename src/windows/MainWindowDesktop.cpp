@@ -5,6 +5,7 @@
 MainWindowDesktop::MainWindowDesktop(State *state)
 {
     m_State = state;
+    m_VRAMWindow = nullptr;
 }
 
 void MainWindowDesktop::init()
@@ -30,6 +31,20 @@ void MainWindowDesktop::update()
         {
             m_State->exit = true;
         }
+
+        if (e.type == SDL_KEYDOWN)
+        {
+            switch( e.key.keysym.sym ){
+                    case SDLK_v:
+                    {
+                        m_VRAMWindow = new VRAMWindow(m_Soc);
+                        m_State->add(m_VRAMWindow);
+                    }
+                        break;
+                    default:
+                        break;
+                }
+        }
     }
 
     while (m_Soc->cpu.cycles < 69905)
@@ -46,7 +61,5 @@ void MainWindowDesktop::update()
 void MainWindowDesktop::destroy()
 {
     window.free();
-    // bgMap.free();
-    // vramWindow.free();
     SDL_Quit();
 }

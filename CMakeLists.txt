@@ -13,8 +13,10 @@ set(SOURCES
 	src/SDL/SDLWindow.cpp
 	src/SoC.cpp
 	src/Config.cpp
+	src/State.cpp
 	src/windows/MainWindowDesktop.cpp
-	src/State.cpp)
+	src/windows/VRAMWindow.cpp
+	)
 
 find_package(SDL2 REQUIRED)
 include_directories(${SDL2_INCLUDE_DIRS})

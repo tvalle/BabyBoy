@@ -1,5 +1,6 @@
 #include <vector>
 #include <chrono>
+#include <algorithm>
 
 #include "State.h"
 #include "windows/MainWindowDesktop.h"
@@ -32,6 +33,15 @@ void State::run()
     }
 
     destroyWindows(m_Windows);
+}
+
+void State::add(Window *window)
+{
+    if (std::find(m_Windows.begin(), m_Windows.end(), window) == m_Windows.end())
+    {
+        window->init();
+        m_Windows.push_back(window);
+    }
 }
 
 void State::initializeWindows(std::vector<Window *> windows)
