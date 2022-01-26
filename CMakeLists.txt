@@ -13,7 +13,7 @@ set(SOURCES
 	src/SDL/SDLWindow.cpp
 	src/SoC.cpp
 	src/Config.cpp
-	src/State.cpp
+	src/WindowManager.cpp
 	src/windows/MainWindowDesktop.cpp
 	src/windows/VRAMWindow.cpp
 	)

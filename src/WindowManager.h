@@ -4,12 +4,12 @@
 
 #include "Window.h"
 
-class State
+class WindowManager
 {
 public:
     bool exit;
 
-    State();
+    WindowManager();
     void run();
     void add(Window *window);
 

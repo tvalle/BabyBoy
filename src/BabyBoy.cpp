@@ -1,10 +1,10 @@
-#include "State.h"
+#include "WindowManager.h"
 
 int main(int argc, char *argv[])
 {
-    State state;
+    WindowManager windowManager;
 
-    state.run();
+    windowManager.run();
 
     return 0;
 }

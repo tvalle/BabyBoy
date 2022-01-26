@@ -2,15 +2,15 @@
 #include <chrono>
 #include <algorithm>
 
-#include "State.h"
+#include "WindowManager.h"
 #include "windows/MainWindowDesktop.h"
 
-State::State()
+WindowManager::WindowManager()
 {
     exit = false;
 }
 
-void State::run()
+void WindowManager::run()
 {
     MainWindowDesktop mainWindow = MainWindowDesktop(this);
     m_Windows.push_back(&mainWindow);
@@ -35,7 +35,7 @@ void State::run()
     destroyWindows(m_Windows);
 }
 
-void State::add(Window *window)
+void WindowManager::add(Window *window)
 {
     if (std::find(m_Windows.begin(), m_Windows.end(), window) == m_Windows.end())
     {
@@ -44,7 +44,7 @@ void State::add(Window *window)
     }
 }
 
-void State::initializeWindows(std::vector<Window *> windows)
+void WindowManager::initializeWindows(std::vector<Window *> windows)
 {
     for (int i = 0; i < windows.size(); i++)
     {
@@ -52,7 +52,7 @@ void State::initializeWindows(std::vector<Window *> windows)
     }
 }
 
-void State::updateWindows(std::vector<Window *> windows)
+void WindowManager::updateWindows(std::vector<Window *> windows)
 {
     for (int i = 0; i < windows.size(); i++)
     {
@@ -60,7 +60,7 @@ void State::updateWindows(std::vector<Window *> windows)
     }
 }
 
-void State::destroyWindows(std::vector<Window *> windows)
+void WindowManager::destroyWindows(std::vector<Window *> windows)
 {
     for (int i = 0; i < windows.size(); i++)
     {

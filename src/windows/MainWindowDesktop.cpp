@@ -2,9 +2,9 @@
 
 #include "MainWindowDesktop.h"
 
-MainWindowDesktop::MainWindowDesktop(State *state)
+MainWindowDesktop::MainWindowDesktop(WindowManager *windowManager)
 {
-    m_State = state;
+    m_WindowManager = windowManager;
     m_VRAMWindow = nullptr;
 }
 
@@ -29,7 +29,7 @@ void MainWindowDesktop::update()
     {
         if (e.type == SDL_QUIT)
         {
-            m_State->exit = true;
+            m_WindowManager->exit = true;
         }
 
         if (e.type == SDL_KEYDOWN)
@@ -38,7 +38,7 @@ void MainWindowDesktop::update()
                     case SDLK_v:
                     {
                         m_VRAMWindow = new VRAMWindow(m_Soc);
-                        m_State->add(m_VRAMWindow);
+                        m_WindowManager->add(m_VRAMWindow);
                     }
                         break;
                     default:
