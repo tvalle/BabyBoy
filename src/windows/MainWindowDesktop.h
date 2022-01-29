@@ -5,7 +5,9 @@
 #include "../WindowManager.h"
 #include "../SoC.h"
 #include "../Rom.h"
+
 #include "VRAMWindow.h"
+#include "DebugWindow.h"
 
 class MainWindowDesktop : public Window
 {
@@ -25,4 +27,5 @@ private:
     SoC *m_Soc;
 
     VRAMWindow *m_VRAMWindow;
+    DebugWindow *m_DebugWindow;
 };

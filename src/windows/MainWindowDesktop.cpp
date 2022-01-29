@@ -34,16 +34,23 @@ void MainWindowDesktop::update()
 
         if (e.type == SDL_KEYDOWN)
         {
-            switch( e.key.keysym.sym ){
-                    case SDLK_v:
-                    {
-                        m_VRAMWindow = new VRAMWindow(m_Soc);
-                        m_WindowManager->add(m_VRAMWindow);
-                    }
-                        break;
-                    default:
-                        break;
-                }
+            switch (e.key.keysym.sym)
+            {
+            case SDLK_2:
+            {
+                m_VRAMWindow = new VRAMWindow(m_Soc);
+                m_WindowManager->add(m_VRAMWindow);
+            }
+            break;
+            case SDLK_1:
+            {
+                m_DebugWindow = new DebugWindow(m_Soc);
+                m_WindowManager->add(m_DebugWindow);
+            }
+            break;
+            default:
+                break;
+            }
         }
     }
 
