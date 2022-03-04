@@ -1,4 +1,6 @@
 #include "DebugWindow.h"
+#include "../Opcode.h"
+#include "../OpcodesArray.h"
 
 DebugWindow::DebugWindow(SoC *soc)
 {
@@ -30,11 +32,9 @@ void DebugWindow::init()
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
     SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 
-    // SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
     SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
 
-    // SDL_Window* window = SDL_CreateWindow("Dear ImGui SDL2+OpenGL3 example", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, window_flags);
-    m_Window = SDL_CreateWindow("Dear ImGui SDL2+OpenGL3 example", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, window_flags);
+    m_Window = SDL_CreateWindow("Debug Window", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 600, window_flags);
 
     // SDL_GLContext gl_context = SDL_GL_CreateContext(window);
     m_GLContext = SDL_GL_CreateContext(m_Window);
@@ -75,10 +75,29 @@ void DebugWindow::update()
     ImGui_ImplSDL2_NewFrame();
     ImGui::NewFrame();
 
-    ImGui::Begin("Hello, world!"); // Create a window called "Hello, world!" and append into it.
+    //ImGui::Begin("Hello, world!"); // Create a window called "Hello, world!" and append into it.
 
-    ImGui::Text("This is some useful text.");
-    ImGui::End();
+    if (ImGui::BeginListBox("##listbox 1", ImVec2(0, 100)))
+    {
+        const int memoryMapWhereROMIsLocated = 0x7FFF - 0x100;
+         for (int n = 0; n < memoryMapWhereROMIsLocated; n++)
+         {
+            std::string s = opcodes.at(m_Soc->ram.read(n)).mnemonic;
+             char* c = &*s.begin();
+            ImGui::Selectable(c, false);
+
+        //     // const bool is_selected = (item_current_idx == n);
+        //     // if (ImGui::Selectable(items[n], is_selected))
+        //     //     item_current_idx = n;
+
+        //     // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+        //     // if (is_selected)
+        //     // ImGui::SetItemDefaultFocus();
+        }
+        ImGui::EndListBox();
+    }
+
+    //ImGui::End();
 
     ImGui::Render();
     glViewport(0, 0, (int)m_IO->DisplaySize.x, (int)m_IO->DisplaySize.y);
