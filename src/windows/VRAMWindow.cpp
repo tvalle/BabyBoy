@@ -1,8 +1,9 @@
 #include "VRAMWindow.h"
 
-VRAMWindow::VRAMWindow(SoC *soc)
+VRAMWindow::VRAMWindow(SoC *soc, WindowManager *windowManager)
 {
     m_Soc = soc;
+    m_WindowManager = windowManager;
 }
 
 void VRAMWindow::init()
@@ -13,22 +14,23 @@ void VRAMWindow::init()
 
 void VRAMWindow::update()
 {
-    while (SDL_PollEvent(&e) != 0)
+    auto vramMatrix = m_Soc->ram.getVRAM_Tiles();
+    window.render(vramMatrix, 128, 192);
+}
+
+void VRAMWindow::updateEvent(SDL_Event e)
+{
+    if (e.type == SDL_WINDOWEVENT && e.window.event == SDL_WINDOWEVENT_CLOSE && e.window.windowID == window.getWindowId())
     {
-        if (e.type == SDL_QUIT)
-        {
-            window.free();
-            return;
-        }
+        destroy();
+        m_WindowManager->remove(this);
+        return;
     }
 
     window.handleEvent(e);
-    auto vramMatrix = m_Soc->ram.getVRAM_Tiles();
-    window.handleEvent(e);
-    window.render(vramMatrix, 128, 192);
 }
 
 void VRAMWindow::destroy()
 {
-    // TODO: check if needed to free here
+    window.free();
 }

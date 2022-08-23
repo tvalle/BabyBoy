@@ -1,6 +1,7 @@
 #include <vector>
 #include <chrono>
 #include <algorithm>
+#include <SDL.h>
 
 #include "WindowManager.h"
 #include "windows/MainWindowDesktop.h"
@@ -44,6 +45,11 @@ void WindowManager::add(Window *window)
     }
 }
 
+void WindowManager::remove(Window *window)
+{
+   m_Windows.erase(std::remove(m_Windows.begin(), m_Windows.end(), window), m_Windows.end());
+}
+
 void WindowManager::initializeWindows(std::vector<Window *> windows)
 {
     for (int i = 0; i < windows.size(); i++)
@@ -54,6 +60,14 @@ void WindowManager::initializeWindows(std::vector<Window *> windows)
 
 void WindowManager::updateWindows(std::vector<Window *> windows)
 {
+    SDL_Event event;
+    while (SDL_PollEvent(&event)) {
+        for (int i = 0; i < windows.size(); i++)
+        {
+            windows[i]->updateEvent(event);
+        }
+    }
+
     for (int i = 0; i < windows.size(); i++)
     {
         windows[i]->update();

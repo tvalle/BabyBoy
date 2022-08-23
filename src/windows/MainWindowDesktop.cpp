@@ -25,35 +25,6 @@ void MainWindowDesktop::init()
 
 void MainWindowDesktop::update()
 {
-    while (SDL_PollEvent(&e) != 0)
-    {
-        if (e.type == SDL_QUIT)
-        {
-            m_WindowManager->exit = true;
-        }
-
-        if (e.type == SDL_KEYDOWN)
-        {
-            switch (e.key.keysym.sym)
-            {
-            case SDLK_2:
-            {
-                m_VRAMWindow = new VRAMWindow(m_Soc);
-                m_WindowManager->add(m_VRAMWindow);
-            }
-            break;
-            case SDLK_1:
-            {
-                m_DebugWindow = new DebugWindow(m_Soc);
-                m_WindowManager->add(m_DebugWindow);
-            }
-            break;
-            default:
-                break;
-            }
-        }
-    }
-
     while (m_Soc->cpu.cycles < 69905)
     {
         m_Soc->step();
@@ -63,6 +34,40 @@ void MainWindowDesktop::update()
     window.handleEvent(e);
     auto bgMatrix = m_Soc->ram.getBGTileMapMatrix();
     window.render(bgMatrix, 160, 144);
+}
+
+void MainWindowDesktop::updateEvent(SDL_Event e)
+{
+    if (e.type == SDL_WINDOWEVENT && e.window.event == SDL_WINDOWEVENT_CLOSE && e.window.windowID == window.getWindowId())
+    {
+        m_WindowManager->exit = true;
+    }
+
+    if (e.type == SDL_QUIT)
+    {
+        m_WindowManager->exit = true;
+    }
+
+    if (e.type == SDL_KEYDOWN)
+    {
+        switch (e.key.keysym.sym)
+        {
+        case SDLK_2:
+        {
+            m_VRAMWindow = new VRAMWindow(m_Soc, m_WindowManager);
+            m_WindowManager->add(m_VRAMWindow);
+        }
+        break;
+        case SDLK_1:
+        {
+            m_DebugWindow = new DebugWindow(m_Soc, m_WindowManager);
+            m_WindowManager->add(m_DebugWindow);
+        }
+        break;
+        default:
+            break;
+        }
+    }
 }
 
 void MainWindowDesktop::destroy()

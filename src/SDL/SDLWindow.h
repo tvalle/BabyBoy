@@ -46,6 +46,8 @@ public:
 	bool isMinimized();
 	bool isShown();
 
+	int getWindowId();
+
 private:
 	//Window data
 	SDL_Window *mWindow;

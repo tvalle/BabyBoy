@@ -4,6 +4,7 @@
 #include <SDL_opengl.h>
 
 #include "../Window.h"
+#include "../WindowManager.h"
 #include "../SoC.h"
 
 #include "../imgui/imgui.h"
@@ -13,14 +14,16 @@
 class DebugWindow : public Window
 {
 public:
-    DebugWindow(SoC *soc);
+    DebugWindow(SoC *soc, WindowManager *windowManager);
 
     void init() override;
     void update() override;
+    void updateEvent(SDL_Event e) override;
     void destroy() override;
 
 private:
     SoC *m_Soc;
+    WindowManager *m_WindowManager;
 
     SDL_Window *m_Window;
     SDL_GLContext m_GLContext;

@@ -2,9 +2,10 @@
 #include "../Opcode.h"
 #include "../OpcodesArray.h"
 
-DebugWindow::DebugWindow(SoC *soc)
+DebugWindow::DebugWindow(SoC *soc, WindowManager *windowManager)
 {
     m_Soc = soc;
+    m_WindowManager = windowManager;
     m_Window = nullptr;
     m_GLContext = nullptr;
     m_IO = nullptr;
@@ -57,20 +58,6 @@ void DebugWindow::init()
 
 void DebugWindow::update()
 {
-    SDL_Event event;
-    while (SDL_PollEvent(&event))
-    {
-        ImGui_ImplSDL2_ProcessEvent(&event);
-        if (event.type == SDL_QUIT)
-        {
-            // done = true;
-        }
-        if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE && event.window.windowID == SDL_GetWindowID(m_Window))
-        {
-            // done = true;
-        }
-    }
-
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplSDL2_NewFrame();
     ImGui::NewFrame();
@@ -105,6 +92,17 @@ void DebugWindow::update()
     glClear(GL_COLOR_BUFFER_BIT);
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
     SDL_GL_SwapWindow(m_Window);
+}
+
+void DebugWindow::updateEvent(SDL_Event e)
+{
+    ImGui_ImplSDL2_ProcessEvent(&e);
+    if (e.type == SDL_WINDOWEVENT && e.window.event == SDL_WINDOWEVENT_CLOSE && e.window.windowID == SDL_GetWindowID(m_Window))
+    {
+        m_WindowManager->remove(this);
+        destroy();
+        return;
+    }
 }
 
 void DebugWindow::destroy()

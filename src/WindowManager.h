@@ -12,6 +12,7 @@ public:
     WindowManager();
     void run();
     void add(Window *window);
+    void remove(Window *window);
 
 private:
     std::vector<Window *> m_Windows;

@@ -16,6 +16,7 @@ public:
 
     void init() override;
     void update() override;
+    void updateEvent(SDL_Event e) override;
     void destroy() override;
 
 private:

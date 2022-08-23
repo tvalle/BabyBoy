@@ -185,3 +185,8 @@ void SDLWindow::initializePixels()
     pixels = new Uint32[160 * 144];
     memset(pixels, 255, 160 * 144 * sizeof(Uint32));
 }
+
+int SDLWindow::getWindowId()
+{
+    return mWindowID;
+}
