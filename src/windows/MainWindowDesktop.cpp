@@ -75,3 +75,8 @@ void MainWindowDesktop::destroy()
     window.free();
     SDL_Quit();
 }
+
+bool MainWindowDesktop::markedForDeletion()
+{
+    return false;
+}

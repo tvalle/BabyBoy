@@ -58,6 +58,9 @@ void DebugWindow::init()
 
 void DebugWindow::update()
 {
+    if (m_MarkedForDeletion)
+        return;
+
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplSDL2_NewFrame();
     ImGui::NewFrame();
@@ -113,4 +116,11 @@ void DebugWindow::destroy()
 
     SDL_GL_DeleteContext(m_GLContext);
     SDL_DestroyWindow(m_Window);
+
+    m_MarkedForDeletion = true;
+}
+
+bool DebugWindow::markedForDeletion()
+{
+    return m_MarkedForDeletion;
 }

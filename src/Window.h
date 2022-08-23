@@ -9,4 +9,5 @@ public:
     virtual void update() = 0;
     virtual void updateEvent(SDL_Event e) = 0;
     virtual void destroy() = 0;
+    virtual bool markedForDeletion() = 0;
 };

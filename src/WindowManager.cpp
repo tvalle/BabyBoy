@@ -61,7 +61,8 @@ void WindowManager::initializeWindows(std::vector<Window *> windows)
 void WindowManager::updateWindows(std::vector<Window *> windows)
 {
     SDL_Event event;
-    while (SDL_PollEvent(&event)) {
+    while (SDL_PollEvent(&event)) 
+    {
         for (int i = 0; i < windows.size(); i++)
         {
             windows[i]->updateEvent(event);

@@ -20,6 +20,7 @@ public:
     void update() override;
     void updateEvent(SDL_Event e) override;
     void destroy() override;
+    bool markedForDeletion() override;
 
 private:
     SoC *m_Soc;
@@ -30,4 +31,6 @@ private:
     ImGuiIO *m_IO;
 
     ImVec4 m_BGColor = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+    
+    bool m_MarkedForDeletion = false;
 };

@@ -13,6 +13,7 @@ public:
     void update() override;
     void updateEvent(SDL_Event e) override;
     void destroy() override;
+    bool markedForDeletion() override;
 
 private:
     SDLWindow window;

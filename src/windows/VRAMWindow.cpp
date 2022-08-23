@@ -34,3 +34,8 @@ void VRAMWindow::destroy()
 {
     window.free();
 }
+
+bool VRAMWindow::markedForDeletion()
+{
+    return false;
+}
