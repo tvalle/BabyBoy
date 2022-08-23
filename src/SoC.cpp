@@ -32,7 +32,7 @@ SoC::SoC(Rom rom)
     modeclock = 0;
     graphicsMode = 2;
 
-    isRunning = true;
+    isPaused = false;
 }
 
 void SoC::step()

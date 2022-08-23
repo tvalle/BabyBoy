@@ -25,11 +25,19 @@ void MainWindowDesktop::init()
 
 void MainWindowDesktop::update()
 {
-    while (m_Soc->cpu.cycles < 69905)
+    if (!m_Soc->isPaused)
     {
-        m_Soc->step();
+        while (m_Soc->cpu.cycles < 69905)
+        {
+            m_Soc->step();
+        }
     }
-    m_Soc->cpu.cycles = 0;
+
+    // This is outside in order to step through in the debugger, otherwise it would be just after the while loop
+    if (m_Soc->cpu.cycles >= 69905)
+    {
+        m_Soc->cpu.cycles = 0;
+    }
 
     window.handleEvent(e);
     auto bgMatrix = m_Soc->ram.getBGTileMapMatrix();

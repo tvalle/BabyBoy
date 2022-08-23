@@ -10,7 +10,7 @@ public:
     SoC();
     SoC(Rom rom);
 
-    bool isRunning;
+    bool isPaused;
 
     void step();
 
