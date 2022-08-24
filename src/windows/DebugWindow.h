@@ -1,11 +1,14 @@
 #pragma once
 
+#include <vector>
+
 #include <SDL.h>
 #include <SDL_opengl.h>
 
 #include "../Window.h"
 #include "../WindowManager.h"
 #include "../SoC.h"
+#include "../Opcode.h"
 
 #include "../imgui/imgui.h"
 #include "../imgui/imgui_impl_sdl.h"
@@ -34,4 +37,8 @@ private:
     
     bool m_MarkedForDeletion = false;
     bool m_TrackPC = false;
+
+    std::vector<Opcode> instructions;
+
+    void createInstructionsList();
 };

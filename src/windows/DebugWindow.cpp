@@ -1,7 +1,4 @@
-#include <iomanip>
 #include "DebugWindow.h"
-#include "../Opcode.h"
-#include "../OpcodesArray.h"
 
 DebugWindow::DebugWindow(SoC *soc, WindowManager *windowManager)
 {
@@ -45,7 +42,6 @@ void DebugWindow::init()
 
     m_Window = SDL_CreateWindow("Debug Window", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 600, window_flags);
 
-    // SDL_GLContext gl_context = SDL_GL_CreateContext(window);
     m_GLContext = SDL_GL_CreateContext(m_Window);
 
     SDL_GL_MakeCurrent(m_Window, m_GLContext);
@@ -53,7 +49,6 @@ void DebugWindow::init()
 
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
-    // ImGuiIO& io = ImGui::GetIO(); (void)io;
     m_IO = &(ImGui::GetIO());
     (void)m_IO;
 
@@ -62,6 +57,8 @@ void DebugWindow::init()
     // Setup Platform/Renderer backends
     ImGui_ImplSDL2_InitForOpenGL(m_Window, m_GLContext);
     ImGui_ImplOpenGL3_Init(glsl_version);
+
+    createInstructionsList();
 }
 
 static void PushStyleCompact()
@@ -88,7 +85,6 @@ void DebugWindow::update()
     bool closed = false;
     ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f));
     ImGui::SetNextWindowSize(ImGui::GetIO().DisplaySize);
-    // ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
     ImGui::Begin("Debugger", &closed, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoResize);
 
     // PC Instructions
@@ -96,13 +92,6 @@ void DebugWindow::update()
     
         static ImGuiTableFlags flags = ImGuiTableFlags_ScrollY | ImGuiTableFlags_RowBg | ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV | ImGuiTableFlags_Resizable | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable;
 
-        // PushStyleCompact();
-        // ImGui::CheckboxFlags("ImGuiTableFlags_ScrollY", &flags, ImGuiTableFlags_ScrollY);
-        // PopStyleCompact();
-
-        // When using ScrollX or ScrollY we need to specify a size for our table container!
-        // Otherwise by default the table will fit all available space, like a BeginChild() call.
-        
         float firstHalfWidth = m_IO->DisplaySize.x * .60f;
         float secondHalfWidth = m_IO->DisplaySize.x * .40f;
 
@@ -116,39 +105,34 @@ void DebugWindow::update()
             ImGui::TableHeadersRow();
 
             ImGuiListClipper clipper;
-            const int memoryMapWhereROMIsLocated = 0x7FFF - 0x100;
-            clipper.Begin(memoryMapWhereROMIsLocated);
+            clipper.Begin(instructions.size());
             while (clipper.Step())
             {
+                int currentPC = 0;
+
                 for (int row = clipper.DisplayStart; row < clipper.DisplayEnd; row++)
                 {
                     bool isCurrentPc = row == m_Soc->cpu.PC;
-
-                    if (isCurrentPc && m_TrackPC) {
-                        // ImGui::SetScrollHereY(row * 0.25f);
-                    }
 
                     ImGui::TableNextRow();
                     for (int column = 0; column < 3; column++)
                     {
                         ImGui::TableSetColumnIndex(column);
-                        // ImGui::Text("Hello %d,%d", column, row);
 
                         if (isCurrentPc) {
                             ImGui::TableSetBgColor(ImGuiTableBgTarget_RowBg1, ImGui::GetColorU32(ImVec4(0.7f, 0.3f, 0.3f, 0.65f)));
                         }
 
                         if (column == 0) {
-                            ImGui::Text("0x%02X", row);
+                            ImGui::Text("0x%04X", instructions[row].address);
                         } else if (column == 1) {
-                            uint8_t opcode = opcodes.at(m_Soc->ram.read(row)).opcode;
+                            uint8_t opcode = instructions[row].opcode;
                             ImGui::Text("%02X", opcode);
                         } else if (column == 2) {
-                            std::string s = opcodes.at(m_Soc->ram.read(row)).mnemonic;
+                            std::string s = instructions[row].mnemonic;
                             char* c = &*s.begin();
                             ImGui::Text("%s", c);
                         }
-                        
 
                     }
                 }
@@ -204,32 +188,10 @@ void DebugWindow::update()
         ImGui::EndGroup();
         ImGui::Text("Last instructions list");
 
-
-    // if (ImGui::BeginListBox("##listbox 1", ImVec2(0, 100)))
-    // {
-    //     const int memoryMapWhereROMIsLocated = 0x7FFF - 0x100;
-    //     for (int n = 0; n < memoryMapWhereROMIsLocated; n++)
-    //     {
-    //         std::string s = opcodes.at(m_Soc->ram.read(n)).mnemonic;
-    //         char* c = &*s.begin();
-    //         ImGui::Selectable(c, false);
-
-    //     //     // const bool is_selected = (item_current_idx == n);
-    //     //     // if (ImGui::Selectable(items[n], is_selected))
-    //     //     //     item_current_idx = n;
-
-    //     //     // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
-    //     //     // if (is_selected)
-    //     //     // ImGui::SetItemDefaultFocus();
-    //     }
-    //     ImGui::EndListBox();
-    // }
-
     ImGui::EndGroup();
 
 
     ImGui::End();
-    // ImGui::PopStyleVar(2);
 
     ImGui::Render();
     glViewport(0, 0, (int)m_IO->DisplaySize.x, (int)m_IO->DisplaySize.y);
@@ -265,4 +227,35 @@ void DebugWindow::destroy()
 bool DebugWindow::markedForDeletion()
 {
     return m_MarkedForDeletion;
+}
+
+void DebugWindow::createInstructionsList()
+{
+    instructions = std::vector<Opcode>();
+
+    const int memoryMapWhereROMIsLocated = 0x7FFF;
+    for (int n = 0; n < memoryMapWhereROMIsLocated;)
+    {
+        Opcode instruction;
+        switch (m_Soc->ram.read(n))
+        {
+            #include "../unprefixed.h"
+
+            case 0xCB: {
+                uint8_t nextOpcode = m_Soc->ram.read(n+1);
+                switch (nextOpcode)
+                {
+                    #include "../cb_prefixed.h"
+                }
+            }
+                break;
+            default:
+                instruction = Opcode("Illegal", m_Soc->ram.read(n), 1, n);
+                break;
+        }
+
+        instructions.push_back(instruction);
+
+        n += instruction.bytes;
+    }
 }
