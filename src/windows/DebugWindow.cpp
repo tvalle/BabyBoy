@@ -40,7 +40,7 @@ void DebugWindow::init()
 
     SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
 
-    m_Window = SDL_CreateWindow("Debug Window", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 600, window_flags);
+    m_Window = SDL_CreateWindow("Debug Window", 50, SDL_WINDOWPOS_CENTERED, 800, 600, window_flags);
 
     m_GLContext = SDL_GL_CreateContext(m_Window);
 
@@ -108,11 +108,9 @@ void DebugWindow::update()
             clipper.Begin(instructions.size());
             while (clipper.Step())
             {
-                int currentPC = 0;
-
                 for (int row = clipper.DisplayStart; row < clipper.DisplayEnd; row++)
                 {
-                    bool isCurrentPc = row == m_Soc->cpu.PC;
+                    bool isCurrentPc = instructions[row].address == m_Soc->cpu.PC;
 
                     ImGui::TableNextRow();
                     for (int column = 0; column < 3; column++)
@@ -151,12 +149,11 @@ void DebugWindow::update()
         ImGui::PopButtonRepeat();
 
         ImGui::SetNextItemWidth(secondHalfWidth - 50);
-        char pc_ca[3];
+        char pc_ca[5];
         sprintf(pc_ca, "%x", m_Soc->cpu.PC);
         ImGui::InputText("PC", pc_ca, IM_ARRAYSIZE(pc_ca));
         bool filterByHeatmap = false;
         ImGui::Checkbox("Filter by heatmap", &filterByHeatmap);
-        ImGui::Checkbox("Track PC", &m_TrackPC);
 
         ImGui::Spacing();
 
@@ -185,8 +182,30 @@ void DebugWindow::update()
         sprintf(reg_sp, "%04x", m_Soc->cpu.SP);
         ImGui::Text("%s", reg_sp);
 
+        bool isZ = m_Soc->cpu.isFlagSet(Z);
+        ImGui::Checkbox("Z", &isZ); ImGui::SameLine();
+
+        bool isN = m_Soc->cpu.isFlagSet(N);
+        ImGui::Checkbox("N", &isN); ImGui::SameLine();
+
+        bool isH = m_Soc->cpu.isFlagSet(H);
+        ImGui::Checkbox("H", &isH); ImGui::SameLine();
+
+        bool isC = m_Soc->cpu.isFlagSet(C);
+        ImGui::Checkbox("C", &isC); ImGui::SameLine();
+
         ImGui::EndGroup();
-        ImGui::Text("Last instructions list");
+
+        // Last Instructions
+        ImGui::BeginChild("InsList", ImVec2(0, 0), true, ImGuiWindowFlags_None);
+        // for (int n = 0; n < 1000; n++)
+        //     ImGui::Text("%d", n);
+        for (auto const& i : m_Soc->cpu.lastInstructions) {
+           ImGui::Text("PC %04X Opcode 0x%02X A:%02x B:%02x C:%02x D:%02x E:%02x F:%02x H:%02x L:%02x SP:%04x", 
+           i.PC, i.opcode, i.a, i.b, i.c, i.d, i.e, i.f, i.h, i.l, i.SP);
+        }
+
+        ImGui::EndChild();
 
     ImGui::EndGroup();
 

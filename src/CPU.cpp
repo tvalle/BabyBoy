@@ -9,8 +9,6 @@
 bool showDebug = false;
 bool writeFile = true;
 
-FILE* pFile;
-
 CPU::CPU(RAM& ram)
 {
     PC = 0x00;
@@ -21,44 +19,21 @@ CPU::CPU(RAM& ram)
     cycles = 0;
     lastClockCycle = 0;
 
-    //RAM = new uint8_t[0xFFFF];
     this->ram = &ram;
-
-    /*Rom bootRom = Rom("dmg0_rom.bin");
-
-    auto romSize = std::clamp(static_cast<int>(rom.romBuffer.size()), 0, 0x7FFF);
-    auto bootRomSize = std::clamp(static_cast<int>(bootRom.romBuffer.size()), 0, 0x7FFF);
-    std::memcpy(RAM, &rom.romBuffer[0], romSize);
-    std::memcpy(RAM, &bootRom.romBuffer[0], bootRomSize);*/
-
-    //pFile = fopen("log", "w");
 }
 
 CPU::~CPU()
 {
-    //fclose(pFile);
 }
 
 void CPU::ExecuteInstruction(uint8_t instruction)
 {
-    //if (showDebug || PC == 0x8F)
-    {
-        // 0000: 31 A:00 B:00 C:00 D:00 E:00 F:00 H:00 L:00 LY:00 SP:00  Cy:8
-        /*printf("%04x: %02x A:%02x B:%02x C:%02x D:%02x E:%02x F:%02x H:%02x L:%02x LY:%02x SP:%04x FF44:%02x\n",
-            PC, instruction, a, b, c, d, e, f, h, l, 0, SP, ram->read(0xff44));*/
-        //if (PC < 0x100 && writeFile) {
-        //    fprintf(pFile, "%04x: %02x AF:%02x%02x BC:%02x%02x DE:%02x%02x HL:%02x%02x, FF44:%02x\n",
-        //        PC, instruction, a, f, b, c, d, e, h, l, ram->read(0xff44));
-        //    // 33203 sem o FF44
-        //}
-        //else {
-        //    writeFile = false;
-        //    fclose(pFile);
-        //}
-
-        
-        showDebug = true;
+    // Debugger
+    if (lastInstructions.size() > MAX_INSTRUCTIONS_LIST) {
+        lastInstructions.pop_front();
     }
+    lastInstructions.push_back(DebugInstruction(PC, instruction, a, b, c, d, e, f, h, l, SP));
+
 
     switch (instruction)
     {

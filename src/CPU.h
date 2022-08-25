@@ -1,7 +1,11 @@
 #pragma once
-//#include "Rom.h"
+#include <list>
 #include <stdint.h>
 #include "RAM.h"
+#include "Debug_Instruction.h"
+
+// This is used to save the last N instructions (for debugging)
+#define MAX_INSTRUCTIONS_LIST 1000
 
 enum Flag {
     C = 4,
@@ -20,6 +24,7 @@ public:
     CPU(RAM &ram);
     ~CPU();
     void ExecuteInstruction(uint8_t instruction);
+    bool isFlagSet(Flag flag);
 
     uint8_t a;
     uint8_t b;
@@ -34,7 +39,7 @@ public:
     int cycles;
     int lastClockCycle;
 
-	//uint8_t* RAM;
+	std::list<DebugInstruction> lastInstructions;
 private:
 
     // Registers
@@ -47,7 +52,6 @@ private:
 	uint16_t fetchAddressFromRam(int ramPos);
     void add2bytesToRam(int ramPos, uint16_t value);
 
-    bool isFlagSet(Flag flag);
     void setZ(bool value);
     void setN(bool value);
     void setH(bool value);
