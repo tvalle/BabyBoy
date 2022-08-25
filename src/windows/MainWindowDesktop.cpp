@@ -2,10 +2,12 @@
 
 #include "MainWindowDesktop.h"
 
-MainWindowDesktop::MainWindowDesktop(WindowManager *windowManager)
+MainWindowDesktop::MainWindowDesktop(WindowManager *windowManager, std::string romName)
 {
     m_WindowManager = windowManager;
     m_VRAMWindow = nullptr;
+
+    m_RomName = romName;
 }
 
 void MainWindowDesktop::init()
@@ -17,7 +19,7 @@ void MainWindowDesktop::init()
     window.init("BabyBoy", 160, 144, true);
 
     // Emulator
-    m_Rom = new Rom("cpu_instrs.gb");
+    m_Rom = new Rom(m_RomName);
 
     m_Soc = new SoC(*m_Rom);
     m_Soc->ram.write8(0xFF47, 0xE4);

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 #include "../SDL/SDLWindow.h"
 #include "../Window.h"
 #include "../WindowManager.h"
@@ -12,7 +14,7 @@
 class MainWindowDesktop : public Window
 {
 public:
-    MainWindowDesktop(WindowManager *windowManager);
+    MainWindowDesktop(WindowManager *windowManager, std::string romName);
 
     void init() override;
     void update() override;
@@ -30,4 +32,6 @@ private:
 
     VRAMWindow *m_VRAMWindow;
     DebugWindow *m_DebugWindow;
+
+    std::string m_RomName;
 };

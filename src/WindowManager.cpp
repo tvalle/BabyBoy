@@ -6,14 +6,15 @@
 #include "WindowManager.h"
 #include "windows/MainWindowDesktop.h"
 
-WindowManager::WindowManager()
+WindowManager::WindowManager(std::string romName)
 {
     exit = false;
+    m_RomName = romName;
 }
 
 void WindowManager::run()
 {
-    MainWindowDesktop mainWindow = MainWindowDesktop(this);
+    MainWindowDesktop mainWindow = MainWindowDesktop(this, m_RomName);
     m_Windows.push_back(&mainWindow);
 
     initializeWindows(m_Windows);
