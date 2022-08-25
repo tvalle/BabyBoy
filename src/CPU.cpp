@@ -728,21 +728,26 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         // JUMP/CALL OPERATIONS *****************************************
     case 0x20:
         // jr nz, *
-        if (!isFlagSet(Flag::Z))
+        if (!isFlagSet(Flag::Z)) {
             PC += (int8_t)ram->read(PC + 1);
+            lastClockCycle = 12;
+        } else {
+            lastClockCycle = 8;
+        }
 
         PC += 2;
-        lastClockCycle = 12;
         break;
     case 0x30:
         // jr nc, *
-        if (!isFlagSet(Flag::C))
+        if (!isFlagSet(Flag::C)) {
             PC += (int8_t)ram->read(PC + 1);
+            lastClockCycle = 12;
+        } else {
+            lastClockCycle = 8;
+        }
+
         PC += 2;
-        lastClockCycle = 12;
         break;
-
-
     case 0x18:
         // jr *
         PC += (int8_t)ram->read(PC + 1);
