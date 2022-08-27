@@ -838,56 +838,56 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         break;
     case 0xC7:
         // rst 00h
-        SP += 2;
+        SP -= 2;
         add2bytesToRam(SP, PC + 1);
         PC = 0x00;
         lastClockCycle = 16;
         break;
     case 0xD7:
         // rst 10h
-        SP += 2;
+        SP -= 2;
         add2bytesToRam(SP, PC + 1);
         PC = 0x10;
         lastClockCycle = 16;
         break;
     case 0xE7:
         // rst 20h
-        SP += 2;
+        SP -= 2;
         add2bytesToRam(SP, PC + 1);
         PC = 0x20;
         lastClockCycle = 16;
         break;
     case 0xF7:
         // rst 30h
-        SP += 2;
+        SP -= 2;
         add2bytesToRam(SP, PC + 1);
         PC = 0x30;
         lastClockCycle = 16;
         break;
     case 0xCF:
         // rst 08h
-        SP += 2;
+        SP -= 2;
         add2bytesToRam(SP, PC + 1);
         PC = 0x08;
         lastClockCycle = 16;
         break;
     case 0xDF:
         // rst 18h
-        SP += 2;
+        SP -= 2;
         add2bytesToRam(SP, PC + 1);
         PC = 0x18;
         lastClockCycle = 16;
         break;
     case 0xEF:
         // rst 28h
-        SP += 2;
+        SP -= 2;
         add2bytesToRam(SP, PC + 1);
         PC = 0x28;
         lastClockCycle = 16;
         break;
     case 0xFF:
         // rst 38h
-        SP += 2;
+        SP -= 2;
         add2bytesToRam(SP, PC + 1);
         PC = 0x38;
         lastClockCycle = 16;
