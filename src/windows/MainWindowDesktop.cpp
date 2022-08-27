@@ -32,6 +32,9 @@ void MainWindowDesktop::update()
         while (m_Soc->cpu.cycles < 69905)
         {
             m_Soc->step();
+            if (m_Soc->isPaused) {
+                break;
+            }
         }
     }
 

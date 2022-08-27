@@ -39,6 +39,8 @@ public:
     int cycles;
     int lastClockCycle;
 
+    bool isOnIllegalInstruction = false;
+
 	std::list<DebugInstruction> lastInstructions;
 private:
 

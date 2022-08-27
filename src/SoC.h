@@ -4,6 +4,8 @@
 #include "CPU.h"
 #include <algorithm>
 
+#define BREAKPOINT_SIZE 0x7FFF
+
 class SoC
 {
 public:
@@ -16,6 +18,8 @@ public:
 
     RAM ram;
     CPU cpu;
+
+    bool breakpoints[BREAKPOINT_SIZE];
 
 private:
     int modeclock;

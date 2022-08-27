@@ -33,11 +33,18 @@ SoC::SoC(Rom rom)
     graphicsMode = 2;
 
     isPaused = false;
+
+    for (int i = 0; i < BREAKPOINT_SIZE; i++) {
+        breakpoints[i] = false;
+    }
 }
 
 void SoC::step()
 {
     cpu.ExecuteInstruction(ram.read(cpu.PC));
+    if (breakpoints[cpu.PC] == true) {
+        isPaused = true;
+    }
 
     //Check if Boot was disabled
     if (ram.read(0xFF50) != 0 && !hasBIOSbeenDisabled)

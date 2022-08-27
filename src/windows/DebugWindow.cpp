@@ -96,9 +96,10 @@ void DebugWindow::update()
         float secondHalfWidth = m_IO->DisplaySize.x * .40f;
 
         ImVec2 outer_size = ImVec2(firstHalfWidth, m_IO->DisplaySize.y * .65f);
-        if (ImGui::BeginTable("table_scrolly", 3, flags, outer_size))
+        if (ImGui::BeginTable("table_scrolly", 4, flags, outer_size))
         {
             ImGui::TableSetupScrollFreeze(0, 1); // Make top row always visible
+            ImGui::TableSetupColumn("", ImGuiTableColumnFlags_None);
             ImGui::TableSetupColumn("PC", ImGuiTableColumnFlags_None);
             ImGui::TableSetupColumn("OP Code", ImGuiTableColumnFlags_None);
             ImGui::TableSetupColumn("Instruction", ImGuiTableColumnFlags_None);
@@ -113,7 +114,7 @@ void DebugWindow::update()
                     bool isCurrentPc = instructions[row].address == m_Soc->cpu.PC;
 
                     ImGui::TableNextRow();
-                    for (int column = 0; column < 3; column++)
+                    for (int column = 0; column < 4; column++)
                     {
                         ImGui::TableSetColumnIndex(column);
 
@@ -122,11 +123,23 @@ void DebugWindow::update()
                         }
 
                         if (column == 0) {
+                            bool isSelected = m_Soc->breakpoints[instructions[row].address];
+                            char buf[7];
+                            sprintf(buf, "##%04X", instructions[row].address);
+                            if (ImGui::Selectable(buf, isSelected, 0, ImVec2(0,0))) {
+                                m_Soc->breakpoints[instructions[row].address] = !isSelected;
+                            }
+                            if (isSelected) {
+                                ImGui::SameLine();
+                                ImGui::Bullet();
+                            }
+                        }
+                        else if (column == 1) {
                             ImGui::Text("0x%04X", instructions[row].address);
-                        } else if (column == 1) {
+                        } else if (column == 2) {
                             uint8_t opcode = instructions[row].opcode;
                             ImGui::Text("%02X", opcode);
-                        } else if (column == 2) {
+                        } else if (column == 3) {
                             std::string s = instructions[row].mnemonic;
                             char* c = &*s.begin();
                             ImGui::Text("%s", c);

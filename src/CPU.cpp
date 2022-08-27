@@ -32,8 +32,10 @@ void CPU::ExecuteInstruction(uint8_t instruction)
     if (lastInstructions.size() > MAX_INSTRUCTIONS_LIST) {
         lastInstructions.pop_front();
     }
-    lastInstructions.push_back(DebugInstruction(PC, instruction, a, b, c, d, e, f, h, l, SP));
 
+    if (!isOnIllegalInstruction) {
+        lastInstructions.push_back(DebugInstruction(PC, instruction, a, b, c, d, e, f, h, l, SP));
+    }
 
     switch (instruction)
     {
@@ -771,8 +773,8 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         lastClockCycle = 16;
         break;
     case 0xE9:
-        // jp (hl), **
-        PC = receive2bytesFromRam(combineRegisters(h, l));
+        // jp hl
+        PC = combineRegisters(h, l);
         lastClockCycle = 4;
         break;
     case 0xC0:
@@ -1675,7 +1677,10 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         break;
 
     default:
-        printf("Not implemented %x - PC %x\n", instruction, PC);
+        if (!isOnIllegalInstruction)
+            printf("Not implemented %x - PC %x\n", instruction, PC);
+
+        isOnIllegalInstruction = true;
         break;
     }
 
@@ -3707,7 +3712,10 @@ void CPU::bitExtensions(uint8_t opcode)
         break;
 
     default:
-        printf("Not implemented CB %x - PC %x (extension)\n", opcode, PC);
+        if (!isOnIllegalInstruction)
+            printf("Not implemented CB %x - PC %x (extension)\n", opcode, PC);
+
+        isOnIllegalInstruction = true;
         break;
     }
 
