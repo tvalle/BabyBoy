@@ -304,9 +304,7 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         break;
     case 0x86:
         // add a,(hl)
-        if (a == 0x6d)
-
-            add(ram->read(combineRegisters(h, l)));
+        add(ram->read(combineRegisters(h, l)));
         PC++;
         lastClockCycle = 8;
         break;
