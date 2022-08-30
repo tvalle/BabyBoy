@@ -902,7 +902,7 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         }
         else
         {
-            PC += 1;
+            PC += 3;
         }
         lastClockCycle = 24;
         break;
@@ -916,7 +916,7 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         }
         else
         {
-            PC += 1;
+            PC += 3;
         }
         lastClockCycle = 24;
         break;
@@ -930,7 +930,7 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         }
         else
         {
-            PC += 1;
+            PC += 3;
         }
         lastClockCycle = 24;
         break;
@@ -944,7 +944,7 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         }
         else
         {
-            PC += 1;
+            PC += 3;
         }
         lastClockCycle = 24;
         break;
@@ -1710,16 +1710,16 @@ uint16_t CPU::fetchAddressFromRam(int ramPos)
 {
     uint16_t result;
 
-    result = ram->read(ramPos) << 8;
-    result += ram->read(ramPos + 1);
+    result = ram->read(ramPos + 1) << 8;
+    result += ram->read(ramPos);
 
     return result;
 }
 
 void CPU::add2bytesToRam(int ramPos, uint16_t value)
 {
-    ram->write8(ramPos, value >> 8);
-    ram->write8(ramPos + 1, (uint8_t)value);
+    ram->write8(ramPos + 1, value >> 8);
+    ram->write8(ramPos, (uint8_t)value);
 }
 
 bool CPU::isFlagSet(Flag flag)
@@ -1929,7 +1929,8 @@ void CPU::reg_or(uint8_t reg)
 void CPU::reg_cp(uint8_t reg)
 {
     setC((int16_t)a - (int16_t)reg < 0x00);
-    setH((a & 0xF) < (reg & 0xF));
+    setH((a & 0x0f) - (reg & 0x0f) < 0x00);
+    // setH((a & 0xF) < (reg & 0xF));
 
     setZ(reg - a == 0);
     setN(true);
