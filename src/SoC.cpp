@@ -73,6 +73,7 @@ void SoC::gpuStep()
             // Enter scanline mode 3
             modeclock = 0;
             graphicsMode = 3;
+            ram.setLCDMode(graphicsMode);
         }
         break;
 
@@ -84,6 +85,7 @@ void SoC::gpuStep()
             // Enter hblank
             modeclock = 0;
             graphicsMode = 0;
+            ram.setLCDMode(graphicsMode);
 
             // Write a scanline to the framebuffer
             drawCurrentLine();
@@ -102,11 +104,13 @@ void SoC::gpuStep()
             {
                 // Enter vblank
                 graphicsMode = 1;
+                ram.setLCDMode(graphicsMode);
                 //GPU._canvas.putImageData(GPU._scrn, 0, 0);
             }
             else
             {
                 graphicsMode = 2;
+                ram.setLCDMode(graphicsMode);
             }
         }
         break;
@@ -122,6 +126,7 @@ void SoC::gpuStep()
             {
                 // Restart scanning modes
                 graphicsMode = 2;
+                ram.setLCDMode(graphicsMode);
                 ram.writeToFF44(0);
             }
         }
@@ -207,4 +212,8 @@ void SoC::drawCurrentLine()
 
         // Draw Window
     }
+}
+
+int SoC::getGraphicsMode() {
+    return ram.read(0xFF41) & 0b00000011;
 }

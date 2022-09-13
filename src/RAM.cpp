@@ -245,3 +245,13 @@ void RAM::fillFrameBufferWithTile(uint16_t tileAddress, int x)
         }
     }
 }
+
+void RAM::setLCDMode(uint8_t mode)
+{
+    ram[0xFF41] = (ram[0xFF41] & 0b11111100) | mode;
+}
+
+uint8_t RAM::getLCDMode()
+{
+    return ram[0xFF41] & 0b00000011;
+}

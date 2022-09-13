@@ -21,9 +21,11 @@ public:
 
     bool breakpoints[BREAKPOINT_SIZE];
 
+    int getGraphicsMode();
+
 private:
     int modeclock;
-    int graphicsMode;
+    uint8_t graphicsMode;
 
     bool hasBIOSbeenDisabled = false;
     std::vector<uint8_t> backupInitRom; // ROM from 0x00 to 0xFF to read back when 0xFF50 is set

@@ -28,6 +28,9 @@ public:
     uint16_t getTileAddress(int tileId);
     void fillFrameBufferWithTile(uint16_t tileAddress, int x);
 
+    void setLCDMode(uint8_t mode);
+    uint8_t getLCDMode();
+
 private:
 
     uint8_t getPaletteColor(uint8_t index);
