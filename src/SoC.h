@@ -4,7 +4,7 @@
 #include "CPU.h"
 #include <algorithm>
 
-#define BREAKPOINT_SIZE 0x7FFF
+#define BREAKPOINT_SIZE 0xFFFF
 
 class SoC
 {

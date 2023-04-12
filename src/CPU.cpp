@@ -7,7 +7,14 @@
 #include <algorithm>
 
 bool showDebug = false;
-bool writeFile = true;
+
+#ifdef WRITE_LOG
+#include <stdio.h>
+#include <stdlib.h>
+FILE *logFile;
+#endif
+
+
 
 CPU::CPU(RAM& ram)
 {
@@ -20,6 +27,12 @@ CPU::CPU(RAM& ram)
     lastClockCycle = 0;
 
     this->ram = &ram;
+
+    
+
+#ifdef WRITE_LOG
+    logFile = fopen("babyboy_log","w");
+#endif
 }
 
 CPU::~CPU()
@@ -36,6 +49,14 @@ void CPU::ExecuteInstruction(uint8_t instruction)
     if (!isOnIllegalInstruction) {
         lastInstructions.push_back(DebugInstruction(PC, instruction, a, b, c, d, e, f, h, l, SP));
     }
+
+#ifdef WRITE_LOG
+    //A:00 F:11 B:22 C:33 D:44 E:55 H:66 L:77 SP:8888 PC:9999 PCMEM:AA,BB,CC,DD    
+
+    fprintf(logFile, "A:%02X F:%02X B:%02X C:%02X D:%02X E:%02X H:%02X L:%02X SP:%04X PC:%04X PCMEM:%02X,%02X,%02X,%02X\n",
+    a, f, b, c, d, e, h, l, SP, PC, ram->read(PC), ram->read(PC+1), ram->read(PC+2), ram->read(PC+3));
+    fflush(logFile);
+#endif
 
     switch (instruction)
     {
@@ -780,11 +801,11 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         if (!isFlagSet(Flag::Z))
         {
             PC = fetchAddressFromRam(SP);
+            SP += 2;
         }
         else
             PC += 1;
 
-        SP += 2;
         lastClockCycle = 20;
         break;
     case 0xD0:
@@ -792,11 +813,11 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         if (!isFlagSet(Flag::C))
         {
             PC = fetchAddressFromRam(SP);
+            SP += 2;
         }
         else
             PC += 1;
 
-        SP += 2;
         lastClockCycle = 20;
         break;
     case 0xC8:
@@ -804,11 +825,11 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         if (isFlagSet(Flag::Z))
         {
             PC = fetchAddressFromRam(SP);
+            SP += 2;
         }
         else
             PC += 1;
 
-        SP += 2;
         lastClockCycle = 20;
         break;
     case 0xD8:
@@ -816,11 +837,11 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         if (isFlagSet(Flag::C))
         {
             PC = fetchAddressFromRam(SP);
+            SP += 2;
         }
         else
             PC += 1;
 
-        SP += 2;
         lastClockCycle = 20;
         break;
     case 0xC9:
@@ -1461,20 +1482,20 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         lastClockCycle = 8;
         break;
     case 0x73:
-        // ld (hl), h
-        ram->write8(combineRegisters(h, l), h);
+        // ld (hl), e
+        ram->write8(combineRegisters(h, l), e);
         PC++;
         lastClockCycle = 8;
         break;
     case 0x74:
         // ld (hl), l
-        ram->write8(combineRegisters(h, l), l);
+        ram->write8(combineRegisters(h, l), h);
         PC++;
         lastClockCycle = 8;
         break;
     case 0x75:
         // ld (hl), a
-        ram->write8(combineRegisters(h, l), a);
+        ram->write8(combineRegisters(h, l), l);
         PC++;
         lastClockCycle = 8;
         break;
@@ -1784,7 +1805,7 @@ void CPU::decreaseMemoryAddress(uint16_t pointer)
 {
     uint8_t previousValue = ram->read(pointer);
     auto t = ram->read(pointer);
-    ram->write8(pointer, t--);
+    ram->write8(pointer, --t);
     uint8_t result = ram->read(pointer);
 
     setZ(result == 0);
@@ -1842,8 +1863,8 @@ void CPU::addHL(uint16_t reg)
     uint16_t hl = combineRegisters(h, l);
 
     setN(false);
-    setC((uint32_t)hl + (uint32_t)reg > 0xffff);
-    setH(h + l > 0x0f);
+    setC(((uint32_t)hl + (uint32_t)reg) & 0x10000);
+    setH(((hl & 0xFFF) + (reg & 0xFFF)) & 0x1000);
 
     hl += reg;
     h = (uint8_t)(hl >> 8);
@@ -1866,7 +1887,7 @@ void CPU::adc(uint8_t reg)
     int carry = getC() == true ? 1 : 0;
 
     setC((uint16_t)a + (uint16_t)reg + carry > 0xff);
-    setH(((uint8_t)a << 4) + ((uint8_t)reg << 4) + carry > 0xff);
+    setH((a & 0xf) + (reg & 0xf) + carry > 0x0f);
 
     a = a + reg + carry;
 

@@ -37,6 +37,8 @@ SoC::SoC(Rom rom)
     for (int i = 0; i < BREAKPOINT_SIZE; i++) {
         breakpoints[i] = false;
     }
+
+    // breakpoints[0xc482] = true;
 }
 
 void SoC::step()

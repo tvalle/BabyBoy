@@ -188,7 +188,10 @@ void DebugWindow::update()
         ImGui::Text("HL"); ImGui::SameLine();
         char reg_hl[5];
         sprintf(reg_hl, "%02x%02x", m_Soc->cpu.h, m_Soc->cpu.l);
-        ImGui::Text("%s", reg_hl);
+        ImGui::Text("%s", reg_hl); ImGui::SameLine();
+        char reg_addrhl[3];
+        sprintf(reg_addrhl, "%02x", m_Soc->ram.read((m_Soc->cpu.h << 8 | 0x00ff) & (m_Soc->cpu.l | 0xff00)));
+        ImGui::Text("(%s)", reg_addrhl);
 
         ImGui::Text("SP"); ImGui::SameLine();
         char reg_sp[5];
@@ -265,7 +268,7 @@ void DebugWindow::createInstructionsList()
 {
     instructions = std::vector<Opcode>();
 
-    const int memoryMapWhereROMIsLocated = 0x7FFF;
+    const int memoryMapWhereROMIsLocated = 0xFFFF;
     for (int n = 0; n < memoryMapWhereROMIsLocated;)
     {
         Opcode instruction;

@@ -19,7 +19,7 @@ Config* Config::GetInstance()
 
 bool Config::HasBoot()
 {
-    return true;
+    return false;
 }
 
 std::string Config::GetBootFileName()
