@@ -38,7 +38,7 @@ SoC::SoC(Rom rom)
         breakpoints[i] = false;
     }
 
-    // breakpoints[0xc482] = true;
+    // breakpoints[0xc31e] = true;
 }
 
 void SoC::step()

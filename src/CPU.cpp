@@ -8,6 +8,8 @@
 
 bool showDebug = false;
 
+#define WRITE_LOG 1
+
 #ifdef WRITE_LOG
 #include <stdio.h>
 #include <stdlib.h>
@@ -178,6 +180,45 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         decreaseMemoryAddress(combineRegisters(h, l));
         PC++;
         lastClockCycle = 12;
+        break;
+    case 0x27:
+        // daa
+        {
+        int16_t result = a;
+
+        //gb->af &= ~(0xFF00 | GB_ZERO_FLAG);
+
+        if (isFlagSet(Flag::N)) {
+            if (isFlagSet(Flag::H)) {
+                result = (result - 0x06) & 0xFF;
+            }
+
+            if (isFlagSet(Flag::C)) {
+                result -= 0x60;
+            }
+        }
+        else {
+            if (isFlagSet(Flag::H) || (result & 0x0F) > 0x09) {
+                result += 0x06;
+            }
+
+            if (isFlagSet(Flag::C) || result > 0x9F) {
+                result += 0x60;
+                setC(true);
+            } else {
+                setC(false);
+            }
+        }
+
+        setZ((result & 0xFF) == 0);
+        // setC((result & 0x100) == 0x100);
+        setH(false);
+
+        a = result;
+
+        PC++;
+        lastClockCycle = 4;
+        }
         break;
     case 0x37:
         // scf
@@ -1004,6 +1045,9 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         // pop AF
         f = ram->read(SP++);
         a = ram->read(SP++);
+
+        f &= 0xF0;
+
         PC++;
         lastClockCycle = 12;
         break;

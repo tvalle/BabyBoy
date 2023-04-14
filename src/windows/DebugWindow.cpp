@@ -196,7 +196,10 @@ void DebugWindow::update()
         ImGui::Text("SP"); ImGui::SameLine();
         char reg_sp[5];
         sprintf(reg_sp, "%04x", m_Soc->cpu.SP);
-        ImGui::Text("%s", reg_sp);
+        ImGui::Text("%s", reg_sp); ImGui::SameLine();
+        char reg_addrsp[3];
+        sprintf(reg_addrsp, "%02x", m_Soc->ram.read(m_Soc->cpu.SP));
+        ImGui::Text("(%s)", reg_addrsp);
 
         bool isZ = m_Soc->cpu.isFlagSet(Z);
         ImGui::Checkbox("Z", &isZ); ImGui::SameLine();
