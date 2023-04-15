@@ -186,6 +186,11 @@ void SDLWindow::initializePixels()
     memset(pixels, 255, 160 * 144 * sizeof(Uint32));
 }
 
+bool SDLWindow::hasKeyboardFocus()
+{
+    return mKeyboardFocus;
+}
+
 int SDLWindow::getWindowId()
 {
     return mWindowID;

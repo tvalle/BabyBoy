@@ -51,6 +51,8 @@ void MainWindowDesktop::update()
 
 void MainWindowDesktop::updateEvent(SDL_Event e)
 {
+    window.handleEvent(e);
+
     if (e.type == SDL_WINDOWEVENT && e.window.event == SDL_WINDOWEVENT_CLOSE && e.window.windowID == window.getWindowId())
     {
         m_WindowManager->exit = true;
@@ -61,7 +63,7 @@ void MainWindowDesktop::updateEvent(SDL_Event e)
         m_WindowManager->exit = true;
     }
 
-    if (e.type == SDL_KEYDOWN)
+    if (e.type == SDL_KEYDOWN && window.hasKeyboardFocus())
     {
         switch (e.key.keysym.sym)
         {

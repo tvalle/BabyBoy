@@ -47,8 +47,8 @@ void RAM::write8(uint16_t address, uint8_t value)
 uint8_t RAM::read(uint16_t address)
 {
     // TODO: remove this later! This is for debugging with Gameboy Doctor only
-    // if (address == 0xFF44)
-    //     return 0x90;
+    if (address == 0xFF44)
+        return 0x90;
 
     return ram[address];
 }

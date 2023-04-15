@@ -1,4 +1,6 @@
 #include "DebugWindow.h"
+#include <iomanip>
+#include <sstream>
 
 DebugWindow::DebugWindow(SoC *soc, WindowManager *windowManager)
 {
@@ -211,7 +213,44 @@ void DebugWindow::update()
         ImGui::Checkbox("H", &isH); ImGui::SameLine();
 
         bool isC = m_Soc->cpu.isFlagSet(C);
-        ImGui::Checkbox("C", &isC); ImGui::SameLine();
+        ImGui::Checkbox("C", &isC);
+
+        ImGui::Text("Watchlist");
+        static char memory_addr_input[5] = "";
+        ImGui::SetNextItemWidth(secondHalfWidth - 100);
+        ImGui::InputText("##address", memory_addr_input, IM_ARRAYSIZE(memory_addr_input)); ImGui::SameLine();
+        static std::vector<int> watchlist = std::vector<int>();
+        if (ImGui::Button("Add")) {
+            std::stringstream ss;
+            ss << std::hex << memory_addr_input;
+            int addr;
+            ss >> addr;
+            watchlist.insert(watchlist.begin(), addr);
+        }
+
+        static ImGuiTableFlags watchlist_flags = ImGuiTableFlags_ScrollY;
+
+        if (ImGui::BeginTable("table1", 2, watchlist_flags, ImVec2(0, 100)))
+        {
+            for (int row = 0; row < watchlist.size(); row++)
+            {
+                ImGui::TableNextRow();
+                for (int column = 0; column < 2; column++)
+                {
+                    ImGui::TableSetColumnIndex(column);
+                    if (column == 0)
+                    {
+                        std::stringstream ss;
+                        ss << std::hex << watchlist.at(row);
+                        ImGui::TextUnformatted(ss.str().c_str());
+                    } else {
+                        ImGui::TextUnformatted("$blabla");
+                    }
+                }
+            }
+            ImGui::EndTable();
+        }
+
 
         ImGui::EndGroup();
 
