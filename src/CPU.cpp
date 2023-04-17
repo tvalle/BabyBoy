@@ -8,7 +8,7 @@
 
 bool showDebug = false;
 
-//#define WRITE_LOG 1
+// #define WRITE_LOG 1
 
 #ifdef WRITE_LOG
 #include <stdio.h>
@@ -1173,7 +1173,7 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         break;
     case 0x36:
         // ld h, *
-        h = ram->read(PC + 1);
+        ram->write8(combineRegisters(h, l), ram->read(PC+1));
         PC += 2;
         lastClockCycle = 12;
         break;
@@ -1968,7 +1968,7 @@ void CPU::sbc(uint8_t reg)
     setC((int16_t)a - (int16_t)reg - carry < 0x00);
     setH((a & 0x0f) - (reg & 0x0f) - carry < 0x00);
 
-    a = a - reg;
+    a = a - reg - carry;
 
     setZ(a == 0);
     setN(true);
