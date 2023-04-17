@@ -238,7 +238,7 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         // ccf
         setN(false);
         setH(false);
-        setC(!c);
+        setC(!isFlagSet(Flag::C));
         PC++;
         lastClockCycle = 4;
         break;
@@ -843,7 +843,7 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         break;
     case 0xDA:
         // jp c, **
-        PC = !isFlagSet(Flag::C) ? fetchNext2BytesInverted(PC) : PC += 3;
+        PC = isFlagSet(Flag::C) ? fetchNext2BytesInverted(PC) : PC += 3;
         lastClockCycle = 16;
         break;
     case 0xE9:
@@ -1836,7 +1836,7 @@ void CPU::increaseMemoryAddress(uint16_t pointer)
 {
     uint8_t previousValue = ram->read(pointer);
     auto t = ram->read(pointer);
-    ram->write8(pointer, t++);
+    ram->write8(pointer, ++t);
     uint8_t result = ram->read(pointer);
 
     if (result == 0)
@@ -2132,13 +2132,15 @@ void CPU::bitExtensions(uint8_t opcode)
     case 0x08:
         // rrc b
     {
-        auto original_b = b;
-        b = b >> 1;
-        b = b | (original_b & 0b00000001);
-        setC(original_b & 0b00000001);
-        setZ(b == 0);
+        bool carry;
+        uint8_t original_b = b;
+        carry = (original_b & 0x01) != 0;
+
+        b = (original_b >> 1) | (carry << 7);
         setH(0);
         setN(0);
+        setC(carry);
+        setZ(b == 0);
         PC++;
         lastClockCycle = 8;
     }
@@ -2146,13 +2148,15 @@ void CPU::bitExtensions(uint8_t opcode)
     case 0x09:
         // rrc c
     {
-        auto original_c = c;
-        c = c >> 1;
-        c = c | (original_c & 0b00000001);
-        setC(original_c & 0b00000001);
-        setZ(c == 0);
+        bool carry;
+        uint8_t original_c = c;
+        carry = (original_c & 0x01) != 0;
+
+        c = (original_c >> 1) | (carry << 7);
         setH(0);
         setN(0);
+        setC(carry);
+        setZ(c == 0);
         PC++;
         lastClockCycle = 8;
     }
@@ -2160,13 +2164,15 @@ void CPU::bitExtensions(uint8_t opcode)
     case 0x0A:
         // rrc d
     {
-        auto original_d = d;
-        d = d >> 1;
-        d = d | (original_d & 0b00000001);
-        setC(original_d & 0b00000001);
-        setZ(d == 0);
+        bool carry;
+        uint8_t original_d = d;
+        carry = (original_d & 0x01) != 0;
+
+        d = (original_d >> 1) | (carry << 7);
         setH(0);
         setN(0);
+        setC(carry);
+        setZ(d == 0);
         PC++;
         lastClockCycle = 8;
     }
@@ -2174,13 +2180,15 @@ void CPU::bitExtensions(uint8_t opcode)
     case 0x0B:
         // rrc e
     {
-        auto original_e = e;
-        e = e >> 1;
-        e = e | (original_e & 0b00000001);
-        setC(original_e & 0b00000001);
-        setZ(e == 0);
+        bool carry;
+        uint8_t original_e = e;
+        carry = (original_e & 0x01) != 0;
+
+        e = (original_e >> 1) | (carry << 7);
         setH(0);
         setN(0);
+        setC(carry);
+        setZ(e == 0);
         PC++;
         lastClockCycle = 8;
     }
@@ -2188,13 +2196,15 @@ void CPU::bitExtensions(uint8_t opcode)
     case 0x0C:
         // rrc h
     {
-        auto original_h = h;
-        h = h >> 1;
-        h = h | (original_h & 0b00000001);
-        setC(original_h & 0b00000001);
-        setZ(h == 0);
+        bool carry;
+        uint8_t original_h = h;
+        carry = (original_h & 0x01) != 0;
+
+        h = (original_h >> 1) | (carry << 7);
         setH(0);
         setN(0);
+        setC(carry);
+        setZ(h == 0);
         PC++;
         lastClockCycle = 8;
     }
@@ -2202,13 +2212,15 @@ void CPU::bitExtensions(uint8_t opcode)
     case 0x0D:
         // rrc l
     {
-        auto original_l = l;
-        l = l >> 1;
-        l = l | (original_l & 0b00000001);
-        setC(original_l & 0b00000001);
-        setZ(l == 0);
+        bool carry;
+        uint8_t original_l = l;
+        carry = (original_l & 0x01) != 0;
+
+        l = (original_l >> 1) | (carry << 7);
         setH(0);
         setN(0);
+        setC(carry);
+        setZ(l == 0);
         PC++;
         lastClockCycle = 8;
     }
@@ -2216,15 +2228,15 @@ void CPU::bitExtensions(uint8_t opcode)
     case 0x0E:
         // rrc (hl)
     {
-        auto original_hl = ram->read(combineRegisters(h, l));
-        auto hl = original_hl;
-        hl = hl >> 1;
-        hl = hl | (original_hl & 0b00000001);
-        setC(original_hl & 0b00000001);
-        setZ(hl == 0);
+        bool carry;
+        uint8_t original_hl = ram->read(combineRegisters(h, l));
+        carry = (original_hl & 0x01) != 0;
+
+        ram->write8(combineRegisters(h, l), (original_hl >> 1) | (carry << 7));
         setH(0);
         setN(0);
-        ram->write8(combineRegisters(h, l), hl);
+        setC(carry);
+        setZ(original_hl == 0);
         PC++;
         lastClockCycle = 16;
     }
@@ -2232,14 +2244,17 @@ void CPU::bitExtensions(uint8_t opcode)
     case 0x0F:
         // rrc a
     {
-        auto original_a = a;
-        a = a >> 1;
-        a = a | (original_a & 0b00000001);
-        setC(original_a & 0b00000001);
-        setZ(a == 0);
+        bool carry;
+        uint8_t original_a = a;
+        carry = (original_a & 0x01) != 0;
+
+        a = (original_a >> 1) | (carry << 7);
         setH(0);
         setN(0);
+        setC(carry);
+        setZ(a == 0);
         PC++;
+        lastClockCycle = 8;
     }
     break;
 
@@ -2444,12 +2459,11 @@ void CPU::bitExtensions(uint8_t opcode)
     case 0x1E:
         // rr (hl)
     {
-        auto original_hl = ram->read(combineRegisters(h, l));
-        auto hl = original_hl;
+        auto hl = ram->read(combineRegisters(h , l));
         hl = hl >> 1;
         hl = modifyBit(hl, 7, getC());
-        setC(original_hl & 0b00000001);
-        setZ(l == 0);
+        setC(ram->read(combineRegisters(h, l)) & 0b00000001);
+        setZ(hl == 0);
         setH(0);
         setN(0);
         ram->write8(combineRegisters(h, l), hl);
@@ -2580,10 +2594,13 @@ void CPU::bitExtensions(uint8_t opcode)
     case 0x28:
         // sra b
     {
-        auto original_b = b;
-        b = b >> 1;
-        b = modifyBit(b, 8, original_b >> 7);
-        setC(original_b & 0b00000001);
+        uint8_t bit7;
+        uint8_t original_b = b;
+        
+        bit7 = original_b & 0x80;
+
+        setC(original_b & 1);
+        b = (original_b >> 1) | bit7;
         setZ(b == 0);
         setH(0);
         setN(0);
@@ -2594,10 +2611,13 @@ void CPU::bitExtensions(uint8_t opcode)
     case 0x29:
         // sra c
     {
-        auto original_c = c;
-        c = c >> 1;
-        c = modifyBit(c, 8, original_c >> 7);
-        setC(original_c & 0b00000001);
+        uint8_t bit7;
+        uint8_t original_c = c;
+        
+        bit7 = original_c & 0x80;
+
+        setC(original_c & 1);
+        c = (original_c >> 1) | bit7;
         setZ(c == 0);
         setH(0);
         setN(0);
@@ -2608,10 +2628,13 @@ void CPU::bitExtensions(uint8_t opcode)
     case 0x2A:
         // sra d
     {
-        auto original_d = d;
-        d = d >> 1;
-        d = modifyBit(d, 8, original_d >> 7);
-        setC(original_d & 0b00000001);
+        uint8_t bit7;
+        uint8_t original_d = d;
+        
+        bit7 = original_d & 0x80;
+
+        setC(original_d & 1);
+        d = (original_d >> 1) | bit7;
         setZ(d == 0);
         setH(0);
         setN(0);
@@ -2622,10 +2645,13 @@ void CPU::bitExtensions(uint8_t opcode)
     case 0x2B:
         // sra e
     {
-        auto original_e = e;
-        e = e >> 1;
-        e = modifyBit(e, 8, original_e >> 7);
-        setC(original_e & 0b00000001);
+        uint8_t bit7;
+        uint8_t original_e = e;
+        
+        bit7 = original_e & 0x80;
+
+        setC(original_e & 1);
+        e = (original_e >> 1) | bit7;
         setZ(e == 0);
         setH(0);
         setN(0);
@@ -2636,10 +2662,13 @@ void CPU::bitExtensions(uint8_t opcode)
     case 0x2C:
         // sra h
     {
-        auto original_h = h;
-        h = h >> 1;
-        h = modifyBit(h, 8, original_h >> 7);
-        setC(original_h & 0b00000001);
+        uint8_t bit7;
+        uint8_t original_h = h;
+        
+        bit7 = original_h & 0x80;
+
+        setC(original_h & 1);
+        h = (original_h >> 1) | bit7;
         setZ(h == 0);
         setH(0);
         setN(0);
@@ -2650,10 +2679,13 @@ void CPU::bitExtensions(uint8_t opcode)
     case 0x2D:
         // sra l
     {
-        auto original_l = l;
-        l = l >> 1;
-        l = modifyBit(l, 8, original_l >> 7);
-        setC(original_l & 0b00000001);
+        uint8_t bit7;
+        uint8_t original_l = l;
+        
+        bit7 = original_l & 0x80;
+
+        setC(original_l & 1);
+        l = (original_l >> 1) | bit7;
         setZ(l == 0);
         setH(0);
         setN(0);
@@ -2664,15 +2696,16 @@ void CPU::bitExtensions(uint8_t opcode)
     case 0x2E:
         // sra (hl)
     {
-        auto original_hl = ram->read(combineRegisters(h, l));
-        auto hl = original_hl;
-        hl = hl >> 1;
-        hl = modifyBit(hl, 8, original_hl >> 7);
-        setC(original_hl & 0b00000001);
-        setZ(l == 0);
+        uint8_t bit7;
+        uint8_t original_hl = ram->read(combineRegisters(h, l));
+        
+        bit7 = original_hl & 0x80;
+
+        setC(original_hl & 1);
+        ram->write8(combineRegisters(h, l), (original_hl >> 1) | bit7);
+        setZ(ram->read(combineRegisters(h, l)) == 0);
         setH(0);
         setN(0);
-        ram->write8(combineRegisters(h, l), hl);
         PC++;
         lastClockCycle = 16;
     }
@@ -2680,10 +2713,13 @@ void CPU::bitExtensions(uint8_t opcode)
     case 0x2F:
         // sra a
     {
-        auto original_a = a;
-        a = a >> 1;
-        a = modifyBit(a, 8, original_a >> 7);
-        setC(original_a & 0b00000001);
+        uint8_t bit7;
+        uint8_t original_a = a;
+        
+        bit7 = original_a & 0x80;
+
+        setC(original_a & 1);
+        a = (original_a >> 1) | bit7;
         setZ(a == 0);
         setH(0);
         setN(0);
@@ -2772,11 +2808,10 @@ void CPU::bitExtensions(uint8_t opcode)
     case 0x3E:
         // srl (hl)
     {
-        auto original_hl = ram->read(combineRegisters(h, l));
-        auto hl = original_hl;
+        auto hl = ram->read(combineRegisters(h, l));
         hl = hl >> 1;
-        setC(original_hl & 0b00000001);
-        setZ(l == 0);
+        setC(ram->read(combineRegisters(h, l)) & 0b00000001);
+        setZ(hl == 0);
         setH(0);
         setN(0);
         ram->write8(combineRegisters(h, l), hl);
@@ -2804,7 +2839,7 @@ void CPU::bitExtensions(uint8_t opcode)
         b = swap8(b);
         setC(0);
         setH(0);
-        setZ(0);
+        setZ(b == 0);
         setN(0);
         PC++;
         lastClockCycle = 8;
@@ -2814,7 +2849,7 @@ void CPU::bitExtensions(uint8_t opcode)
         c = swap8(c);
         setC(0);
         setH(0);
-        setZ(0);
+        setZ(c == 0);
         setN(0);
         PC++;
         lastClockCycle = 8;
@@ -2824,7 +2859,7 @@ void CPU::bitExtensions(uint8_t opcode)
         d = swap8(d);
         setC(0);
         setH(0);
-        setZ(0);
+        setZ(d == 0);
         setN(0);
         PC++;
         lastClockCycle = 8;
@@ -2834,7 +2869,7 @@ void CPU::bitExtensions(uint8_t opcode)
         e = swap8(e);
         setC(0);
         setH(0);
-        setZ(0);
+        setZ(e == 0);
         setN(0);
         PC++;
         lastClockCycle = 8;
@@ -2844,7 +2879,7 @@ void CPU::bitExtensions(uint8_t opcode)
         h = swap8(h);
         setC(0);
         setH(0);
-        setZ(0);
+        setZ(h == 0);
         setN(0);
         PC++;
         lastClockCycle = 8;
@@ -2854,7 +2889,7 @@ void CPU::bitExtensions(uint8_t opcode)
         l = swap8(l);
         setC(0);
         setH(0);
-        setZ(0);
+        setZ(l == 0);
         setN(0);
         PC++;
         lastClockCycle = 8;
@@ -2862,11 +2897,10 @@ void CPU::bitExtensions(uint8_t opcode)
     case 0x36:
         // swap (hl)
     {
-        auto hl = combineRegisters(h, l);
-        ram->write8(hl, swap8(ram->read(hl)));
+        ram->write8(combineRegisters(h, l), swap8(ram->read(combineRegisters(h, l))));
         setC(0);
         setH(0);
-        setZ(0);
+        setZ(ram->read(combineRegisters(h, l)) == 0);
         setN(0);
         PC++;
         lastClockCycle = 16;
@@ -2877,7 +2911,7 @@ void CPU::bitExtensions(uint8_t opcode)
         a = swap8(a);
         setC(0);
         setH(0);
-        setZ(0);
+        setZ(a == 0);
         setN(0);
         PC++;
         lastClockCycle = 8;
@@ -3271,385 +3305,400 @@ void CPU::bitExtensions(uint8_t opcode)
         // RESET BITS
     case 0x80:
         // reset 0, b
-        modifyBit(b, 0, 0);
+        b = modifyBit(b, 0, 0);
         lastClockCycle = 8;
         PC++;
         break;
     case 0x81:
         // reset 0, c
-        modifyBit(c, 0, 0);
+        c = modifyBit(c, 0, 0);
         lastClockCycle = 8;
         PC++;
         break;
     case 0x82:
         // reset 0, d
-        modifyBit(d, 0, 0);
+        d = modifyBit(d, 0, 0);
         lastClockCycle = 8;
         PC++;
         break;
     case 0x83:
         // reset 0, e
-        modifyBit(e, 0, 0);
+        e = modifyBit(e, 0, 0);
         lastClockCycle = 8;
         PC++;
         break;
     case 0x84:
         // reset 0, h
-        modifyBit(h, 0, 0);
+        h = modifyBit(h, 0, 0);
         lastClockCycle = 8;
         PC++;
         break;
     case 0x85:
         // reset 0, l
-        modifyBit(l, 0, 0);
+        l = modifyBit(l, 0, 0);
         lastClockCycle = 8;
         PC++;
         break;
     case 0x86:
         // reset 0, (hl)
-        modifyBit(ram->read(combineRegisters(h, l)), 0, 0);
+        ram->write8(combineRegisters(h, l), modifyBit(ram->read(combineRegisters(h, l)), 0, 0));
         lastClockCycle = 16;
         PC++;
         break;
     case 0x87:
         // reset 0, a
-        modifyBit(a, 0, 0);
+        a = modifyBit(a, 0, 0);
         lastClockCycle = 8;
         PC++;
         break;
     case 0x88:
         // reset 1, b
-        modifyBit(b, 1, 0);
+        b = modifyBit(b, 1, 0);
         lastClockCycle = 8;
         PC++;
         break;
     case 0x89:
         // reset 1, c
-        modifyBit(c, 1, 0);
+        c = modifyBit(c, 1, 0);
         lastClockCycle = 8;
         PC++;
         break;
     case 0x8A:
         // reset 1, d
-        modifyBit(d, 1, 0);
+        d = modifyBit(d, 1, 0);
         lastClockCycle = 8;
         PC++;
         break;
     case 0x8B:
         // reset 1, e
-        modifyBit(e, 1, 0);
+        e = modifyBit(e, 1, 0);
         lastClockCycle = 8;
         PC++;
         break;
     case 0x8C:
         // reset 1, h
-        modifyBit(h, 1, 0);
+        h = modifyBit(h, 1, 0);
         lastClockCycle = 8;
         PC++;
         break;
     case 0x8D:
         // reset 1, l
-        modifyBit(l, 1, 0);
+        l = modifyBit(l, 1, 0);
         lastClockCycle = 8;
         PC++;
         break;
     case 0x8E:
         // reset 1, (hl)
-        modifyBit(ram->read(combineRegisters(h, l)), 1, 0);
+        ram->write8(combineRegisters(h, l), modifyBit(ram->read(combineRegisters(h, l)), 1, 0));
         lastClockCycle = 16;
         PC++;
         break;
     case 0x8F:
         // reset 1, a
-        modifyBit(a, 1, 0);
+        a = modifyBit(a, 1, 0);
         lastClockCycle = 8;
         PC++;
         break;
     case 0x90:
         // reset 2, b
-        modifyBit(b, 2, 0);
+        b = modifyBit(b, 2, 0);
         lastClockCycle = 8;
         PC++;
         break;
     case 0x91:
         // reset 2, c
-        modifyBit(c, 2, 0);
+        c = modifyBit(c, 2, 0);
         lastClockCycle = 8;
         PC++;
         break;
     case 0x92:
         // reset 2, d
-        modifyBit(d, 2, 0);
+        d = modifyBit(d, 2, 0);
         lastClockCycle = 8;
         PC++;
         break;
     case 0x93:
         // reset 2, e
-        modifyBit(e, 2, 0);
+        e = modifyBit(e, 2, 0);
         lastClockCycle = 8;
         PC++;
         break;
     case 0x94:
         // reset 2, h
-        modifyBit(h, 2, 0);
+        h = modifyBit(h, 2, 0);
         lastClockCycle = 8;
         PC++;
         break;
     case 0x95:
         // reset 2, l
-        modifyBit(l, 2, 0);
+        l = modifyBit(l, 2, 0);
         lastClockCycle = 8;
         PC++;
         break;
     case 0x96:
         // reset 2, (hl)
-        modifyBit(ram->read(combineRegisters(h, l)), 2, 0);
+        ram->write8(combineRegisters(h, l ), modifyBit(ram->read(combineRegisters(h, l)), 2, 0));
         lastClockCycle = 16;
         PC++;
         break;
     case 0x97:
         // reset 2, a
-        modifyBit(a, 2, 0);
+        a = modifyBit(a, 2, 0);
         lastClockCycle = 8;
         PC++;
         break;
     case 0x98:
         // reset 3, b
-        modifyBit(b, 3, 0);
+        b = modifyBit(b, 3, 0);
         lastClockCycle = 8;
         PC++;
         break;
     case 0x99:
         // reset 3, c
-        modifyBit(c, 3, 0);
+        c = modifyBit(c, 3, 0);
         lastClockCycle = 8;
         PC++;
         break;
     case 0x9A:
         // reset 3, d
-        modifyBit(d, 3, 0);
+        d = modifyBit(d, 3, 0);
         lastClockCycle = 8;
         PC++;
         break;
     case 0x9B:
         // reset 3, e
-        modifyBit(e, 3, 0);
+        e = modifyBit(e, 3, 0);
         lastClockCycle = 8;
         PC++;
         break;
     case 0x9C:
         // reset 3, h
-        modifyBit(h, 3, 0);
+        h = modifyBit(h, 3, 0);
         lastClockCycle = 8;
         PC++;
         break;
     case 0x9D:
         // reset 3, l
-        modifyBit(l, 3, 0);
+        l = modifyBit(l, 3, 0);
         lastClockCycle = 8;
         PC++;
         break;
     case 0x9E:
         // reset 3, (hl)
-        modifyBit(ram->read(combineRegisters(h, l)), 3, 0);
+    {
+        auto hl = combineRegisters(h, l);
+        ram->write8(hl, modifyBit(ram->read(hl), 3, 0));
         lastClockCycle = 16;
         PC++;
         break;
+    }
     case 0x9F:
         // reset 3, a
-        modifyBit(a, 3, 0);
+        a = modifyBit(a, 3, 0);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xA0:
         // reset 4, b
-        modifyBit(b, 4, 0);
+        b = modifyBit(b, 4, 0);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xA1:
         // reset 4, c
-        modifyBit(c, 4, 0);
+        c = modifyBit(c, 4, 0);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xA2:
         // reset 4, d
-        modifyBit(d, 4, 0);
+        d = modifyBit(d, 4, 0);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xA3:
         // reset 4, e
-        modifyBit(e, 4, 0);
+        e = modifyBit(e, 4, 0);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xA4:
         // reset 4, h
-        modifyBit(h, 4, 0);
+        h = modifyBit(h, 4, 0);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xA5:
         // reset 4, l
-        modifyBit(l, 4, 0);
+        l = modifyBit(l, 4, 0);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xA6:
-        // reset 4, (hl)
-        modifyBit(ram->read(combineRegisters(h, l)), 4, 0);
+        // reset 3, (hl)
+    {
+        auto hl = combineRegisters(h, l);
+        ram->write8(hl, modifyBit(ram->read(hl), 4, 0));
         lastClockCycle = 16;
         PC++;
         break;
+    }
     case 0xA7:
         // reset 4, a
-        modifyBit(a, 4, 0);
+        a = modifyBit(a, 4, 0);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xA8:
         // reset 5, b
-        modifyBit(b, 5, 0);
+        b = modifyBit(b, 5, 0);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xA9:
         // reset 5, c
-        modifyBit(c, 5, 0);
+        c = modifyBit(c, 5, 0);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xAA:
         // reset 5, d
-        modifyBit(d, 5, 0);
+        d = modifyBit(d, 5, 0);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xAB:
         // reset 5, e
-        modifyBit(e, 5, 0);
+        e = modifyBit(e, 5, 0);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xAC:
         // reset 5, h
-        modifyBit(h, 5, 0);
+        h = modifyBit(h, 5, 0);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xAD:
         // reset 5, l
-        modifyBit(l, 5, 0);
+        l = modifyBit(l, 5, 0);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xAE:
+    {
         // reset 5, (hl)
-        modifyBit(ram->read(combineRegisters(h, l)), 5, 0);
+        auto hl = combineRegisters(h, l);
+        ram->write8(hl, modifyBit(ram->read(hl), 5, 0));
         lastClockCycle = 16;
         PC++;
         break;
+    }
     case 0xAF:
         // reset 5, a
-        modifyBit(a, 5, 0);
+        a = modifyBit(a, 5, 0);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xB0:
         // reset 6, b
-        modifyBit(b, 6, 0);
+        b = modifyBit(b, 6, 0);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xB1:
         // reset 6, c
-        modifyBit(c, 6, 0);
+        c = modifyBit(c, 6, 0);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xB2:
         // reset 6, d
-        modifyBit(d, 6, 0);
+        d = modifyBit(d, 6, 0);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xB3:
         // reset 6, e
-        modifyBit(e, 6, 0);
+        e = modifyBit(e, 6, 0);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xB4:
         // reset 6, h
-        modifyBit(h, 6, 0);
+        h = modifyBit(h, 6, 0);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xB5:
         // reset 6, l
-        modifyBit(l, 6, 0);
+        l = modifyBit(l, 6, 0);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xB6:
+    {
         // reset 6, (hl)
-        modifyBit(ram->read(combineRegisters(h, l)), 6, 0);
+        auto hl = combineRegisters(h, l);
+        ram->write8(hl, modifyBit(ram->read(hl), 6, 0));
         lastClockCycle = 16;
         PC++;
         break;
+    }
     case 0xB7:
         // reset 6, a
-        modifyBit(a, 6, 0);
+        a = modifyBit(a, 6, 0);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xB8:
         // reset 7, b
-        modifyBit(b, 7, 0);
+        b = modifyBit(b, 7, 0);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xB9:
         // reset 7, c
-        modifyBit(c, 7, 0);
+        c = modifyBit(c, 7, 0);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xBA:
         // reset 7, d
-        modifyBit(d, 7, 0);
+        d = modifyBit(d, 7, 0);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xBB:
         // reset 7, e
-        modifyBit(e, 7, 0);
+        e = modifyBit(e, 7, 0);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xBC:
         // reset 7, h
-        modifyBit(h, 7, 0);
+        h = modifyBit(h, 7, 0);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xBD:
         // reset 7, l
-        modifyBit(l, 7, 0);
+        l = modifyBit(l, 7, 0);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xBE:
+    {
         // reset 7, (hl)
-        modifyBit(ram->read(combineRegisters(h, l)), 7, 0);
+        auto hl = combineRegisters(h, l);
+        ram->write8(hl, modifyBit(ram->read(hl), 7, 0));
         lastClockCycle = 16;
         PC++;
         break;
+    }
     case 0xBF:
         // reset 7, a
-        modifyBit(a, 7, 0);
+        a = modifyBit(a, 7, 0);
         lastClockCycle = 8;
         PC++;
         break;
@@ -3657,385 +3706,409 @@ void CPU::bitExtensions(uint8_t opcode)
         // SET BITS
     case 0xC0:
         // set 0, b
-        modifyBit(b, 0, 1);
+        b = modifyBit(b, 0, 1);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xC1:
         // set 0, c
-        modifyBit(c, 0, 1);
+        c = modifyBit(c, 0, 1);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xC2:
         // set 0, d
-        modifyBit(d, 0, 1);
+        d = modifyBit(d, 0, 1);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xC3:
         // set 0, e
-        modifyBit(e, 0, 1);
+        e = modifyBit(e, 0, 1);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xC4:
         // set 0, h
-        modifyBit(h, 0, 1);
+        h = modifyBit(h, 0, 1);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xC5:
         // set 0, l
-        modifyBit(l, 0, 1);
+        l = modifyBit(l, 0, 1);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xC6:
+    {
         // set 0, (hl)
-        modifyBit(ram->read(combineRegisters(h, l)), 0, 1);
+        auto hl = combineRegisters(h, l);
+        ram->write8(hl, modifyBit(ram->read(hl), 0, 1));
         lastClockCycle = 16;
         PC++;
         break;
+    }
     case 0xC7:
         // set 0, a
-        modifyBit(a, 0, 1);
+        a = modifyBit(a, 0, 1);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xC8:
         // set 1, b
-        modifyBit(b, 1, 1);
+        b = modifyBit(b, 1, 1);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xC9:
         // set 1, c
-        modifyBit(c, 1, 1);
+        c = modifyBit(c, 1, 1);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xCA:
         // set 1, d
-        modifyBit(d, 1, 1);
+        d = modifyBit(d, 1, 1);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xCB:
         // set 1, e
-        modifyBit(e, 1, 1);
+        e = modifyBit(e, 1, 1);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xCC:
         // set 1, h
-        modifyBit(h, 1, 1);
+        h = modifyBit(h, 1, 1);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xCD:
         // set 1, l
-        modifyBit(l, 1, 1);
+        l = modifyBit(l, 1, 1);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xCE:
+    {
         // set 1, (hl)
-        modifyBit(ram->read(combineRegisters(h, l)), 1, 1);
+        auto hl = combineRegisters(h, l);
+        ram->write8(hl, modifyBit(ram->read(hl), 1, 1));
         lastClockCycle = 16;
         PC++;
         break;
+    }
     case 0xCF:
         // set 1, a
-        modifyBit(a, 1, 1);
+        a = modifyBit(a, 1, 1);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xD0:
         // set 2, b
-        modifyBit(b, 2, 1);
+        b = modifyBit(b, 2, 1);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xD1:
         // set 2, c
-        modifyBit(c, 2, 1);
+        c = modifyBit(c, 2, 1);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xD2:
         // set 2, d
-        modifyBit(d, 2, 1);
+        d = modifyBit(d, 2, 1);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xD3:
         // set 2, e
-        modifyBit(e, 2, 1);
+        e = modifyBit(e, 2, 1);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xD4:
         // set 2, h
-        modifyBit(h, 2, 1);
+        h = modifyBit(h, 2, 1);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xD5:
         // set 2, l
-        modifyBit(l, 2, 1);
+        l = modifyBit(l, 2, 1);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xD6:
+    {
         // set 2, (hl)
-        modifyBit(ram->read(combineRegisters(h, l)), 2, 1);
+        auto hl = combineRegisters(h, l);
+        ram->write8(hl, modifyBit(ram->read(hl), 2, 1));
         lastClockCycle = 16;
         PC++;
         break;
+    }
     case 0xD7:
         // set 2, a
-        modifyBit(a, 2, 1);
+        a = modifyBit(a, 2, 1);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xD8:
         // set 3, b
-        modifyBit(b, 3, 1);
+        b = modifyBit(b, 3, 1);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xD9:
         // set 3, c
-        modifyBit(c, 3, 1);
+        c = modifyBit(c, 3, 1);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xDA:
         // set 3, d
-        modifyBit(d, 3, 1);
+        d = modifyBit(d, 3, 1);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xDB:
         // set 3, e
-        modifyBit(e, 3, 1);
+        e = modifyBit(e, 3, 1);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xDC:
         // set 3, h
-        modifyBit(h, 3, 1);
+        h = modifyBit(h, 3, 1);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xDD:
         // set 3, l
-        modifyBit(l, 3, 1);
+        l = modifyBit(l, 3, 1);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xDE:
+    {
         // set 3, (hl)
-        modifyBit(ram->read(combineRegisters(h, l)), 3, 1);
+        auto hl = combineRegisters(h, l);
+        ram->write8(hl, modifyBit(ram->read(hl), 3, 1));
         lastClockCycle = 16;
         PC++;
         break;
+    }
     case 0xDF:
         // set 3, a
-        modifyBit(a, 3, 1);
+        a = modifyBit(a, 3, 1);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xE0:
         // set 4, b
-        modifyBit(b, 4, 1);
+        b = modifyBit(b, 4, 1);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xE1:
         // set 4, c
-        modifyBit(c, 4, 1);
+        c = modifyBit(c, 4, 1);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xE2:
         // set 4, d
-        modifyBit(d, 4, 1);
+        d = modifyBit(d, 4, 1);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xE3:
         // set 4, e
-        modifyBit(e, 4, 1);
+        e = modifyBit(e, 4, 1);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xE4:
         // set 4, h
-        modifyBit(h, 4, 1);
+        h = modifyBit(h, 4, 1);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xE5:
         // set 4, l
-        modifyBit(l, 4, 1);
+        l = modifyBit(l, 4, 1);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xE6:
+    {
         // set 4, (hl)
-        modifyBit(ram->read(combineRegisters(h, l)), 4, 1);
+        auto hl = combineRegisters(h, l);
+        ram->write8(hl, modifyBit(ram->read(hl), 4, 1));
         lastClockCycle = 16;
         PC++;
         break;
+    }
     case 0xE7:
         // set 4, a
-        modifyBit(a, 4, 1);
+        a = modifyBit(a, 4, 1);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xE8:
         // set 5, b
-        modifyBit(b, 5, 1);
+        b = modifyBit(b, 5, 1);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xE9:
         // set 5, c
-        modifyBit(c, 5, 1);
+        c = modifyBit(c, 5, 1);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xEA:
         // set 5, d
-        modifyBit(d, 5, 1);
+        d = modifyBit(d, 5, 1);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xEB:
         // set 5, e
-        modifyBit(e, 5, 1);
+        e = modifyBit(e, 5, 1);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xEC:
         // set 5, h
-        modifyBit(h, 5, 1);
+        h = modifyBit(h, 5, 1);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xED:
         // set 5, l
-        modifyBit(l, 5, 1);
+        l = modifyBit(l, 5, 1);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xEE:
+    {
         // set 5, (hl)
-        modifyBit(ram->read(combineRegisters(h, l)), 5, 1);
+        auto hl = combineRegisters(h, l);
+        ram->write8(hl, modifyBit(ram->read(hl), 5, 1));
         lastClockCycle = 16;
         PC++;
         break;
+    }
     case 0xEF:
         // set 5, a
-        modifyBit(a, 5, 1);
+        a = modifyBit(a, 5, 1);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xF0:
         // set 6, b
-        modifyBit(b, 6, 1);
+        b = modifyBit(b, 6, 1);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xF1:
         // set 6, c
-        modifyBit(c, 6, 1);
+        c = modifyBit(c, 6, 1);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xF2:
         // set 6, d
-        modifyBit(d, 6, 1);
+        d = modifyBit(d, 6, 1);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xF3:
         // set 6, e
-        modifyBit(e, 6, 1);
+        e = modifyBit(e, 6, 1);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xF4:
         // set 6, h
-        modifyBit(h, 6, 1);
+        h = modifyBit(h, 6, 1);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xF5:
         // set 6, l
-        modifyBit(l, 6, 1);
+        l = modifyBit(l, 6, 1);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xF6:
+    {
         // set 6, (hl)
-        modifyBit(ram->read(combineRegisters(h, l)), 6, 1);
+        auto hl = combineRegisters(h, l);
+        ram->write8(hl, modifyBit(ram->read(hl), 6, 1));
         lastClockCycle = 16;
         PC++;
         break;
+    }
     case 0xF7:
         // set 6, a
-        modifyBit(a, 6, 1);
+        a = modifyBit(a, 6, 1);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xF8:
         // set 7, b
-        modifyBit(b, 7, 1);
+        b = modifyBit(b, 7, 1);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xF9:
         // set 7, c
-        modifyBit(c, 7, 1);
+        c = modifyBit(c, 7, 1);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xFA:
         // set 7, d
-        modifyBit(d, 7, 1);
+        d = modifyBit(d, 7, 1);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xFB:
         // set 7, e
-        modifyBit(e, 7, 1);
+        e = modifyBit(e, 7, 1);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xFC:
         // set 7, h
-        modifyBit(h, 7, 1);
+        h = modifyBit(h, 7, 1);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xFD:
         // set 7, l
-        modifyBit(l, 7, 1);
+        l = modifyBit(l, 7, 1);
         lastClockCycle = 8;
         PC++;
         break;
     case 0xFE:
+    {
         // set 7, (hl)
-        modifyBit(ram->read(combineRegisters(h, l)), 7, 1);
+        auto hl = combineRegisters(h, l);
+        ram->write8(hl, modifyBit(ram->read(hl), 7, 1));
         lastClockCycle = 16;
         PC++;
         break;
+    }
     case 0xFF:
         // set 7, a
-        modifyBit(a, 7, 1);
+        a = modifyBit(a, 7, 1);
         lastClockCycle = 8;
         PC++;
         break;
