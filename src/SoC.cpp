@@ -37,8 +37,8 @@ SoC::SoC(Rom rom)
         Debug::GetInstance()->breakpoints[i] = false;
     }
 
-    // Debug::GetInstance()->breakpoints[0xc64b] = true;
-    Debug::GetInstance()->addrWatchlist.insert(Debug::GetInstance()->addrWatchlist.begin(), 0xdd02);
+    //  Debug::GetInstance()->breakpoints[0xc642] = true;
+    // Debug::GetInstance()->addrWatchlist.insert(Debug::GetInstance()->addrWatchlist.begin(), 0xdd02);
 }
 
 void SoC::step()

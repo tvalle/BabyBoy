@@ -8,7 +8,7 @@
 
 bool showDebug = false;
 
-#define WRITE_LOG 1
+//#define WRITE_LOG 1
 
 #ifdef WRITE_LOG
 #include <stdio.h>
@@ -759,6 +759,22 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         PC += 2;
         lastClockCycle = 8;
         break;
+    case 0xE8:
+    {
+        int16_t offset;
+        uint16_t tmp_sp = SP;
+        offset = (int8_t)ram->read(PC + 1);
+        SP += offset;
+
+        setZ(false);
+        setN(false);
+        setH((tmp_sp & 0xF) + (offset & 0xF) > 0xF);
+        setC((tmp_sp & 0xFF) + (offset & 0xFF) > 0xFF);
+
+        PC += 2;
+        lastClockCycle = 16;
+        break;
+    }
 
         // JUMP/CALL OPERATIONS *****************************************
     case 0x20:
@@ -1163,7 +1179,7 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         break;
     case 0x08:
         // ld (a16), SP
-        add2bytesToRam(receive2bytesFromRam(fetchNext2BytesInverted(PC)), SP);
+        add2bytesToRam(fetchNext2BytesInverted(PC), SP);
         PC += 3;
         lastClockCycle = 20;
         break;
@@ -1624,9 +1640,16 @@ void CPU::ExecuteInstruction(uint8_t instruction)
     case 0xF8:
         // LD HL,SP+r8
     {
-        uint16_t tmp = SP + ram->read(PC + 1);
-        l = tmp | 0xff00;
-        h = (tmp | 0x00ff) >> 8;
+        int16_t offset;
+        offset = (int8_t)ram->read(PC + 1);
+        l = (SP + offset) | 0xff00;
+        h = ((SP + offset) | 0x00ff) >> 8;
+
+        setZ(false);
+        setN(false);
+        setH((SP & 0xF) + (offset & 0xF) > 0xF);
+        setC((SP & 0xFF)  + (offset & 0xFF) > 0xFF);
+        
         PC += 2;
         lastClockCycle = 12;
         break;
@@ -1756,16 +1779,6 @@ uint8_t CPU::modifyBit(uint8_t number, uint8_t position, uint8_t value)
 uint16_t CPU::fetchNext2BytesInverted(int PC)
 {
     return (ram->read(PC + 1) | 0xff00) & ((ram->read(PC + 2) << 8) | 0x00ff);
-}
-
-uint16_t CPU::receive2bytesFromRam(int ramPos)
-{
-    uint16_t result;
-
-    result = ram->read(ramPos + 1) << 8;
-    result += ram->read(ramPos);
-
-    return result;
 }
 
 uint16_t CPU::fetchAddressFromRam(int ramPos)

@@ -51,7 +51,6 @@ private:
     uint8_t modifyBit(uint8_t number, uint8_t position, uint8_t value);
 
     uint16_t fetchNext2BytesInverted(int PC);
-    uint16_t receive2bytesFromRam(int ramPos);
 	uint16_t fetchAddressFromRam(int ramPos);
     void add2bytesToRam(int ramPos, uint16_t value);
 
