@@ -1,4 +1,5 @@
 #include "RAM.h"
+#include "Debug.h"
 #include <fstream>
 #include <iterator>
 #include <cstring>
@@ -32,6 +33,12 @@ RAM::RAM()
 
 void RAM::write8(uint16_t address, uint8_t value)
 {
+    for (auto const& i : Debug::GetInstance()->addrWatchlist) {
+        if (i == address) {
+            Debug::GetInstance()->isPaused = true;
+        }
+    }
+
     if (address < 0x8000 || (address >= 0xFEA0 && address <= 0xFEFF))
         return;
 

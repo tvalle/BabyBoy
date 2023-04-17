@@ -30,8 +30,6 @@ CPU::CPU(RAM& ram)
 
     this->ram = &ram;
 
-    
-
 #ifdef WRITE_LOG
     logFile = fopen("babyboy_log","w");
 #endif

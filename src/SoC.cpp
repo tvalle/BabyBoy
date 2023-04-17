@@ -1,5 +1,6 @@
 #include "SoC.h"
 #include "Config.h"
+#include "Debug.h"
 
 SoC::SoC()
 {
@@ -32,20 +33,19 @@ SoC::SoC(Rom rom)
     modeclock = 0;
     graphicsMode = 2;
 
-    isPaused = false;
-
     for (int i = 0; i < BREAKPOINT_SIZE; i++) {
-        breakpoints[i] = false;
+        Debug::GetInstance()->breakpoints[i] = false;
     }
 
-    breakpoints[0xc64b] = true;
+    // Debug::GetInstance()->breakpoints[0xc64b] = true;
+    Debug::GetInstance()->addrWatchlist.insert(Debug::GetInstance()->addrWatchlist.begin(), 0xdd02);
 }
 
 void SoC::step()
 {
     cpu.ExecuteInstruction(ram.read(cpu.PC));
-    if (breakpoints[cpu.PC] == true) {
-        isPaused = true;
+    if (Debug::GetInstance()->breakpoints[cpu.PC] == true) {
+        Debug::GetInstance()->isPaused = true;
     }
 
     //Check if Boot was disabled

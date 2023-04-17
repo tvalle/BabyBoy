@@ -4,22 +4,16 @@
 #include "CPU.h"
 #include <algorithm>
 
-#define BREAKPOINT_SIZE 0xFFFF
-
 class SoC
 {
 public:
     SoC();
     SoC(Rom rom);
 
-    bool isPaused;
-
     void step();
 
     RAM ram;
     CPU cpu;
-
-    bool breakpoints[BREAKPOINT_SIZE];
 
     int getGraphicsMode();
 

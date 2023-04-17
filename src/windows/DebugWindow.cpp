@@ -1,4 +1,5 @@
 #include "DebugWindow.h"
+#include "../Debug.h"
 #include <iomanip>
 #include <sstream>
 
@@ -125,11 +126,11 @@ void DebugWindow::update()
                         }
 
                         if (column == 0) {
-                            bool isSelected = m_Soc->breakpoints[instructions[row].address];
+                            bool isSelected = Debug::GetInstance()->breakpoints[instructions[row].address];
                             char buf[7];
                             sprintf(buf, "##%04X", instructions[row].address);
                             if (ImGui::Selectable(buf, isSelected, 0, ImVec2(0,0))) {
-                                m_Soc->breakpoints[instructions[row].address] = !isSelected;
+                                Debug::GetInstance()->breakpoints[instructions[row].address] = !isSelected;
                             }
                             if (isSelected) {
                                 ImGui::SameLine();
@@ -153,8 +154,8 @@ void DebugWindow::update()
         }
         ImGui::EndTable(); ImGui::SameLine();
         ImGui::BeginGroup();
-        if (ImGui::Button(m_Soc->isPaused ? "Continue" : "Pause   ")) {
-            m_Soc->isPaused = !m_Soc->isPaused;
+        if (ImGui::Button(Debug::GetInstance()->isPaused ? "Continue" : "Pause   ")) {
+            Debug::GetInstance()->isPaused = !Debug::GetInstance()->isPaused;
         }
         ImGui::SameLine();
         ImGui::PushButtonRepeat(true);
@@ -219,20 +220,19 @@ void DebugWindow::update()
         static char memory_addr_input[5] = "";
         ImGui::SetNextItemWidth(secondHalfWidth - 100);
         ImGui::InputText("##address", memory_addr_input, IM_ARRAYSIZE(memory_addr_input)); ImGui::SameLine();
-        static std::vector<int> watchlist = std::vector<int>();
         if (ImGui::Button("Add")) {
             std::stringstream ss;
             ss << std::hex << memory_addr_input;
             int addr;
             ss >> addr;
-            watchlist.insert(watchlist.begin(), addr);
+            Debug::GetInstance()->addrWatchlist.insert(Debug::GetInstance()->addrWatchlist.begin(), addr);
         }
 
         static ImGuiTableFlags watchlist_flags = ImGuiTableFlags_ScrollY;
 
         if (ImGui::BeginTable("table1", 2, watchlist_flags, ImVec2(0, 100)))
         {
-            for (int row = 0; row < watchlist.size(); row++)
+            for (int row = 0; row < Debug::GetInstance()->addrWatchlist.size(); row++)
             {
                 ImGui::TableNextRow();
                 for (int column = 0; column < 2; column++)
@@ -241,10 +241,12 @@ void DebugWindow::update()
                     if (column == 0)
                     {
                         std::stringstream ss;
-                        ss << std::hex << watchlist.at(row);
+                        ss << std::hex << Debug::GetInstance()->addrWatchlist.at(row);
                         ImGui::TextUnformatted(ss.str().c_str());
                     } else {
-                        ImGui::TextUnformatted("$blabla");
+                        char watchlist_addr[3];
+                        sprintf(watchlist_addr, "%02x", m_Soc->ram.read(Debug::GetInstance()->addrWatchlist.at(row)));
+                        ImGui::Text("(%s)", watchlist_addr);
                     }
                 }
             }

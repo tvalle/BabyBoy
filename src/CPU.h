@@ -1,5 +1,6 @@
 #pragma once
 #include <list>
+#include <vector>
 #include <stdint.h>
 #include "RAM.h"
 #include "Debug_Instruction.h"

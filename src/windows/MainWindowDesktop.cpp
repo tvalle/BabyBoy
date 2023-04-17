@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "MainWindowDesktop.h"
+#include "../Debug.h"
 
 MainWindowDesktop::MainWindowDesktop(WindowManager *windowManager, std::string romName)
 {
@@ -27,12 +28,12 @@ void MainWindowDesktop::init()
 
 void MainWindowDesktop::update()
 {
-    if (!m_Soc->isPaused)
+    if (!Debug::GetInstance()->isPaused)
     {
         while (m_Soc->cpu.cycles < 69905)
         {
             m_Soc->step();
-            if (m_Soc->isPaused) {
+            if (Debug::GetInstance()->isPaused) {
                 break;
             }
         }
