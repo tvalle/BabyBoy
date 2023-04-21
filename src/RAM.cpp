@@ -163,6 +163,16 @@ bool RAM::getLCDC_IsDisplayOn()
     return (ram[0xFF40] & 0b10000000) == 0b10000000;
 }
 
+bool RAM::hasIE()
+{
+    return ram[0xFFFF];
+}
+
+bool RAM::hasIF()
+{
+    return ram[0xFF0F];
+}
+
 uint8_t RAM::getSCX()
 {
     return ram[0xFF43];

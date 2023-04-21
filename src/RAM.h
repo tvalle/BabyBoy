@@ -19,6 +19,9 @@ public:
     bool getLCDC_BGWindowTileData();
     bool getLCDC_IsDisplayOn();
 
+    bool hasIF();
+    bool hasIE();
+
     uint8_t getSCX();
     uint8_t getSCY();
 

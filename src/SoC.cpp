@@ -55,6 +55,24 @@ void SoC::step()
         ram.copy(backupInitRom, 0xFF);
     }
 
+    if (cpu.IME && ram.read(0xFF0F) && ram.read(0xFFFF))
+    {
+        uint8_t interrupts = ram.read(0xFF0F) & ram.read(0xFFFF);
+        uint8_t if_flag = ram.read(0xFF0F);
+
+        // VBlank interrupt
+        if (interrupts & 0b0001)
+        {
+            cpu.IME = false;
+            ram.write8(0xFF0F, if_flag & 0xFE);
+            cpu.handleInterrupt40();
+        }
+
+        if (Debug::GetInstance()->breakpoints[cpu.PC] == true) {
+            Debug::GetInstance()->isPaused = true;
+        }
+    }
+
     cpu.cycles += cpu.lastClockCycle;
     gpuStep();
 }
@@ -108,6 +126,9 @@ void SoC::gpuStep()
                 graphicsMode = 1;
                 ram.setLCDMode(graphicsMode);
                 //GPU._canvas.putImageData(GPU._scrn, 0, 0);
+                auto vblank_interrupt = ram.read(0xFF0F);
+                vblank_interrupt |= 1;
+                ram.write8(0xFF0F, vblank_interrupt);
             }
             else
             {

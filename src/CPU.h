@@ -37,6 +37,10 @@ public:
     uint8_t l;
     uint16_t SP;
 
+    void handleInterrupt40();
+
+    bool IME = false;
+
     int cycles;
     int lastClockCycle;
 

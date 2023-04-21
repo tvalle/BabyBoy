@@ -16,8 +16,6 @@ bool showDebug = false;
 FILE *logFile;
 #endif
 
-
-
 CPU::CPU(RAM& ram)
 {
     PC = 0x00;
@@ -38,6 +36,14 @@ CPU::CPU(RAM& ram)
 CPU::~CPU()
 {
 }
+
+void CPU::handleInterrupt40()
+{
+    SP -= 2;
+    add2bytesToRam(SP, PC);
+    PC = 0x40;
+}
+
 
 void CPU::ExecuteInstruction(uint8_t instruction)
 {
@@ -907,9 +913,9 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         break;
     case 0xD9:
         // reti
+        IME = true;
         PC = fetchAddressFromRam(SP);
         SP += 2;
-        //TODO ENABLE INTERRUPTS
         lastClockCycle = 16;
         break;
     case 0xC7:
@@ -1742,13 +1748,13 @@ void CPU::ExecuteInstruction(uint8_t instruction)
         break;
     case 0xF3:
         // DI
-        //TODO: Implement DI
+        IME = false;
         PC++;
         lastClockCycle = 4;
         break;
     case 0xFB:
         // EI
-        //TODO: Implement EI
+        IME = true;
         PC++;
         lastClockCycle = 4;
         break;
