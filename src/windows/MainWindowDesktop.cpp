@@ -32,7 +32,7 @@ void MainWindowDesktop::update()
     {
         while (m_Soc->cpu.cycles < 69905)
         {
-            m_Soc->step();
+            m_Soc->step(m_keysPressed);
             if (Debug::GetInstance()->isPaused) {
                 break;
             }
@@ -64,25 +64,51 @@ void MainWindowDesktop::updateEvent(SDL_Event e)
         m_WindowManager->exit = true;
     }
 
+    m_keysPressed = 0xFF;
+
     if (e.type == SDL_KEYDOWN && window.hasKeyboardFocus())
     {
         switch (e.key.keysym.sym)
         {
-        case SDLK_2:
-        {
-            m_VRAMWindow = new VRAMWindow(m_Soc, m_WindowManager);
-            m_WindowManager->add(m_VRAMWindow);
-        }
-        break;
-        case SDLK_1:
-        {
-            m_DebugWindow = new DebugWindow(m_Soc, m_WindowManager);
-            m_WindowManager->add(m_DebugWindow);
-        }
-        break;
-        default:
+            case SDLK_2:
+            {
+                m_VRAMWindow = new VRAMWindow(m_Soc, m_WindowManager);
+                m_WindowManager->add(m_VRAMWindow);
+            }
             break;
-        }
+            case SDLK_1:
+            {
+                m_DebugWindow = new DebugWindow(m_Soc, m_WindowManager);
+                m_WindowManager->add(m_DebugWindow);
+            }
+            break;
+            case SDLK_z:
+            case SDLK_RIGHT:
+            {
+                m_keysPressed = (m_keysPressed | 0b00000001) & 0b1111110;
+            }
+            break;
+            case SDLK_x:
+            case SDLK_LEFT:
+            {
+                m_keysPressed = (m_keysPressed | 0b00000010) & 0b1111101;
+            }
+            break;
+            case SDLK_SPACE:
+            case SDLK_UP:
+            {
+                m_keysPressed = (m_keysPressed | 0b00000100) & 0b1111011;
+            }
+            break;
+            case SDLK_RETURN:
+            case SDLK_DOWN:
+            {
+                m_keysPressed = (m_keysPressed | 0b00001000) & 0b1110111;
+            }
+            break;
+            default:
+                break;
+            }
     }
 }
 

@@ -160,7 +160,7 @@ void DebugWindow::update()
         ImGui::SameLine();
         ImGui::PushButtonRepeat(true);
         if (ImGui::ArrowButton("right", ImGuiDir_Right)) {
-            m_Soc->step();
+            m_Soc->step(0);
         }
         ImGui::PopButtonRepeat();
 

@@ -272,6 +272,13 @@ void RAM::setLCDMode(uint8_t mode)
     ram[0xFF41] = (ram[0xFF41] & 0b11111100) | mode;
 }
 
+void RAM::setLYCeqLY()
+{
+    bool isEqual = ram[0xFF44] == ram[0xFF45];
+
+    ram[0xFF41] = (ram[0xFF41] & 0b11111011) | (isEqual ? 0x4: 0x0);
+}
+
 uint8_t RAM::getLCDMode()
 {
     return ram[0xFF41] & 0b00000011;

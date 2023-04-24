@@ -34,4 +34,6 @@ private:
     DebugWindow *m_DebugWindow;
 
     std::string m_RomName;
+
+    uint8_t m_keysPressed;
 };

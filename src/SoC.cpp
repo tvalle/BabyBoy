@@ -37,12 +37,14 @@ SoC::SoC(Rom rom)
         Debug::GetInstance()->breakpoints[i] = false;
     }
 
-    //  Debug::GetInstance()->breakpoints[0xc642] = true;
+    // Debug::GetInstance()->breakpoints[0x101] = true;
     // Debug::GetInstance()->addrWatchlist.insert(Debug::GetInstance()->addrWatchlist.begin(), 0xdd02);
 }
 
-void SoC::step()
+void SoC::step(uint8_t keysPressed)
 {
+    ram.write8(0xFF00, keysPressed);
+
     cpu.ExecuteInstruction(ram.read(cpu.PC));
     if (Debug::GetInstance()->breakpoints[cpu.PC] == true) {
         Debug::GetInstance()->isPaused = true;
@@ -119,6 +121,7 @@ void SoC::gpuStep()
         {
             modeclock = 0;
             increaseScanline();
+            // ram.setLYCeqLY();
 
             if (currentScanline() == 143)
             {

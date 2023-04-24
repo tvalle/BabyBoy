@@ -32,6 +32,7 @@ public:
     void fillFrameBufferWithTile(uint16_t tileAddress, int x);
 
     void setLCDMode(uint8_t mode);
+    void setLYCeqLY();
     uint8_t getLCDMode();
 
 private:
