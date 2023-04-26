@@ -2,6 +2,7 @@
 
 #include "MainWindowDesktop.h"
 #include "../Debug.h"
+#include "../Input.h"
 
 MainWindowDesktop::MainWindowDesktop(WindowManager *windowManager, std::string romName)
 {
@@ -32,7 +33,7 @@ void MainWindowDesktop::update()
     {
         while (m_Soc->cpu.cycles < 69905)
         {
-            m_Soc->step(m_keysPressed);
+            m_Soc->step();
             if (Debug::GetInstance()->isPaused) {
                 break;
             }
@@ -64,8 +65,6 @@ void MainWindowDesktop::updateEvent(SDL_Event e)
         m_WindowManager->exit = true;
     }
 
-    m_keysPressed = 0xFF;
-
     if (e.type == SDL_KEYDOWN && window.hasKeyboardFocus())
     {
         switch (e.key.keysym.sym)
@@ -82,33 +81,15 @@ void MainWindowDesktop::updateEvent(SDL_Event e)
                 m_WindowManager->add(m_DebugWindow);
             }
             break;
-            case SDLK_z:
-            case SDLK_RIGHT:
-            {
-                m_keysPressed = (m_keysPressed | 0b00000001) & 0b1111110;
-            }
-            break;
-            case SDLK_x:
-            case SDLK_LEFT:
-            {
-                m_keysPressed = (m_keysPressed | 0b00000010) & 0b1111101;
-            }
-            break;
-            case SDLK_SPACE:
-            case SDLK_UP:
-            {
-                m_keysPressed = (m_keysPressed | 0b00000100) & 0b1111011;
-            }
-            break;
-            case SDLK_RETURN:
-            case SDLK_DOWN:
-            {
-                m_keysPressed = (m_keysPressed | 0b00001000) & 0b1110111;
-            }
-            break;
             default:
                 break;
-            }
+        }
+    }
+
+    if (e.type == SDL_KEYUP && window.hasKeyboardFocus())
+    {
+        // TODO add support for multiple keys being pressed at the same time
+        Input::GetInstance()->handleKeyPress(e.key.keysym.sym, false);
     }
 }
 

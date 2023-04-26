@@ -61,6 +61,7 @@ void WindowManager::initializeWindows(std::vector<Window *> windows)
 
 void WindowManager::updateWindows(std::vector<Window *> windows)
 {
+    SDL_StopTextInput();
     SDL_Event event;
     while (SDL_PollEvent(&event)) 
     {
@@ -69,6 +70,8 @@ void WindowManager::updateWindows(std::vector<Window *> windows)
             windows[i]->updateEvent(event);
         }
     }
+    // TODO: Check how to enable this in order for debug window to work
+    // SDL_StartTextInput();
 
     for (int i = 0; i < windows.size(); i++)
     {

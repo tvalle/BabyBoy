@@ -41,10 +41,8 @@ SoC::SoC(Rom rom)
     // Debug::GetInstance()->addrWatchlist.insert(Debug::GetInstance()->addrWatchlist.begin(), 0xdd02);
 }
 
-void SoC::step(uint8_t keysPressed)
+void SoC::step()
 {
-    ram.write8(0xFF00, keysPressed);
-
     cpu.ExecuteInstruction(ram.read(cpu.PC));
     if (Debug::GetInstance()->breakpoints[cpu.PC] == true) {
         Debug::GetInstance()->isPaused = true;

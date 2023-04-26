@@ -10,7 +10,7 @@ public:
     SoC();
     SoC(Rom rom);
 
-    void step(uint8_t keysPressed);
+    void step();
 
     RAM ram;
     CPU cpu;
