@@ -37,11 +37,12 @@ CPU::~CPU()
 {
 }
 
-void CPU::handleInterrupt40()
+void CPU::handleInterrupt(uint16_t address)
 {
+    IME = false;
     SP -= 2;
     add2bytesToRam(SP, PC);
-    PC = 0x40;
+    PC = address;
 }
 
 

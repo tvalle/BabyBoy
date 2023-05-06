@@ -61,11 +61,34 @@ void SoC::step()
         uint8_t if_flag = ram.read(0xFF0F);
 
         // VBlank interrupt
-        if (interrupts & 0b0001)
+        if (interrupts & 0b00001)
         {
-            cpu.IME = false;
-            ram.write8(0xFF0F, if_flag & 0xFE);
-            cpu.handleInterrupt40();
+            ram.write8(0xFF0F, if_flag & (~0b00001));
+            cpu.handleInterrupt(0x40);
+        } 
+        // LCD STAT interrupt
+        else if (interrupts & 0b00010)
+        {
+            ram.write8(0xFF0F, if_flag & (~0b00010));
+            cpu.handleInterrupt(0x48);
+        }
+        // Timer interrupt
+        else if (interrupts & 0b00100)
+        {
+            ram.write8(0xFF0F, if_flag & (~0b00100));
+            cpu.handleInterrupt(0x50);
+        }
+        // Serial interrupt
+        else if (interrupts & 0b01000)
+        {
+            ram.write8(0xFF0F, if_flag & (~0b01000));
+            cpu.handleInterrupt(0x58);
+        }
+        // Joypad interrupt
+        else if (interrupts & 0b10000)
+        {
+            ram.write8(0xFF0F, if_flag & (~0b10000));
+            cpu.handleInterrupt(0x60);
         }
 
         if (Debug::GetInstance()->breakpoints[cpu.PC] == true) {

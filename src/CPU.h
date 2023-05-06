@@ -37,7 +37,7 @@ public:
     uint8_t l;
     uint16_t SP;
 
-    void handleInterrupt40();
+    void handleInterrupt(uint16_t address);
 
     bool IME = false;
 
