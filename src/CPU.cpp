@@ -68,7 +68,13 @@ void CPU::ExecuteInstruction(uint8_t instruction)
     switch (instruction)
     {
     case 0x00:
+        // NOP
         PC++;
+        lastClockCycle = 4;
+        break;
+    case 0x10:
+        // STOP
+        PC+=2;
         lastClockCycle = 4;
         break;
 

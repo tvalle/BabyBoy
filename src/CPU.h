@@ -41,7 +41,7 @@ public:
 
     bool IME = false;
 
-    int cycles;
+    uint64_t cycles;
     int lastClockCycle;
 
     bool isOnIllegalInstruction = false;
